@@ -20,12 +20,27 @@ getNumber -> {
 }
 ```
 
-grass automatically infers the return type of a function.
+grass automatically infers the return type of a private function.
 if you want to write the return type explicitly,
 you can write it after the `->`
 
 ```
 getNumber -> Integer {
+    return 67
+}
+```
+
+public functions require explicit typing.
+type inference is awesome,
+but they can cause ripples of code changes
+caused by a function changing its inferred type.
+explicit typing forces us to think ahead,
+preventing multi-file code changes
+
+```
+// ERROR: a public function requires an explicit return type
+public parent
+getNumber -> {
     return 67
 }
 ```
@@ -101,6 +116,15 @@ if you really want to
 ```
 runApp -> () {
     bark.
+}
+```
+
+but of course, you can omit `()` return type in a public function
+
+```
+public
+doSomething -> {
+    bark()
 }
 ```
 
