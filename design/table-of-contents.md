@@ -4,3 +4,4 @@
 
 - [bindings](basics/bindings.md)
 - [data types](basics/data-types.md)
+- [functions](basics/functions.md)
