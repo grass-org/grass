@@ -72,6 +72,19 @@ runApp -> {
 }
 ```
 
+### ternary
+
+sometimes, you want to represent uncertainty on top of `Yea` and `Nah`.
+in other languages, 
+this could be represented as a nullable `boolean` (`Option<bool>` in Rust).
+grass has the `Ternary` type
+
+| `boolean?` | `Binary` |
+| ---------- | -------- |
+| `true`     | `Yea`    |
+| `false`    | `Nah`    |
+| `null`     | `Idk`    |
+
 ### character
 
 the `Character` type represents a single UTF-8 character
