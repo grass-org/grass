@@ -52,15 +52,15 @@ for aesthetic reasons (length and symmetry), grass uses these for its binary val
 
 | `boolean` | `Binary` |
 | --------- | -------- |
-| `true`    | `yea`    |
-| `false`   | `nah`    |
+| `true`    | `Yea`    |
+| `false`   | `Nah`    |
 
 the binary type is the only type accepted as `if` predicates
 
 ```
 runApp -> {
-    let a -- yea
-    let b -- nah
+    let a -- Yea
+    let b -- Nah
 
     if a {
         printLine("YEA!") // will print
@@ -97,7 +97,7 @@ a tuple is group of multiple values with fixed and independent types
 ```
 runApp -> {
     // explicit type for clarity; not required
-    let tuple: (Integer, Integer, Character, Binary) -- (1, 2, 'c', yea)
+    let tuple: (Integer, Integer, Character, Binary) -- (1, 2, 'c', Yea)
 }
 ```
 
@@ -120,12 +120,12 @@ allowing you to access each value with the name you gave
 
 ```
 getTuple -> (a: Integer, b: Integer, c: Character, d: Binary) {
-    return (1, 2, 'c', yea)
+    return (1, 2, 'c', Yea)
 }
 
 runApp -> {
     let tuple ~ getTuple.
-    printLine(tuple.d) // prints "yea"
+    printLine(tuple.d) // prints "Yea"
 }
 ```
 
@@ -133,7 +133,7 @@ we can also infer the return type of `getTuple`
 
 ```
 getTuple -> {
-    return (a: 1, b: 2, c: 'c', d: yea)
+    return (a: 1, b: 2, c: 'c', d: Yea)
 }
 ```
 
