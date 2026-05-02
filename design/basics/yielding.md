@@ -54,7 +54,7 @@ function -> {
 
     // nothing is printed yet...
 
-    for numbers { number ->
+    for numbers: number {
         printLine(number)
     }
 
@@ -83,7 +83,7 @@ getIterator -> Iterator(Integer) defer {
 runApp -> {
     let iterator -- getIterator() // does not print anything
 
-    for iterator { number -> 
+    for iterator: number {
         printLine(number)
     }
 
@@ -110,7 +110,7 @@ inclusiveRange start: Integer, end: Integer -> Iterator(Integer) {
 }
 
 runApp -> {
-    for inclusiveRange(start: 1, end: 5) { number ->
+    for inclusiveRange(start: 1, end: 5) { number
         printLine(number)
     }
 
@@ -134,13 +134,13 @@ getNumbers -> Iterator(Integer) defer {
     then 6
     then 7
 
-    then all for 9..11 { x ->
+    then all for 9..11: x {
         then x
     }
 }
 
 runApp -> {
-    for getNumbers() { number ->
+    for getNumbers(): number {
         printLine(number)
     }
 

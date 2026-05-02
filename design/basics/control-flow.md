@@ -242,7 +242,7 @@ you can iterate through an `Iterator` by using a `for` loop
 
 ```
 function numbers: Iterator(Integer) -> {
-    for numbers { number ->
+    for numbers: number {
         printLine(number)
     }
 }
@@ -252,7 +252,7 @@ function numbers: Iterator(Integer) -> {
 
 ```
 function numbers: Iterator(Integer) -> {
-    let a -- for numbers { number ->
+    let a -- for numbers: number {
         printLine(number)
 
         if number % 2: then number
@@ -271,7 +271,7 @@ and use it on a `for` loop
 
 ```
 function -> {
-    for 1..5 { index ->
+    for 1..5: index {
         printLine(number)
     }
 }
