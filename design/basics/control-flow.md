@@ -61,17 +61,23 @@ function predicate: Binary -> {
 ```
 
 `if-else` is an expression, 
-meaning it can return a value using the `then` keyword.
+meaning it can return a value using the `return` keyword.
 
 ```
 myFunction predicate: Binary -> {
     let value: Integer -- if predicate {
-        then 1
+        return 1
     } else {
-        then 2
+        return 2
     }
 }
 ```
+
+> note: grass uses the `return` keyword
+> to return from the innermost scope.
+> in the example above,
+> `1` is returned from `if`, not `myFunction`
+> [return](#return)
 
 `if` without an `else` returns an `Optional`
 of whatever you return from it
@@ -79,7 +85,7 @@ of whatever you return from it
 ```
 myFunction predicate: Binary -> {
     let a: Optional(Integer) -- if predicate {
-        then 1
+        return 1
     }
 }
 ```
@@ -152,7 +158,7 @@ function -> {
 }
 ```
 
-use the `break` keyword to exit the loop.
+use `return` to exit the loop.
 the following will print "Hello, world!" 5 times
 
 ```
@@ -160,9 +166,7 @@ function -> {
     mutable x -- 0
 
     loop {
-        if x >= 5 {
-            break
-        }
+        if x >= 5: return
 
         printLine("Hello, world!")
 
@@ -172,16 +176,14 @@ function -> {
 ```
 
 a grass `loop` is also an expression,
-and you can return a single value with the `break` keyword
+and you can return a single value with the `return` keyword
 
 ```
 function -> {
     mutable x -- 0
 
     let y: Integer -- loop {
-        if x >= 5 {
-            break x
-        }
+        if x >= 5: return x
 
         printLine("Hello, world!")
 
@@ -200,9 +202,7 @@ function -> {
     mutable x -- 0
 
     let y: List(Integer) -- loop {
-        if x >= 5 {
-            break
-        }
+        if x >= 5: return
 
         printLine("Hello, world!")
 
@@ -285,3 +285,137 @@ function -> {
 | `a >..< b` | `(a, b)`          |
 
 > [interval notation](https://en.wikipedia.org/wiki/Interval_(mathematics))
+
+## return
+
+grass uses the `return` keyword to:
+
+- return a value from a scope
+- skip everything between the `return` and the `}`
+
+this is unlike other languages,
+where `return` is only used
+to exit out of the innermost function.
+to do the same in grass, 
+use the `return from` syntax
+
+```
+runApp -> {
+    if true {
+        printLine("Hi!")
+        return from runApp
+    }
+
+    printLine("Bye!")
+}
+```
+
+in the example above, 
+"Hi!" would print, but "Bye!" wouldn't,
+since we returned from `runApp`.
+
+you can use the `return from` syntax
+with a return value
+
+```
+getNumber likesSix: Binary -> Integer {
+    if likesSix {
+        return 6 from getNumber
+    }
+
+    return 7
+}
+```
+
+you can use the type of scope you're in
+to indicate what scope you wanna exit
+
+```
+runApp -> {
+    mutable i = 0
+
+    loop {
+        if i >= 5 {
+            return from loop
+        }
+
+        printLine(i)
+    }
+}
+```
+
+in the example above,
+we need to specify that we're returning from `loop`,
+since if we just wrote `return`,
+we'd just be returning from the `if` scope,
+and nothing would really happen
+
+we could use the `if` shorthand tho
+to save us from doing a `return from`,
+since it doesn't introduce a new scope
+
+```
+runApp -> {
+    mutable i = 0
+
+    loop {
+        if i >= 5: return
+
+        printLine(i)
+    }
+}
+```
+
+`return from` will exit
+out of the innermost identifier match
+
+```
+runApp -> {
+    mutable i = 0
+
+    loop {
+        loop {
+            if i >= 5 {
+                return from loop // this
+            }
+
+            printLine(i)
+        } // will exit you out of this
+    }
+}
+```
+
+if you want to exit out of a scope
+with the same identifier as a more inner scope,
+then name the scope you wanna exit
+
+```
+runApp -> {
+    mutable i = 0
+
+    loop outerLoop {
+        loop {
+            if i >= 5 {
+                return from outerLoop // this
+            }
+
+            printLine(i)
+        }
+    } // will exit you out of this
+}
+```
+
+you can use the same syntax
+to name regular non-control flow scopes
+
+```
+function predicate: Binary -> {
+    let a -- scope {
+        if predicate {
+            return 1 from scope
+        }
+
+        return 2
+    }
+}
+```

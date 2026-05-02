@@ -155,10 +155,3 @@ runApp -> {
     // 11
 }
 ```
-
-## then return type
-
-| scope usage    | return type (non-deferred) | return type (deferred ) |
-| -------------- | -------------------------- | ----------------------- |
-| once           | `T`                        | `Iterator(T)`           |
-| more than once | `List(T)`                  | `Iterator(T)`           |
