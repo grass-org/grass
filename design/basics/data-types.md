@@ -39,7 +39,7 @@ runApp -> {
     let difference -- 1 - 2
     let product -- 1 * 2
     let quotient -- 1 / 2
-    let remainder -- 1 remainder 2
+    let remainder -- 1 % 2
 }
 ```
 
