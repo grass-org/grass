@@ -195,7 +195,7 @@ function -> {
 ```
 
 a `loop` expression can also collect values into a `List`
-with the `then` keyword
+with the `yield` keyword
 
 ```
 function -> {
@@ -207,7 +207,7 @@ function -> {
         printLine("Hello, world!")
 
         x -- x + 1
-        then x
+        yield x
     }
 
     printLine(y) // prints List("1, 2, 3, 4, 5")
@@ -229,7 +229,7 @@ function -> {
         printLine("Hello, world!")
 
         x -- x + 1
-        then x
+        yield x
     }
 
     printLine(y) // prints List("1, 2, 3, 4, 5")
@@ -255,7 +255,7 @@ function numbers: Iterator(Integer) -> {
     let a -- for numbers: number {
         printLine(number)
 
-        if number % 2: then number
+        if number % 2: yield number
     }
 
     printLine(a) // prints even elements of `numbers`

@@ -1,18 +1,18 @@
 # yielding
 
-## then
+## yield
 
 in [control flow](control-flow.md),
-we saw an example of using the `then` keyword to yield multiple values.
-however, `then` is not exlusive to loops.
-any scope can use the `then` keyword to yield values
+we saw an example of using the `yield` keyword to yield multiple values.
+however, `yield` is not exlusive to loops.
+any scope can use the `yield` keyword to yield values
 
 ```
 function -> {
     let numbers: List(Integer) -- {
-        then 1
-        then 2
-        then 42
+        yield 1
+        yield 2
+        yield 42
     }
 
     printLine(numbers) // prints "List(1, 2, 42)"
@@ -23,9 +23,9 @@ you can also do this in a function scope
 
 ```
 function -> List(Integer) {
-    then 1
-    then 2
-    then 42
+    yield 1
+    yield 2
+    yield 42
 }
 
 runApp -> {
@@ -44,10 +44,10 @@ until you iterate through the `Iterator` it returned
 function -> {
     let numbers: Iterator(Integer) -- defer {
         printLine("hey")
-        then 1
+        yield 1
 
         printLine("hello")
-        then 42
+        yield 42
 
         printLine("a b c d")
     }
@@ -72,10 +72,10 @@ a deferred function
 ```
 getIterator -> Iterator(Integer) defer {
     printLine("hey")
-    then 1
+    yield 1
     
     printLine("hello")
-    then 42
+    yield 42
     
     printLine("a b c d")
 }
@@ -103,7 +103,7 @@ inclusiveRange start: Integer, end: Integer -> Iterator(Integer) {
     mutable index -- start
 
     return while index <= end {
-        then index
+        yield index
 
         index -- index + 1
     }
@@ -123,19 +123,19 @@ runApp -> {
 }
 ```
 
-## then all
+## yield all
 
-use `then all` to yield all the elements of an iterator
+use `yield all` to yield all the elements of an iterator
 
 ```
 getNumbers -> Iterator(Integer) defer {
-    then all 3..5
+    yield all 3..5
 
-    then 6
-    then 7
+    yield 6
+    yield 7
 
-    then all for 9..11: x {
-        then x
+    yield all for 9..11: x {
+        yield x
     }
 }
 
