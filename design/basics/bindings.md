@@ -60,7 +60,7 @@ this distinction between shadowing and mutation should be clearer here
 runApp -> {
     let a -- 1
 
-    if flipCoin. {
+    if flipCoin() {
         let a -- 2
         printLine(a) // 2
     }

@@ -29,7 +29,7 @@ function -> List(Integer) {
 }
 
 runApp -> {
-    printLine(function.) // prints "List(1, 2, 42)"
+    printLine(function()) // prints "List(1, 2, 42)"
 }
 ```
 
@@ -81,7 +81,7 @@ getIterator -> Iterator(Integer) defer {
 }
 
 runApp -> {
-    let iterator -- getIterator. // does not print anything
+    let iterator -- getIterator() // does not print anything
 
     for iterator { number -> 
         printLine(number)
@@ -110,7 +110,7 @@ inclusiveRange start: Integer, end: Integer -> Iterator(Integer) {
 }
 
 runApp -> {
-    for inclusiveRange start: 1, end: 5 { number ->
+    for inclusiveRange(start: 1, end: 5) { number ->
         printLine(number)
     }
 
@@ -140,7 +140,7 @@ getNumbers -> Iterator(Integer) defer {
 }
 
 runApp -> {
-    for getNumbers. { number ->
+    for getNumbers() { number ->
         printLine(number)
     }
 

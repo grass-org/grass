@@ -137,7 +137,7 @@ getTuple -> (a: Integer, b: Integer, c: Character, d: Binary) {
 }
 
 runApp -> {
-    let tuple ~ getTuple.
+    let tuple ~ getTuple()
     printLine(tuple.d) // prints "Yea"
 }
 ```
@@ -155,7 +155,7 @@ named tuples can be destructured by name
 ```
 runApp -> {
     // using the same getTuple as the last example
-    let { a, c } = getTuple.
+    let { a, c } = getTuple()
 }
 ```
 
