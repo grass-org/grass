@@ -6,3 +6,4 @@
 - [data types](basics/data-types.md)
 - [functions](basics/functions.md)
 - [control flow](basics/control-flow.md)
+- [yielding](basics/yielding.md)
