@@ -84,7 +84,7 @@ of whatever you return from it
 
 ```
 myFunction predicate: Binary -> {
-    let a: Optional(Integer) -- if predicate {
+    let a: Optional<Integer> -- if predicate {
         return 1
     }
 }
@@ -126,7 +126,7 @@ unhandled cases would make the type `Optional`
 
 ```
 myFunction predicate: Ternary -> {
-    let a: Optional(Integer) -- when predicate {
+    let a: Optional<Integer> -- when predicate {
         Yea: 1,
         Idk: 67,
     }
@@ -136,7 +136,7 @@ myFunction predicate: Ternary -> {
 you can also do rust-like pattern matching
 
 ```
-myFunction predicate: Optional(Integer) -> {
+myFunction predicate: Optional<Integer> -> {
     let a -- when predicate {
         Some(value): value * 2,
         None: 0,
@@ -201,7 +201,7 @@ with the `yield` keyword
 function -> {
     mutable x -- 0
 
-    let y: List(Integer) -- loop {
+    let y: List<Integer> -- loop {
         if x >= 5: return
 
         printLine("Hello, world!")
@@ -225,7 +225,7 @@ the following is equivalent to the last `loop` example
 function -> {
     mutable x -- 0
 
-    let y: List(Integer) -- while x < 5 {
+    let y: List<Integer> -- while x < 5 {
         printLine("Hello, world!")
 
         x -- x + 1
@@ -241,7 +241,7 @@ function -> {
 you can iterate through an `Iterator` by using a `for` loop
 
 ```
-function numbers: Iterator(Integer) -> {
+function numbers: Iterator<Integer> -> {
     for numbers: number {
         printLine(number)
     }
@@ -251,7 +251,7 @@ function numbers: Iterator(Integer) -> {
 `for` loops are also expressions
 
 ```
-function numbers: Iterator(Integer) -> {
+function numbers: Iterator<Integer> -> {
     let a -- for numbers: number {
         printLine(number)
 
@@ -266,7 +266,7 @@ function numbers: Iterator(Integer) -> {
 
 grass doesn't have a `for (initializer; predicate; incrementer)` loop.
 if you want to, say, iterate through 1 to 5,
-you can make a `Range(Integer)`, which implements `Iterator(Integer)`,
+you can make a `Range<Integer>`, which implements `Iterator<Integer>`,
 and use it on a `for` loop
 
 ```

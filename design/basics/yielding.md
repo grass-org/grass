@@ -9,7 +9,7 @@ any scope can use the `yield` keyword to yield values
 
 ```
 function -> {
-    let numbers: List(Integer) -- {
+    let numbers: List<Integer> -- {
         yield 1
         yield 2
         yield 42
@@ -22,7 +22,7 @@ function -> {
 you can also do this in a function scope
 
 ```
-function -> List(Integer) {
+function -> List<Integer> {
     yield 1
     yield 2
     yield 42
@@ -42,7 +42,7 @@ until you iterate through the `Iterator` it returned
 
 ```
 function -> {
-    let numbers: Iterator(Integer) -- defer {
+    let numbers: Iterator<Integer> -- defer {
         printLine("hey")
         yield 1
 
@@ -70,7 +70,7 @@ function -> {
 a deferred function
 
 ```
-getIterator -> Iterator(Integer) defer {
+getIterator -> Iterator<Integer> defer {
     printLine("hey")
     yield 1
     
@@ -99,7 +99,7 @@ runApp -> {
 this is how you can implement your own `start..end`
 
 ```
-inclusiveRange start: Integer, end: Integer -> Iterator(Integer) {
+inclusiveRange start: Integer, end: Integer -> Iterator<Integer> {
     mutable index -- start
 
     return while index <= end {
@@ -128,7 +128,7 @@ runApp -> {
 use `yield all` to yield all the elements of an iterator
 
 ```
-getNumbers -> Iterator(Integer) defer {
+getNumbers -> Iterator<Integer> defer {
     yield all 3..5
 
     yield 6

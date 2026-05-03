@@ -188,7 +188,7 @@ to the type it's defined for
 
 ```
 public
-Decision inFavor: Ternary, final: Binary -> Optional(Decision) {
+Decision inFavor: Ternary, final: Binary -> Optional<Decision> {
     if inFavor = Idk & final = Yea:
         return None
 
@@ -196,7 +196,7 @@ Decision inFavor: Ternary, final: Binary -> Optional(Decision) {
 }
 
 public
-Cat alive: Binary, hungry: Binary -> Optional(Cat) {
+Cat alive: Binary, hungry: Binary -> Optional<Cat> {
     if !alive & hungry:
         return None
 
