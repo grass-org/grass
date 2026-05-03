@@ -132,21 +132,13 @@ tuple fields can also be named,
 allowing you to access each value with the name you gave
 
 ```
-getTuple -> (a: Integer, b: Integer, c: Character, d: Binary) {
-    return (1, 2, 'c', Yea)
+getTuple -> { a: Integer, b: Integer, c: Character, d: Binary } {
+    return (a: 1, b: 2, c: 'c', d: Yea)
 }
 
 runApp -> {
     let tuple ~ getTuple()
     printLine(tuple.d) // prints "Yea"
-}
-```
-
-we can also infer the return type of `getTuple`
-
-```
-getTuple -> {
-    return (a: 1, b: 2, c: 'c', d: Yea)
 }
 ```
 
@@ -165,6 +157,29 @@ using the `.` operator, with index `0` being the first value
 ```
 printThirdValue tuple: (Integer, Integer, Character, Binary) -> {
     printLine(tuple.2)
+}
+```
+
+tuples types can of course be inferred
+
+```
+// inferred -> (Integer, Integer, Character, Binary)
+getTuples -> {
+    return (1, 2, 'c' Yea)
+}
+
+// inferred -> { a: Integer, b: Integer, c: Character, d: Yea }
+getNamedTuples -> {
+    return (a: 1, b: 2, c: 'c', d: Yea)
+}
+
+runApp -> {
+    // note: you can explicitly type destructured tuple fields
+
+    let (a: Integer, b: Integer, c: Character, d: Binary) -- getTuples()
+
+    let { a: Integer, b: Integer, c: Character, d: Binary } -- 
+        getNamedTuples()
 }
 ```
 
