@@ -78,6 +78,22 @@ runApp -> {
 }
 ```
 
+however, if you have a binding with the same name as a named parameter,
+then you don't have to name the argument itself
+
+```
+runApp -> {
+    let left -- 1
+    let right -- 2
+
+    // unnecessary named arguments
+    let sum -- add(right: right, left: left)
+
+    // simpler call. same as the one above
+    let sum -- add(right, left)
+}
+```
+
 if you want to allow the caller to provide arguments
 without naming them,
 put them inside `()`
