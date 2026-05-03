@@ -80,10 +80,10 @@ runApp -> {
 
 if you want to allow the caller to provide arguments
 without naming them,
-put them inside `[]`
+put them inside `()`
 
 ```
-add [left: Integer, right: Integer] -> {
+add (left: Integer, right: Integer) -> {
     return left + right
 }
 
@@ -127,8 +127,8 @@ depending on how they're called
 doNothing number: Integer -> {}           // 1
 doNothing integer: Integer -> {}          // 2
 doNothing text: Text -> {}                // 3
-doNothing [a: Integer] -> {}              // 4
-doNothing [a: Integer, b: Integer] -> {}  // 5
+doNothing (a: Integer) -> {}              // 4
+doNothing (a: Integer, b: Integer) -> {}  // 5
 
 runApp -> {
     doNothing(number: 1)  // calls 1
@@ -150,8 +150,8 @@ they are both positional parameters with the same type.
 there is no way for the compiler to disambiguate them when called
 
 ```
-doNothing [number: Integer] -> {}
-doNothing [pizza: Integer] -> {}
+doNothing (number: Integer) -> {}
+doNothing (pizza: Integer) -> {}
 
 runApp -> {
     doNothing 1 // not sure which to call
@@ -171,7 +171,7 @@ function parameters can have default values,
 allowing you to skip them when calling the function
 
 ```
-order food: Food -- Grass, drink: Drink -- Water {}
+order(food: Food -- Grass, drink: Drink -- Water) -> {}
 
 runApp -> {
     order(food: Pizza) // same as order food: Pizza, drink: Water
