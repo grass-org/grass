@@ -214,6 +214,27 @@ function -> {
 }
 ```
 
+you can skip the rest of the current iteration
+by using the `skip` keyword.
+this is the equivalent of `continue` in other languages
+
+```
+function -> {
+    mutable x -- 0
+
+    loop {
+        if x % 2 = 0: skip
+
+        printLine(x)
+
+        x -- x + 1
+    }
+}
+```
+
+the function loops forever printing `x`, 
+skipping all even values for `x`
+
 ### while
 
 you can simplify a `loop` with a condition using `while`.
