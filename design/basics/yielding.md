@@ -102,7 +102,7 @@ this is how you can implement your own `start..end`
 inclusiveRange start: Integer, end: Integer -> Iterator<Integer> {
     mutable index -- start
 
-    return while index <= end {
+    out while index <= end {
         yield index
 
         index -- index + 1

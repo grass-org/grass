@@ -12,11 +12,11 @@ runApp -> {
 > which is the entry point to your application.
 > this is equivalent to the `main` function in languages like C
 
-a function can return a value
+a function can return a value using the `out` keyword
 
 ```
 getNumber -> {
-    return 67
+    out 67
 }
 ```
 
@@ -35,7 +35,7 @@ you can write it after the `->`
 
 ```
 getNumber -> Integer {
-    return 67
+    out 67
 }
 ```
 
@@ -50,7 +50,7 @@ preventing multi-file code changes
 // ERROR: a public function requires an explicit return type
 public parent
 getNumber -> {
-    return 67
+    out 67
 }
 ```
 
@@ -58,7 +58,7 @@ a function can have parameters
 
 ```
 add left: Integer, right: Integer -> {
-    return left + right
+    out left + right
 }
 
 runApp -> {
@@ -100,7 +100,7 @@ put them inside `()`
 
 ```
 add (left: Integer, right: Integer) -> {
-    return left + right
+    out left + right
 }
 
 runApp -> {

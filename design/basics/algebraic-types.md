@@ -146,11 +146,11 @@ using its private field initializer
 
 ```
 getDecision -> Decision {
-    return Decision { inFavor: Idk, final: Nah }
+    out Decision { inFavor: Idk, final: Nah }
 }
 
 getCat -> Cat {
-    return Cat.Alive { hungry: Nah }
+    out Cat.Alive { hungry: Nah }
 }
 ```
 
@@ -165,17 +165,17 @@ this also allows you to add custom logic to your constructor
 public
 Decision inFavor: Ternary, final: Binary -> Decision {
     if inFavor = Idk: 
-        return Decision { inFavor, final: Nah }
+        out Decision { inFavor, final: Nah }
 
-    return Decision { inFavor, final }
+    out Decision { inFavor, final }
 }
 
 public
 Cat alive: Binary, hungry: Binary -> Cat {
     if !alive:
-        return Cat.Dead
+        out Cat.Dead
 
-    return Cat.Alive { alive, hungry }
+    out Cat.Alive { alive, hungry }
 }
 ```
 
@@ -190,20 +190,20 @@ to the type it's defined for
 public
 Decision inFavor: Ternary, final: Binary -> Optional<Decision> {
     if inFavor = Idk & final = Yea:
-        return None
+        out None
 
-    return Decision { inFavor, final }
+    out Decision { inFavor, final }
 }
 
 public
 Cat alive: Binary, hungry: Binary -> Optional<Cat> {
     if !alive & hungry:
-        return None
+        out None
 
     if !alive:
-        return Cat.Dead
+        out Cat.Dead
 
-    return Cat.Alive { alive, hungry }
+    out Cat.Alive { alive, hungry }
 }
 ```
 
@@ -213,12 +213,12 @@ just directly calls the field initializer like this:
 ```
 public
 Decision inFavor: Ternary, final: Binary -> Decision {
-    return Decision { inFavor, final }
+    out Decision { inFavor, final }
 }
 
 public
 Cat.Alive hungry: Binary -> Cat.Alive {
-    return Cat.Alive { hungry }
+    out Cat.Alive { hungry }
 }
 ```
 
@@ -245,7 +245,7 @@ you can access a type's fields via the `::` operator
 
 ```
 isInFavor decision: Decision -> Ternary {
-    return decision::inFavor
+    out decision::inFavor
 }
 ```
 
@@ -261,7 +261,7 @@ here is an example getter method that exposes the `inFavor` field
 ```
 public
 decision: Decision isInFavor -> Ternary {
-    return decision::inFavor
+    out decision::inFavor
 }
 ```
 
@@ -300,7 +300,7 @@ here is how you declare a property getter
 ```
 public
 decision: Decision get inFavor -> Ternary {
-    return decision::inFavor
+    out decision::inFavor
 }
 ```
 
@@ -365,7 +365,7 @@ Decision: Destructure {
     Output: { inFavor: Ternary, final: Binary }
 
     decision destructure -> {
-        return { decision::inFavor, decision::final }
+        out { decision::inFavor, decision::final }
     }
 }
 
@@ -382,7 +382,7 @@ Decision: Destructure {
     Output: (Ternary, Binary)
 
     decision destructure -> {
-        return (decision::inFavor, final::final)
+        out (decision::inFavor, final::final)
     }
 }
 

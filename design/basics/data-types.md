@@ -133,7 +133,7 @@ allowing you to access each value with the name you gave
 
 ```
 getTuple -> { a: Integer, b: Integer, c: Character, d: Binary } {
-    return (a: 1, b: 2, c: 'c', d: Yea)
+    out (a: 1, b: 2, c: 'c', d: Yea)
 }
 
 runApp -> {
@@ -165,12 +165,12 @@ tuples types can of course be inferred
 ```
 // inferred -> (Integer, Integer, Character, Binary)
 getTuples -> {
-    return (1, 2, 'c' Yea)
+    out (1, 2, 'c' Yea)
 }
 
 // inferred -> { a: Integer, b: Integer, c: Character, d: Yea }
 getNamedTuples -> {
-    return (a: 1, b: 2, c: 'c', d: Yea)
+    out (a: 1, b: 2, c: 'c', d: Yea)
 }
 
 runApp -> {
@@ -203,6 +203,6 @@ with index `0` being the first element
 
 ```
 getThirdElement array: [Integer of 5] -> {
-    return array[2]
+    out array[2]
 }
 ```
