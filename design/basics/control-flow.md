@@ -286,6 +286,19 @@ function -> {
 
 > [interval notation](https://en.wikipedia.org/wiki/Interval_(mathematics))
 
+if you just need to iterate a number of times,
+but you don't really need the value/index,
+then you can omit the name for the value/index.
+the following code prints "Hello" five times
+
+```
+function -> {
+    for 1..5 {
+        printLine("Hello")
+    }
+}
+```
+
 ## return
 
 grass uses the `return` keyword to:
