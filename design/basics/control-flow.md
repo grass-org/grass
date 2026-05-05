@@ -133,15 +133,45 @@ myFunction predicate: Ternary -> {
 }
 ```
 
-you can also do rust-like pattern matching
+### pattern matching
+
+you can use the `is` operator
+to check if a value matches a certain pattern
 
 ```
-myFunction predicate: Optional<Integer> -> {
-    let a -- when predicate {
-        Some(value): value * 2,
-        None: 0,
+optional: Optional<Integer> printValueOrMin -> {
+    if optional is Some(value) {
+        printLine(value)
+    } // value is inaccessible outside this scope
+
+    printLine(Integer.MIN)
+} 
+```
+
+you can also invert an `is` check with the `!` operator
+
+```
+optional: Optional<Integer> getOrMin -> Integer {
+    if optional !is Some(value) {
+        out! Integer.MIN
+    } // value is only accessible outside this scope
+
+    out value
+} 
+```
+
+you can also use `is` in a when expression
+
+```
+optional: Optional<Integer> getOrMin -> {
+    when optional {
+        is Some(value): printLine(value)
+
+        // `is` is unnecessary for the None check,
+        // since None is a value itself
+        None: printLine(Integer.MIN)
     }
-}
+} 
 ```
 
 ## loops
