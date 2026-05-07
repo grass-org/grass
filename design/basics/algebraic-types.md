@@ -20,7 +20,7 @@ but in simple terms, these are just C-like structs
 this is how you make a simple product type in grass
 
 ```
-Decision {
+type Decision {
     inFavor: Ternary,
     final: Binary,
 }
@@ -48,7 +48,7 @@ that makes invalid states unrepresentable.
 for example, you defined a simple `Cat` type like this as a product type
 
 ```
-Cat {
+type Cat {
     alive: Binary,
     hungry: Binary,
 }
@@ -59,7 +59,7 @@ which doesn't make any sense.
 instead, you can represent it as a sum type like this
 
 ```
-Cat {
+type Cat {
     Alive { hungry: Binary },
     Dead,
 }
@@ -95,16 +95,16 @@ also, grass sum types can have variants of already existing types,
 making it more similar to TypeScript unions
 
 ```
-Pizza {
+type Pizza {
     toppings: Toppings,
     sauce: Sauce,
 }
 
-Cake {
+type Cake {
     icing: Icing,
 }
 
-Food {
+type Food {
     Pizza,
     Cake,
 }
@@ -121,18 +121,18 @@ to avoid nesting in the type definition,
 you can do this
 
 ```
-Food.Pizza {
+type Food.Pizza {
     toppings: Toppings,
     sauce: Sauce,
 }
 
-Food.Cake {
+type Food.Cake {
     icing: Icing,
 }
 
-Food.Salt
+type Food.Salt
 
-Food {
+type Food {
     Pizza,
     Cake,
     // ERROR: Food must have Food.Salt as one of its variants
@@ -227,13 +227,13 @@ which produces said constructor
 
 ```
 #[derive(Constructor)]
-Decision {
+type Decision {
     inFavor: Ternary,
     final: Binary,
 }
 
 #[derive(Constructor)]
-Cat {
+type Cat {
     Alive { hungry: Binary },
     Dead,
 }
@@ -343,7 +343,7 @@ then derive them
 
 ```
 #[derive(Properties)]
-Decision {
+type Decision {
     #[get, set]
     inFavor: Ternary,
 
@@ -396,7 +396,7 @@ that just destructures all its fields
 
 ```
 #[derive(Destructure)]
-Decision {
+type Decision {
     inFavor: Ternary,
     final: Binary,
 }
