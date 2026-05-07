@@ -102,7 +102,7 @@ this is how you can implement your own `start..end`
 inclusiveRange(start: Integer, end: Integer): Iterator<Integer> {
     mutable index -- start
 
-    out while index <= end {
+    out while index <= end defer {
         yield index
 
         index -- index + 1
@@ -134,7 +134,7 @@ fn getNumbers: Iterator<Integer> defer {
     yield 6
     yield 7
 
-    yield all for 9..11: x {
+    yield all for 9..11: x defer {
         yield x
     }
 }
