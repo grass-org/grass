@@ -84,7 +84,7 @@ where an enum variant isn't a type by itself,
 grass sum type variants are their own types
 
 ```
-feedCat cat: Cat.Alive {
+fn feedCat(cat: Cat.Alive) {
     if hungry {
         feed(cat)
     }
@@ -145,11 +145,11 @@ you can construct your named type
 using its private field initializer
 
 ```
-getDecision -> Decision {
+fn getDecision: Decision {
     out Decision { inFavor: Idk, final: Nah }
 }
 
-getCat -> Cat {
+fn getCat: Cat {
     out Cat.Alive { hungry: Nah }
 }
 ```
@@ -163,7 +163,7 @@ this also allows you to add custom logic to your constructor
 
 ```
 public
-Decision inFavor: Ternary, final: Binary -> Decision {
+fn Decision(inFavor: Ternary, final: Binary): Decision {
     if inFavor = Idk: 
         out Decision { inFavor, final: Nah }
 
@@ -171,7 +171,7 @@ Decision inFavor: Ternary, final: Binary -> Decision {
 }
 
 public
-Cat alive: Binary, hungry: Binary -> Cat {
+fn Cat(alive: Binary, hungry: Binary): Cat {
     if !alive:
         out Cat.Dead
 
@@ -188,7 +188,7 @@ to the type it's defined for
 
 ```
 public
-Decision inFavor: Ternary, final: Binary -> Optional<Decision> {
+fn Decision(inFavor: Ternary, final: Binary): Optional<Decision> {
     if inFavor = Idk & final = Yea:
         out None
 
@@ -196,7 +196,7 @@ Decision inFavor: Ternary, final: Binary -> Optional<Decision> {
 }
 
 public
-Cat alive: Binary, hungry: Binary -> Optional<Cat> {
+fn Cat(alive: Binary, hungry: Binary): Optional<Cat> {
     if !alive & hungry:
         out None
 
@@ -212,12 +212,12 @@ just directly calls the field initializer like this:
 
 ```
 public
-Decision inFavor: Ternary, final: Binary -> Decision {
+fn Decision(inFavor: Ternary, final: Binary): Decision {
     out Decision { inFavor, final }
 }
 
 public
-Cat.Alive hungry: Binary -> Cat.Alive {
+fn Cat.Alive(hungry: Binary): Cat.Alive {
     out Cat.Alive { hungry }
 }
 ```
@@ -244,7 +244,7 @@ Cat {
 you can access a type's fields via the `::` operator
 
 ```
-isInFavor decision: Decision -> Ternary {
+fn isInFavor(decision: Decision): Ternary {
     out decision::inFavor
 }
 ```
@@ -260,7 +260,7 @@ here is an example getter method that exposes the `inFavor` field
 
 ```
 public
-decision: Decision isInFavor -> Ternary {
+fn (decision:Decision).isInFavor: Ternary {
     out decision::inFavor
 }
 ```
@@ -268,7 +268,7 @@ decision: Decision isInFavor -> Ternary {
 you can call a method like this
 
 ```
-printInFavor decision: Decision -> {
+fn printInFavor(decision: Decision): {
     printLine(decision.isInFavor())
 }
 ```
@@ -299,7 +299,7 @@ here is how you declare a property getter
 
 ```
 public
-decision: Decision get inFavor -> Ternary {
+fn (decision: Decision).get inFavor: Ternary {
     out decision::inFavor
 }
 ```
@@ -307,7 +307,7 @@ decision: Decision get inFavor -> Ternary {
 and here is how you get that property
 
 ```
-printInFavor decision: Decision -> {
+fn printInFavor(decision: Decision): {
     printLine(decision.inFavor)
 }
 ```
@@ -318,7 +318,7 @@ here is how you declare a property setter
 
 ```
 public
-decision: ~mutable Decision set inFavor: Binary -> {
+fn (decision: ~mutable Decision).set inFavor: Binary -> {
     decision.inFavor -- inFavor
 }
 ```
@@ -329,7 +329,7 @@ decision: ~mutable Decision set inFavor: Binary -> {
 and here is how you set that property
 
 ```
-runApp -> {
+fn runApp {
     let decision -- Decision(inFavor: Yea, final: Yea)
     decision.inFavor -- Nah
     printLine(decision.inFavor) // prints Nah
@@ -364,12 +364,12 @@ then you have to implement the `Destructure` trait
 Decision: Destructure {
     Output: { inFavor: Ternary, final: Binary }
 
-    decision destructure -> {
+    decision destructure {
         out { decision::inFavor, decision::final }
     }
 }
 
-function decision: Decision -> {
+fn function(decision: Decision) {
     let { inFavor, final } -- decision
 }
 ```
@@ -381,12 +381,12 @@ by returning an unnamed tuple instead
 Decision: Destructure {
     Output: (Ternary, Binary)
 
-    decision destructure -> {
+    decision destructure {
         out (decision::inFavor, final::final)
     }
 }
 
-function decision: Decision -> {
+fn function(decision: Decision) {
     let (a, b) -- decision
 }
 ```

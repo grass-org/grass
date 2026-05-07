@@ -41,7 +41,7 @@ here is how you do an `if` in grass.
 remember that only the `Binary` type can be used as an `if` predicate
 
 ```
-function predicate: Binary -> {
+fn function(predicate: Binary) {
     if predicate {
       printLine("predicate is Yea"!)
     }
@@ -51,8 +51,8 @@ function predicate: Binary -> {
 and here is an `if-else`
 
 ```
-function predicate: Binary -> {
-    if predicate -> {
+fn function(predicate: Binary) {
+    if predicate {
         printLine("predicate is Nah!")
     } else {
         printLine("predicate is Yea!")
@@ -64,7 +64,7 @@ function predicate: Binary -> {
 meaning it can return a value using the `out` keyword.
 
 ```
-myFunction predicate: Binary -> {
+fn myFunction(predicate: Binary) {
     let value: Integer -- if predicate {
         out 1
     } else {
@@ -83,7 +83,7 @@ myFunction predicate: Binary -> {
 of whatever you return from it
 
 ```
-myFunction predicate: Binary -> {
+fn myFunction(predicate: Binary) {
     let a: Optional<Integer> -- if predicate {
         out 1
     }
@@ -95,7 +95,7 @@ that contain nothing but return values
 can use the following shorthand
 
 ```
-myFunction predicate: Binary -> {
+fn myFunction(predicate: Binary) {
     let a -- if predicate: 1
     let b -- if predicate: 1; else: 2
 }
@@ -106,7 +106,7 @@ myFunction predicate: Binary -> {
 you can do C#-like `switch` expressions in grass
 
 ```
-myFunction predicate: Ternary -> {
+fn myFunction(predicate: Ternary) {
     when predicate {
         Yea: printLine("Yea!"),
         Nah: printLine("Nah!"),
@@ -125,7 +125,7 @@ and just like with `if` expressions,
 unhandled cases would make the type `Optional`
 
 ```
-myFunction predicate: Ternary -> {
+fn myFunction(predicate: Ternary) {
     let a: Optional<Integer> -- when predicate {
         Yea: 1,
         Idk: 67,
@@ -139,7 +139,7 @@ you can use the `is` operator
 to check if a value matches a certain pattern
 
 ```
-optional: Optional<Integer> printValueOrMin -> {
+fn (optional: Optional<Integer>).printValueOrMin {
     if optional is Some(value) {
         printLine(value)
     } // value is inaccessible outside this scope
@@ -151,7 +151,7 @@ optional: Optional<Integer> printValueOrMin -> {
 you can also invert an `is` check with the `!` operator
 
 ```
-optional: Optional<Integer> getOrMin -> Integer {
+fn (optional: Optional<Integer>).getOrMin: Integer {
     if optional !is Some(value) {
         out! Integer.MIN
     } // value is only accessible outside this scope
@@ -163,7 +163,7 @@ optional: Optional<Integer> getOrMin -> Integer {
 you can also use `is` in a when expression
 
 ```
-optional: Optional<Integer> getOrMin -> {
+fn (optional: Optional<Integer>).getOrMin {
     when optional {
         is Some(value): printLine(value)
 
@@ -181,7 +181,7 @@ optional: Optional<Integer> getOrMin -> {
 here is a basic `loop` that prints "Hello, world!" forever
 
 ```
-function -> {
+fn function {
     loop {
         printLine("Hello, world!")
     }
@@ -192,7 +192,7 @@ use `out` to exit the loop.
 the following will print "Hello, world!" 5 times
 
 ```
-function -> {
+fn function {
     mutable x -- 0
 
     loop {
@@ -209,7 +209,7 @@ a grass `loop` is also an expression,
 and you can return a single value with the `out` keyword
 
 ```
-function -> {
+fn function {
     mutable x -- 0
 
     let y: Integer -- loop {
@@ -228,7 +228,7 @@ a `loop` expression can also collect values into a `List`
 with the `yield` keyword
 
 ```
-function -> {
+fn function {
     mutable x -- 0
 
     let y: List<Integer> -- loop {
@@ -249,7 +249,7 @@ by using the `skip` keyword.
 this is the equivalent of `continue` in other languages
 
 ```
-function -> {
+fn function {
     mutable x -- 0
 
     loop {
@@ -273,7 +273,7 @@ and acts exactly like a `loop`.
 the following is equivalent to the last `loop` example
 
 ```
-function -> {
+fn function {
     mutable x -- 0
 
     let y: List<Integer> -- while x < 5 {
@@ -292,7 +292,7 @@ function -> {
 you can iterate through an `Iterator` by using a `for` loop
 
 ```
-function numbers: Iterator<Integer> -> {
+fn function(numbers: Iterator<Integer>) {
     for numbers: number {
         printLine(number)
     }
@@ -302,7 +302,7 @@ function numbers: Iterator<Integer> -> {
 `for` loops are also expressions
 
 ```
-function numbers: Iterator<Integer> -> {
+fn function(numbers: Iterator<Integer>) {
     let a -- for numbers: number {
         printLine(number)
 
@@ -321,7 +321,7 @@ you can make a `Range<Integer>`, which implements `Iterator<Integer>`,
 and use it on a `for` loop
 
 ```
-function -> {
+fn function {
     for 1..5: index {
         printLine(number)
     }
@@ -343,7 +343,7 @@ then you can omit the name for the value/index.
 the following code prints "Hello" five times
 
 ```
-function -> {
+fn function {
     for 1..5 {
         printLine("Hello")
     }
@@ -364,7 +364,7 @@ to do the same in grass,
 you use the `out from` syntax
 
 ```
-runApp -> {
+fn runApp {
     if true {
         printLine("Hi!")
         out from runApp
@@ -385,7 +385,7 @@ of immediately exiting functions
 by using `return`
 
 ```
-runApp -> {
+fn runApp {
     if true {
         printLine("Hi!")
         out! // equivalent to `out from runApp`
@@ -399,7 +399,7 @@ you can use the `out from` syntax
 with a return value
 
 ```
-getNumber likesSix: Binary -> Integer {
+fn getNumber(likesSix: Binary): Integer {
     if likesSix {
         out 6 from getNumber
     }
@@ -411,7 +411,7 @@ getNumber likesSix: Binary -> Integer {
 you can also use `out!` with a return value
 
 ```
-getNumber likesSix: Binary -> Integer {
+fn getNumber(likesSix: Binary): Integer {
     if likesSix {
         out! 6
     }
@@ -424,7 +424,7 @@ you can use the type of scope you're in
 to indicate what scope you wanna exit
 
 ```
-runApp -> {
+fn runApp {
     mutable i = 0
 
     loop {
@@ -448,7 +448,7 @@ to save us from doing a `out from`,
 since it doesn't introduce a new scope
 
 ```
-runApp -> {
+fn runApp {
     mutable i = 0
 
     loop {
@@ -463,7 +463,7 @@ runApp -> {
 out of the innermost identifier match
 
 ```
-runApp -> {
+fn runApp {
     mutable i = 0
 
     loop {
@@ -483,7 +483,7 @@ with the same identifier as a more inner scope,
 then name the scope you wanna exit
 
 ```
-runApp -> {
+fn runApp {
     mutable i = 0
 
     loop outerLoop {
@@ -502,7 +502,7 @@ you can use the same syntax
 to name regular non-control flow scopes
 
 ```
-function predicate: Binary -> {
+fn function(predicate: Binary) {
     let a -- scope {
         if predicate {
             out 1 from scope

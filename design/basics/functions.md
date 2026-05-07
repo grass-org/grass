@@ -3,7 +3,7 @@
 a function that returns nothing can be declared like this
 
 ```
-runApp -> {
+fn runApp {
     printLine("Hello, world!")
 }
 ```
@@ -15,7 +15,7 @@ runApp -> {
 a function can return a value using the `out` keyword
 
 ```
-getNumber -> {
+fn getNumber {
     out 67
 }
 ```
@@ -23,7 +23,7 @@ getNumber -> {
 this is how you call a function
 
 ```
-runApp -> {
+fn runApp {
     let number -- getNumber()
     printLine(number)
 }
@@ -31,10 +31,10 @@ runApp -> {
 
 grass automatically infers the return type of a private function.
 if you want to write the return type explicitly,
-you can write it after the `->`
+you can write it after a `:`
 
 ```
-getNumber -> Integer {
+fn getNumber: Integer {
     out 67
 }
 ```
@@ -49,7 +49,7 @@ preventing multi-file code changes
 ```
 // ERROR: a public function requires an explicit return type
 public parent
-getNumber -> {
+fn getNumber {
     out 67
 }
 ```
@@ -57,11 +57,11 @@ getNumber -> {
 a function can have parameters
 
 ```
-add left: Integer, right: Integer -> {
+fn add(left: Integer, right: Integer) {
     out left + right
 }
 
-runApp -> {
+fn runApp {
     let number -- add(left: 1, right: 2)
     printLine(number)
 }
@@ -73,7 +73,7 @@ especially if they have the same type.
 this also allows you to write the arguments in any order
 
 ```
-runApp -> {
+fn runApp {
     printLine(add(right: 2, left: 1)
 }
 ```
@@ -82,7 +82,7 @@ however, if you have a binding with the same name as a named parameter,
 then you don't have to name the argument itself
 
 ```
-runApp -> {
+fn runApp {
     let left -- 1
     let right -- 2
 
@@ -96,14 +96,14 @@ runApp -> {
 
 if you want to allow the caller to provide arguments
 without naming them,
-put them inside `()`
+put them inside `[]`
 
 ```
-add (left: Integer, right: Integer) -> {
+fn add[left: Integer, right: Integer] {
     out left + right
 }
 
-runApp -> {
+fn runApp {
     printLine(add(1, 2))
 }
 ```
@@ -115,7 +115,7 @@ however, of course, you can write still write it explicitly
 if you really want to
 
 ```
-runApp -> () {
+fn runApp: () {
     bark()
 }
 ```
@@ -124,7 +124,7 @@ but of course, you can omit `()` return type in a public function
 
 ```
 public
-doSomething -> {
+fn doSomething {
     bark()
 }
 ```
@@ -132,10 +132,11 @@ doSomething -> {
 ## shorthand
 
 if a function returns a value immediately,
-then you can omit the function body `{}` and the `out` keyword
+then you can replace the function body `{}` and the `out` keyword
+with a `->`
 
 ```
-getNumber -> 67
+fn getNumber -> 67
 ```
 
 of course, if it's a public function,
@@ -144,7 +145,7 @@ you have to specify the return type
 
 ```
 public
-getNumber -> Integer: 67
+fn getNumber: Integer -> 67
 ```
 
 ## overloading
@@ -158,13 +159,13 @@ since the compiler can pick which one to use
 depending on how they're called
 
 ```
-doNothing number: Integer -> {}           // 1
-doNothing integer: Integer -> {}          // 2
-doNothing text: Text -> {}                // 3
-doNothing (a: Integer) -> {}              // 4
-doNothing (a: Integer, b: Integer) -> {}  // 5
+fn doNothing(number: Integer) {}         // 1
+fn doNothing(integer: Integer) {}        // 2
+fn doNothing(text: Text) {}              // 3
+fn doNothing[a: Integer] {}              // 4
+fn doNothing[a: Integer, b: Integer] {}  // 5
 
-runApp -> {
+runApp {
     doNothing(number: 1)  // calls 1
     doNothing(integer: 2  // calls 2
     doNothing(text: "Hi") // calls 3
@@ -184,10 +185,10 @@ they are both positional parameters with the same type.
 there is no way for the compiler to disambiguate them when called
 
 ```
-doNothing (number: Integer) -> {}
-doNothing (pizza: Integer) -> {}
+fn doNothing[number: Integer] {}
+fn doNothing[pizza: Integer] {}
 
-runApp -> {
+fn runApp {
     doNothing 1 // not sure which to call
 }
 ```
@@ -205,9 +206,9 @@ function parameters can have default values,
 allowing you to skip them when calling the function
 
 ```
-order(food: Food -- Grass, drink: Drink -- Water) -> {}
+fn order[food: Food -- Grass, drink: Drink -- Water] {}
 
-runApp -> {
+fn runApp {
     order(food: Pizza) // same as order food: Pizza, drink: Water
     order(drink: Coke) // same as order food: Grass, drink: Coke
 }

@@ -34,7 +34,7 @@ these are types that represent a single value
 ### numeric operators
 
 ```
-runApp -> {
+fn runApp {
     let sum -- 1 + 2
     let difference -- 1 - 2
     let product -- 1 * 2
@@ -58,7 +58,7 @@ for aesthetic reasons (length and symmetry), grass uses these for its binary val
 the binary type is the only type accepted as `if` predicates
 
 ```
-runApp -> {
+fn runApp {
     let a -- Yea
     let b -- Nah
 
@@ -90,7 +90,7 @@ grass has the `Ternary` type
 the `Character` type represents a single UTF-8 character
 
 ```
-runApp -> {
+fn runApp {
     let a -- 'c'
     printLine(a) // will print 'c'
 }
@@ -108,7 +108,7 @@ grass has two basic compound types: tuples and arrays
 a tuple is group of multiple values with fixed and independent types
 
 ```
-runApp -> {
+fn runApp {
     // explicit type for clarity; not required
     let tuple: (Integer, Integer, Character, Binary) -- (1, 2, 'c', Yea)
 }
@@ -117,7 +117,7 @@ runApp -> {
 an unnamed tuple can be destructured positionally
 
 ```
-printValues tuple: (Integer, Integer, Character, Binary) -> {
+fn printValues(tuple: (Integer, Integer, Character, Binary)) {
     let (a, b, c, d) -- tuple
 
     // explicit type added for clarity. not required
@@ -132,11 +132,11 @@ tuple fields can also be named,
 allowing you to access each value with the name you gave
 
 ```
-getTuple -> { a: Integer, b: Integer, c: Character, d: Binary } {
+fn getTuple: { a: Integer, b: Integer, c: Character, d: Binary } {
     out (a: 1, b: 2, c: 'c', d: Yea)
 }
 
-runApp -> {
+fn runApp {
     let tuple ~ getTuple()
     printLine(tuple.d) // prints "Yea"
 }
@@ -145,7 +145,7 @@ runApp -> {
 named tuples can be destructured by name
 
 ```
-runApp -> {
+fn runApp {
     // using the same getTuple as the last example
     let { a, c } = getTuple()
 }
@@ -155,7 +155,7 @@ unnamed tuple values can be accessed without destructuring
 using the `.` operator, with index `0` being the first value
 
 ```
-printThirdValue tuple: (Integer, Integer, Character, Binary) -> {
+fn printThirdValue(tuple: (Integer, Integer, Character, Binary)) {
     printLine(tuple.2)
 }
 ```
@@ -163,17 +163,17 @@ printThirdValue tuple: (Integer, Integer, Character, Binary) -> {
 tuples types can of course be inferred
 
 ```
-// inferred -> (Integer, Integer, Character, Binary)
-getTuples -> {
+// inferred: (Integer, Integer, Character, Binary)
+fn getTuples {
     out (1, 2, 'c' Yea)
 }
 
-// inferred -> { a: Integer, b: Integer, c: Character, d: Yea }
-getNamedTuples -> {
+// inferred: { a: Integer, b: Integer, c: Character, d: Yea }
+fn getNamedTuples {
     out (a: 1, b: 2, c: 'c', d: Yea)
 }
 
-runApp -> {
+fn runApp {
     // note: you can explicitly type destructured tuple fields
 
     let (a: Integer, b: Integer, c: Character, d: Binary) -- getTuples()
@@ -192,7 +192,7 @@ an array is also a group of multiple values with fixed size,
 but they are all of the same type
 
 ```
-runApp -> {
+fn runApp {
     // explicit type for clarity; not required
     let a: [Integer of 5] ~ [1, 2, 3, 4, 5]
 }
@@ -202,7 +202,7 @@ an array's elements can be access using the `[]` operator,
 with index `0` being the first element
 
 ```
-getThirdElement array: [Integer of 5] -> {
+fn getThirdElement(array: [Integer of 5]) {
     out array[2]
 }
 ```

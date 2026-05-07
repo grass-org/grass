@@ -3,7 +3,7 @@
 use the `let` keyword to define an immutable binding
 
 ```
-runApp -> {
+fn runApp {
     let a -- 0
 }
 ```
@@ -14,7 +14,7 @@ if you need to explicitly type a binding,
 this is how you do it
 
 ```
-runApp -> {
+fn runApp {
     let a: Integer -- 0
 }
 ```
@@ -24,7 +24,7 @@ runApp -> {
 use the `mutable` keyword to define a mutable binding
 
 ```
-runApp -> {
+fn runApp {
     let a -- 0
     a -- 1 // cannot assign more than once to an immutable binding
     
@@ -43,7 +43,7 @@ this is because grass reclaims the `=` operator for equality
 grass lets you use the same name for a binding as another one
 
 ```
-runApp -> {
+fn runApp {
     let a -- 1
     let a -- 2
 }
@@ -57,7 +57,7 @@ since `a` with the value `2` is always gonna be used when you reference `a`
 this distinction between shadowing and mutation should be clearer here
 
 ```
-runApp -> {
+fn runApp {
     let a -- 1
 
     if flipCoin() {

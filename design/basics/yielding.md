@@ -8,7 +8,7 @@ however, `yield` is not exlusive to loops.
 any scope can use the `yield` keyword to yield values
 
 ```
-function -> {
+fn function {
     let numbers: List<Integer> -- {
         yield 1
         yield 2
@@ -22,13 +22,13 @@ function -> {
 you can also do this in a function scope
 
 ```
-function -> List<Integer> {
+fn function: List<Integer> {
     yield 1
     yield 2
     yield 42
 }
 
-runApp -> {
+fn runApp {
     printLine(function()) // prints "List(1, 2, 42)"
 }
 ```
@@ -41,7 +41,7 @@ this means the code inside the block will not execute
 until you iterate through the `Iterator` it returned
 
 ```
-function -> {
+fn function {
     let numbers: Iterator<Integer> -- defer {
         printLine("hey")
         yield 1
@@ -70,7 +70,7 @@ function -> {
 a deferred function
 
 ```
-getIterator -> Iterator<Integer> defer {
+fn getIterator: Iterator<Integer> defer {
     printLine("hey")
     yield 1
     
@@ -80,7 +80,7 @@ getIterator -> Iterator<Integer> defer {
     printLine("a b c d")
 }
 
-runApp -> {
+fn runApp {
     let iterator -- getIterator() // does not print anything
 
     for iterator: number {
@@ -99,7 +99,7 @@ runApp -> {
 this is how you can implement your own `start..end`
 
 ```
-inclusiveRange start: Integer, end: Integer -> Iterator<Integer> {
+inclusiveRange(start: Integer, end: Integer): Iterator<Integer> {
     mutable index -- start
 
     out while index <= end {
@@ -109,7 +109,7 @@ inclusiveRange start: Integer, end: Integer -> Iterator<Integer> {
     }
 }
 
-runApp -> {
+fn runApp {
     for inclusiveRange(start: 1, end: 5) { number
         printLine(number)
     }
@@ -128,7 +128,7 @@ runApp -> {
 use `yield all` to yield all the elements of an iterator
 
 ```
-getNumbers -> Iterator<Integer> defer {
+fn getNumbers: Iterator<Integer> defer {
     yield all 3..5
 
     yield 6
@@ -139,7 +139,7 @@ getNumbers -> Iterator<Integer> defer {
     }
 }
 
-runApp -> {
+fn runApp {
     for getNumbers(): number {
         printLine(number)
     }
