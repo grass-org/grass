@@ -129,6 +129,24 @@ doSomething -> {
 }
 ```
 
+## shorthand
+
+if a function returns a value immediately,
+then you can omit the function body `{}` and the `out` keyword
+
+```
+getNumber -> 67
+```
+
+of course, if it's a public function,
+you have to specify the return type
+(unless it's `()`)
+
+```
+public
+getNumber -> Integer: 67
+```
+
 ## overloading
 
 if the compiler can differentiate a function 
