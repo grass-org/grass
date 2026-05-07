@@ -110,7 +110,7 @@ inclusiveRange(start: Integer, end: Integer): Iterator<Integer> {
 }
 
 fn runApp {
-    for inclusiveRange(start: 1, end: 5) { number
+    for inclusiveRange(start: 1, end: 5): number {
         printLine(number)
     }
 
