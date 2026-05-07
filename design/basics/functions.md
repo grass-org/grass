@@ -219,3 +219,193 @@ the last positional parameters declared,
 since they are assigned positionally,
 you wouldn't be able to skip a positional parameter with default
 in the middle of other positional parameters
+
+## closures
+
+you can nest functions in grass
+
+```
+fn runApp {
+    fn doSomething -> bark()
+
+    bark()
+}
+```
+
+a nested function can capture values from the outer scope;
+we call functions with captured values `closures`
+
+```
+fn runApp {
+    let number -- 1
+
+    fn printDoubledNumber -> printLine(number * 2)
+
+    printDoubledNumber()
+}
+```
+
+## higher-order funtions
+
+grass functions are first-class,
+meaning we can store them in bindings and data structures.
+each function automatically implements
+at least one of these [traits](traits.md)
+
+- `Function`
+  - `(parameters) -> return`
+  - a function that does not capture any value,
+    or only captures non-mutable references
+- `MutatingFunction`
+  - `(parameters) ~> return`
+  - a function that captures values mutably
+- `OwningFunction`
+  - `(parameters) => return`
+  - a function that captures values and takes ownership of them
+  - can only be called once
+
+examples
+- `(Integer, Integer) -> ()`
+  - `Function<Input: (Integer, Integer), Output: ()>`
+- `() -> Integer`
+  - `Function<Input: (), Output: Integer>`
+- `() ~> ()`
+  - `MutatingFunction<Input: (), Output: ()>`
+- `(Character) => (Integer)`
+  - `OwningFunction<Input: (Character), Output: Integer)>`
+
+here is an example of a function
+taking another function as a parameter
+
+```
+fn printValue(getValue: () -> Integer) {
+    let value -- getValue()
+    printLine(value)
+}
+
+fn getFive -> 5
+
+fn runApp {
+    printValue(getValue: getFive)
+
+    fn getSix {
+        out 6
+    }
+
+    printValue(getValue: getSix)
+
+    fn getSeven -> 7
+    printValue(getValue: getSeven)
+}
+```
+
+here is another,
+where the function parameter has a parameter
+
+```
+fn (optional: Optional<Integer>).map[
+    transform: (Integer) -> Integer,
+]: Optional<Integer> {
+    if optional !is Some(value) {
+        out! None
+    }
+
+    out transform(value)
+}
+
+fn runApp {
+    let optional: Optional<Integer> -- 2
+
+    fn double(integer: Integer) -> integer * 2
+
+    let optional -- optional.map(double)
+}
+```
+
+you can also inline function arguments
+
+```
+fn runApp {
+    printValue(getValue: fn getSix -> 6)
+    printValue(getValue: fn getSeven -> 7)
+
+    let optional: Optional<Integer> -- 2
+    let optional -- optional.map(fn double(integer: Integer) -> integer * 2)
+}
+```
+
+in the examples above,
+since the names `getSix` and `getSeven`
+were never really used
+(`printValue` uses a different name `getValue`),
+we can omit them,
+and since `getValue` accepts a function,
+we can also omit `fn` in the declaration.
+and since the function parameter is already typed,
+we don't have to write types in our function arguments
+
+```
+fn runApp {
+    printValue(getValue: -> 6)
+    printValue(getValue: -> 7)
+
+    let optional: Optional<Integer> -- 2
+    let x -- optional.map(x -> x * 2)
+    let y -- optional.map(x {
+        if x % 2 = 0 {
+            out! x * 2
+        }
+
+        out x / 2
+    })
+}
+```
+
+also, grass allows you to let a function
+accept its last positional function parameter
+outside the call parentheses
+if the function argument is declared inline
+
+```
+printValue[getValue: () -> Integer] -> {
+    let value -- getValue()
+    printLine(value)
+}
+
+runApp -> {
+    printValue() -> 6
+    printValue() {
+        out 7
+    }
+
+    let optional: Optional<Integer> -- 2
+    let x -- optional.map() x -> x * 2
+    let y -- optional.map() x {
+        if x % 2 = 0 {
+            out! x * 2
+        }
+
+        out x / 2
+    }
+}
+```
+
+if there are no other arguments
+but a trailing function argument,
+then you can also omit the parentheses
+
+```
+runApp -> {
+    printValue -> 6
+
+    let optional: Optional<Integer> -- 2
+    let x -- optional.map x -> x * 2
+    let y -- optional.map x {
+        if x % 2 = 0 {
+            out! x * 2
+        }
+
+        out x / 2
+    }
+}
+```
