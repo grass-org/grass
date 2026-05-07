@@ -268,9 +268,8 @@ skipping all even values for `x`
 ### while
 
 you can simplify a `loop` with a condition using `while`.
-except from that, `while` is also an expression,
-and acts exactly like a `loop`.
-the following is equivalent to the last `loop` example
+`while` is also an expression,
+and acts exactly like a `loop`
 
 ```
 fn function {
