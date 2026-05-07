@@ -318,13 +318,13 @@ here is how you declare a property setter
 
 ```
 public
-fn (decision: ~mutable Decision).set inFavor: Binary -> {
+fn (decision: ~Decision).set inFavor: Binary -> {
     decision.inFavor -- inFavor
 }
 ```
 
-> note: `~mutable` means `decision` 
-> is a [mutable reference](borrowing.md) to a `Decision`
+> note: `~` means `decision` 
+> is a [mutable reference](ownership.md#borrowing) to a `Decision`
 
 and here is how you set that property
 

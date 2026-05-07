@@ -8,3 +8,4 @@
 - [control flow](basics/control-flow.md)
 - [yielding](basics/yielding.md)
 - [algebraic types](basics/algebraic-types.md)
+- [ownership](basics/ownership.md)
