@@ -97,7 +97,7 @@ can use the following shorthand
 ```
 fn myFunction(predicate: Binary) {
     let a -- if predicate: 1
-    let b -- if predicate: 1; else: 2
+    let b -- if predicate: 1, else: 2
 }
 ```
 
