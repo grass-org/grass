@@ -10,3 +10,4 @@
 - [algebraic types](basics/algebraic-types.md)
 - [ownership](basics/ownership.md)
 - [generics](basics/generics.md)
+- [traits](basics/traits.md)
