@@ -16,7 +16,7 @@ these are types that represent a single value
 | 16                     | `Integer16`              | `Magnitude16`                |
 | 32                     | `Integer32` or `Integer` | `Magnitude32` or `Magnitude` |
 | 64                     | `Integer64`              | `Magnitude64`                |
-| Architecture-dependent | `ArchitectureInteger`    | `AchitectureMagnitude`       |
+| Architecture-dependent | `ArchInteger`            | `ArchMagnitude`              |
 
 `Integer` and `Magnitude` are just aliases for `Integer32` and `Magnitude32` respectively
 
