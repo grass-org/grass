@@ -425,7 +425,7 @@ to indicate what scope you wanna exit
 
 ```
 fn runApp {
-    mutable i = 0
+    mutable i -- 0
 
     loop {
         if i >= 5 {
@@ -449,7 +449,7 @@ since it doesn't introduce a new scope
 
 ```
 fn runApp {
-    mutable i = 0
+    mutable i -- 0
 
     loop {
         if i >= 5: out
@@ -464,7 +464,7 @@ out of the innermost identifier match
 
 ```
 fn runApp {
-    mutable i = 0
+    mutable i -- 0
 
     loop {
         loop {
@@ -484,7 +484,7 @@ then name the scope you wanna exit
 
 ```
 fn runApp {
-    mutable i = 0
+    mutable i -- 0
 
     loop outerLoop {
         loop {

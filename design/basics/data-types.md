@@ -147,7 +147,7 @@ named tuples can be destructured by name
 ```
 fn runApp {
     // using the same getTuple as the last example
-    let { a, c } = getTuple()
+    let { a, c } -- getTuple()
 }
 ```
 
