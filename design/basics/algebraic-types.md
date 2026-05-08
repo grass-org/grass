@@ -364,7 +364,7 @@ then you have to implement the `Destructure` trait
 Decision: Destructure {
     Output: { inFavor: Ternary, final: Binary }
 
-    decision destructure {
+    fn (decision).destructure {
         out { decision::inFavor, decision::final }
     }
 }
@@ -381,8 +381,8 @@ by returning an unnamed tuple instead
 Decision: Destructure {
     Output: (Ternary, Binary)
 
-    decision destructure {
-        out (decision::inFavor, final::final)
+    fn (decision).destructure {
+        out (decision::inFavor, decision::final)
     }
 }
 
