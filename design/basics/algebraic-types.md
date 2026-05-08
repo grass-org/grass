@@ -60,8 +60,7 @@ instead, you can represent it as a sum type like this
 
 ```
 type Cat {
-    Alive { hungry: Binary },
-    Dead,
+    Alive { hungry: Binary } | Dead
 }
 ```
 
@@ -105,10 +104,27 @@ type Cake {
 }
 
 type Food {
-    Pizza,
-    Cake,
+    | Pizza
+    | Cake
 }
 ```
+
+> note: the code above can be written as
+>
+> ```
+> type Food { Pizza | Cake }
+> ```
+>
+> or
+>
+> ```
+> type Food {
+>     Pizza
+>     | Cake
+> }
+> ```
+>
+> but the above syntax is preferred for extensibility
 
 in this example, `Pizza` and `Cake` are indeed variants of `Food`,
 but they are not under the `Food` name,
@@ -133,8 +149,8 @@ type Food.Cake {
 type Food.Salt
 
 type Food {
-    Pizza,
-    Cake,
+    | Pizza
+    | Cake
     // ERROR: Food must have Food.Salt as one of its variants
 }
 ```
@@ -234,8 +250,8 @@ type Decision {
 
 #[derive(Constructor)]
 type Cat {
-    Alive { hungry: Binary },
-    Dead,
+    | Alive { hungry: Binary }
+    | Dead
 }
 ```
 

@@ -183,8 +183,22 @@ fn runApp {
 }
 ```
 
-> note to self: since tuples are basically just anonymous product types,
-> it would be awesome if we could also have anonymous sum types!
+### union
+
+a union is an anonymous sum type.
+we won't go over sum types here,
+but here is the syntax
+
+```
+fn double(value: Integer | Character) -> Integer | String {
+    out when value {
+        is Integer integer: integer * 2,
+        is Character character: character.repeat(2),
+    }
+}
+```
+
+read more about [sum types](algebraic-types.md#sum-types)
 
 ### array
 
