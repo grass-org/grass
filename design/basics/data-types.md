@@ -20,16 +20,16 @@ these are types that represent a single value
 
 `Integer` and `Magnitude` are just aliases for `Integer32` and `Magnitude32` respectively
 
-### fractional
+### fraction
 
-| bits | type                           |
-| ---- | ------------------------------ |
-| 32   | `Fractional32`                 |
-| 64   | `Fractional64` or `Fractional` |
+| bits | type                       |
+| ---- | -------------------------- |
+| 32   | `Fraction32`               |
+| 64   | `Fraction64` or `Fraction` |
 
 > represented as IEEE-754 floating point numbers
 
-`Fractional` is just an alias for `Fractional64`
+`Fraction` is just an alias for `Fraction64`
 
 ### numeric operators
 
