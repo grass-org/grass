@@ -1,0 +1,11 @@
+[package]
+name = "lexer"
+version = "0.1.0"
+edition = "2024"
+
+[lints.clippy]
+missing_safety_doc = "warn"
+undocumented_unsafe_blocks = "warn"
+missing_const_for_fn = "warn"
+
+[dependencies]
