@@ -8,8 +8,12 @@ pub use token::*;
 
 use crate::cursor::Cursor;
 
+pub fn lex(source: &str) -> impl Iterator<Item = TokenSpan> {
+    Lexer::new(source).tokens()
+}
+
 #[derive(Debug)]
-pub struct Lexer<'source> {
+struct Lexer<'source> {
     cursor: Cursor<'source>,
 }
 
