@@ -40,4 +40,16 @@ impl Literal {
         let literal = unsafe { Self::new_unchecked(kind, symbol) };
         Some(literal)
     }
+
+    pub const fn kind(&self) -> LiteralKind {
+        self.kind
+    }
+
+    pub fn symbol(&self) -> &str {
+        &self.symbol
+    }
+
+    pub fn take_symbol(self) -> String {
+        self.symbol
+    }
 }
