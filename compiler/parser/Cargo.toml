@@ -9,3 +9,5 @@ undocumented_unsafe_blocks = "warn"
 missing_const_for_fn = "warn"
 
 [dependencies]
+interfaces = { path = "../interfaces" }
+lexer = { path = "../lexer" }
