@@ -1,6 +1,6 @@
 use std::fmt::{self, Display, Formatter};
 
-use crate::{ExpressionSpan, Span};
+use crate::{Expression, ExpressionSpan, Span};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct BinaryExpression {
@@ -27,6 +27,18 @@ impl BinaryExpression {
         let length = end - start;
 
         Span { start, length }
+    }
+}
+
+impl From<BinaryExpression> for Expression {
+    fn from(value: BinaryExpression) -> Self {
+        Self::Binary(value)
+    }
+}
+
+impl From<BinaryExpression> for ExpressionSpan {
+    fn from(value: BinaryExpression) -> Self {
+        Self::binary(value)
     }
 }
 
