@@ -1,16 +1,22 @@
 mod binding_power;
+mod error;
 
-use std::iter::Peekable;
+pub use error::*;
+
+use std::{iter::Peekable, result};
 
 use interfaces::{
     AtomicExpression, BinaryExpression, BinaryOperator, BinaryOperatorSpan, ExpressionSpan,
-    LiteralExpression,
+    LiteralExpression, SyntaxKind,
 };
 use lexer::{Literal, LiteralKind, Token, TokenSpan};
 
 use binding_power::BindingPowers;
 
-pub fn parse_expression(tokens: impl Iterator<Item = TokenSpan>) -> Option<ExpressionSpan> {
+pub type Error = ParseExpressionError;
+pub type Result<T = ExpressionSpan, E = Error> = result::Result<T, E>;
+
+pub fn parse_expression(tokens: impl Iterator<Item = TokenSpan>) -> Result {
     let mut parser = ExpressionParser::new(tokens);
     parser.parse()
 }
@@ -34,17 +40,23 @@ where
         }
     }
 
-    pub fn parse(&mut self) -> Option<ExpressionSpan> {
+    pub fn parse(&mut self) -> Result {
         self.pratt_parse(0)
     }
 
-    fn pratt_parse(&mut self, highest_binding_power: u32) -> Option<ExpressionSpan> {
-        let TokenSpan { token, span } = self.tokens.next()?;
-        let expression = parse_atomic(token)?;
+    fn pratt_parse(&mut self, highest_binding_power: u32) -> Result {
+        let Some(TokenSpan { token, span }) = self.tokens.next() else {
+            return Err(Error::NoMoreTokens);
+        };
+
+        let Some(expression) = parse_atomic(token) else {
+            return Err(Error::unexpected_syntax(SyntaxKind::Expression, span));
+        };
+
         let mut expression = ExpressionSpan::atomic(expression, span);
 
         loop {
-            let Some(right) = self.pratt_parse_right(highest_binding_power) else {
+            let Ok(right) = self.pratt_parse_right(highest_binding_power) else {
                 break;
             };
 
@@ -53,17 +65,20 @@ where
             expression = ExpressionSpan::binary(binary_expression);
         }
 
-        Some(expression)
+        Ok(expression)
     }
 
-    fn pratt_parse_right(&mut self, highest_binding_power: u32) -> Option<ExpressionRight> {
+    fn pratt_parse_right(&mut self, highest_binding_power: u32) -> Result<ExpressionRight> {
         let operator_span = self.peek_operator()?;
+
         let operator = operator_span.operator;
 
-        let binding_power = self.binding_powers.binding_power(operator)?;
+        let Some(binding_power) = self.binding_powers.binding_power(operator) else {
+            return Err(Error::undefined_binding_power(operator));
+        };
 
         if binding_power.left < highest_binding_power {
-            return None;
+            return Err(Error::NoMoreTokens);
         }
 
         _ = self.tokens.next();
@@ -73,18 +88,23 @@ where
             operand: self.pratt_parse(binding_power.right)?,
         };
 
-        Some(right)
+        Ok(right)
     }
 
-    fn peek_operator(&mut self) -> Option<BinaryOperatorSpan> {
-        let TokenSpan { token, span } = self.tokens.peek()?;
-
-        let operator = BinaryOperatorSpan {
-            operator: parse_operator(token)?,
-            span: *span,
+    fn peek_operator(&mut self) -> Result<BinaryOperatorSpan> {
+        let Some(TokenSpan { token, span }) = self.tokens.peek() else {
+            return Err(Error::NoMoreTokens);
         };
 
-        Some(operator)
+        let span = *span;
+
+        let Some(operator) = parse_operator(token) else {
+            return Err(Error::unexpected_syntax(SyntaxKind::BinaryOperator, span));
+        };
+
+        let operator = BinaryOperatorSpan { operator, span };
+
+        Ok(operator)
     }
 }
 
@@ -141,13 +161,25 @@ const fn parse_operator(token: &Token) -> Option<BinaryOperator> {
 mod tests {
     use lexer::lex;
 
-    use crate::expression::parse_expression;
+    use crate::expression::{Result, parse_expression};
 
     #[test]
-    fn test() {
-        let tokens = lex("1.0 + 2 * 3 * 4.5 / 5 - 3 + 2");
-        println!("{}", parse_expression(tokens).unwrap());
-        let tokens = lex("1 * 2 + 3.5");
-        println!("{}", parse_expression(tokens).unwrap());
+    fn test_sequential() -> Result<()> {
+        let tokens = lex("1 % 2 / 3 * 4 - 5 + 6");
+        let expected = "(((((1i % 2i) / 3i) * 4i) - 5i) + 6i)";
+        let actual = format!("{}", parse_expression(tokens)?);
+        assert_eq!(expected, actual);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_precedence() -> Result<()> {
+        let tokens = lex("1 + 2 * 3 / 4 - 5 % 6 % 7");
+        let expected = "((1i + ((2i * 3i) / 4i)) - ((5i % 6i) % 7i))";
+        let actual = format!("{}", parse_expression(tokens)?);
+        assert_eq!(expected, actual);
+
+        Ok(())
     }
 }
