@@ -25,7 +25,9 @@ impl Literal {
         Literal { kind, symbol }
     }
 
-    pub fn new(kind: LiteralKind, symbol: String) -> Option<Self> {
+    pub fn new(kind: LiteralKind, symbol: impl Into<String>) -> Option<Self> {
+        let symbol = symbol.into();
+
         let valid = match kind {
             LiteralKind::Integer => is_valid_integer(&symbol),
             LiteralKind::Fraction => is_valid_fraction(&symbol),
@@ -38,6 +40,42 @@ impl Literal {
 
         // SAFETY: `symbol` cannot be invalid at this point
         let literal = unsafe { Self::new_unchecked(kind, symbol) };
+        Some(literal)
+    }
+
+    pub fn integer(symbol: impl Into<String>) -> Option<Self> {
+        let symbol = symbol.into();
+
+        if !is_valid_integer(&symbol) {
+            return None;
+        }
+
+        // SAFETY: `symbol` cannot be invalid at this point
+        let literal = unsafe { Self::new_unchecked(LiteralKind::Integer, symbol) };
+        Some(literal)
+    }
+
+    pub fn fraction(symbol: impl Into<String>) -> Option<Self> {
+        let symbol = symbol.into();
+
+        if !is_valid_fraction(&symbol) {
+            return None;
+        }
+
+        // SAFETY: `symbol` cannot be invalid at this point
+        let literal = unsafe { Self::new_unchecked(LiteralKind::Fraction, symbol) };
+        Some(literal)
+    }
+
+    pub fn string(symbol: impl Into<String>) -> Option<Self> {
+        let symbol = symbol.into();
+
+        if !is_valid_string(&symbol) {
+            return None;
+        }
+
+        // SAFETY: `symbol` cannot be invalid at this point
+        let literal = unsafe { Self::new_unchecked(LiteralKind::String, symbol) };
         Some(literal)
     }
 
