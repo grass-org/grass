@@ -253,25 +253,25 @@ each function automatically implements
 at least one of these [traits](traits.md)
 
 - `Function`
-  - `(parameters) -> return`
+  - `|parameters| -> return`
   - a function that does not capture any value,
     or only captures non-mutable references
 - `MutatingFunction`
-  - `(parameters) ~> return`
+  - `|parameters| ~> return`
   - a function that captures values mutably
 - `OwningFunction`
-  - `(parameters) => return`
+  - `|parameters| => return`
   - a function that captures values and takes ownership of them
   - can only be called once
 
 examples
-- `(Integer, Integer) -> ()`
+- `|Integer, Integer| -> ()`
   - `Function<Input: (Integer, Integer), Output: ()>`
-- `() -> Integer`
+- `|| -> Integer`
   - `Function<Input: (), Output: Integer>`
-- `() ~> ()`
+- `|| ~> ()`
   - `MutatingFunction<Input: (), Output: ()>`
-- `(Character) => (Integer)`
+- `|Character| => Integer`
   - `OwningFunction<Input: (Character), Output: Integer)>`
 
 here is an example of a function
@@ -288,13 +288,13 @@ fn getFive -> 5
 fn runApp {
     printValue(getValue: getFive)
 
-    fn getSix {
+    let getSix -- || -> {
         out 6
     }
 
     printValue(getValue: getSix)
 
-    fn getSeven -> 7
+    let getSeven -- || -> 7
     printValue(getValue: getSeven)
 }
 ```
@@ -316,7 +316,7 @@ fn (optional: Optional<Integer>).map[
 fn runApp {
     let optional: Optional<Integer> -- 2
 
-    fn double(integer: Integer) -> integer * 2
+    let double -- |integer: Integer| -> integer * 2
 
     let optional -- optional.map(double)
 }
@@ -326,35 +326,13 @@ you can also inline function arguments
 
 ```
 fn runApp {
-    printValue(getValue: fn getSix -> 6)
-    printValue(getValue: fn getSeven -> 7)
+    printValue(getValue: || -> 6)
+    printValue(getValue: || -> 7)
 
     let optional: Optional<Integer> -- 2
-    let optional -- optional.map(fn double(integer: Integer) -> integer * 2)
-}
-```
-
-in the examples above,
-since the names `getSix` and `getSeven`
-were never really used
-(`printValue` uses a different name `getValue`),
-we can omit them,
-and since `getValue` accepts a function,
-we can also omit `fn` in the declaration.
-and since the function parameter is already typed,
-we don't have to write types in our function arguments
-
-```
-fn runApp {
-    printValue(getValue: -> 6)
-    printValue(getValue: -> 7)
-
-    let optional: Optional<Integer> -- 2
-    let x -- optional.map(x -> x * 2)
-    let y -- optional.map(x {
-        if x % 2 = 0 {
-            out! x * 2
-        }
+    let x -- optional.map(|integer: Integer| -> integer * 2)
+    let y -- x.map(|x| -> {
+        if x % 2 = 0: out x * 2
 
         out x / 2
     })
@@ -373,17 +351,15 @@ printValue[getValue: () -> Integer] -> {
 }
 
 runApp -> {
-    printValue() -> 6
-    printValue() {
+    printValue() || -> 6
+    printValue() || -> {
         out 7
     }
 
     let optional: Optional<Integer> -- 2
-    let x -- optional.map() x -> x * 2
-    let y -- optional.map() x {
-        if x % 2 = 0 {
-            out! x * 2
-        }
+    let x -- optional.map() |x| -> x * 2
+    let y -- optional.map() |x| -> {
+        if x % 2: out x * 2
 
         out x / 2
     }
@@ -396,14 +372,12 @@ then you can also omit the parentheses
 
 ```
 runApp -> {
-    printValue -> 6
+    printValue || -> 6
 
     let optional: Optional<Integer> -- 2
-    let x -- optional.map x -> x * 2
-    let y -- optional.map x {
-        if x % 2 = 0 {
-            out! x * 2
-        }
+    let x -- optional.map |x| -> x * 2
+    let y -- optional.map |x| -> {
+        if x % 2 = 0: out x * 2
 
         out x / 2
     }
