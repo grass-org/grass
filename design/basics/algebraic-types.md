@@ -276,7 +276,7 @@ here is an example getter method that exposes the `inFavor` field
 
 ```
 public
-fn (decision:Decision).isInFavor: Ternary {
+fn [decision: Decision].isInFavor: Ternary {
     out decision::inFavor
 }
 ```
@@ -315,7 +315,7 @@ here is how you declare a property getter
 
 ```
 public
-fn (decision: Decision).get inFavor: Ternary {
+fn [decision: Decision].get inFavor: Ternary {
     out decision::inFavor
 }
 ```
@@ -334,7 +334,7 @@ here is how you declare a property setter
 
 ```
 public
-fn (decision: ~Decision).set inFavor: Binary -> {
+fn [decision: ~Decision].set inFavor: Binary -> {
     decision.inFavor -- inFavor
 }
 ```
@@ -380,7 +380,7 @@ then you have to implement the `Destructure` trait
 Decision: Destructure {
     Output: { inFavor: Ternary, final: Binary }
 
-    fn (decision).destructure {
+    fn [decision].destructure {
         out { decision::inFavor, decision::final }
     }
 }
