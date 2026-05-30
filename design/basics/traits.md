@@ -60,7 +60,7 @@ to associate types to their own implementatins
 
 ```
 trait Contains {
-    [Output]
+    [type Output]
 
     fn (self: Self).contains[value: Value]: Binary
 }
