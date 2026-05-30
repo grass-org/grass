@@ -315,7 +315,7 @@ here is how you declare a property getter
 
 ```
 public
-fn [decision: Decision].get inFavor: Ternary {
+get [decision: Decision].inFavor: Ternary {
     out decision::inFavor
 }
 ```
@@ -334,8 +334,8 @@ here is how you declare a property setter
 
 ```
 public
-fn [decision: ~Decision].set inFavor: Binary -> {
-    decision.inFavor -- inFavor
+set [decision: ~Decision].inFavor: Ternary {
+    decision::inFavor -- inFavor
 }
 ```
 
