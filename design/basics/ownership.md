@@ -114,7 +114,7 @@ if your type is purely made up of copy types
 then it can derive the `Copy` trait
 
 ```
-#[derive(Copy)]
+@derive(Copy)
 type FavoriteNumbers {
     top1: Integer,
     top2: Integer,

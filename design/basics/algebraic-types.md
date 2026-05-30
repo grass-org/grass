@@ -242,13 +242,13 @@ then you can just derive `Constructor` for your type,
 which produces said constructor
 
 ```
-#[derive(Constructor)]
+@derive(Constructor)
 type Decision {
     inFavor: Ternary,
     final: Binary,
 }
 
-#[derive(Constructor)]
+@derive(Constructor)
 type Cat {
     | Alive { hungry: Binary }
     | Dead
@@ -358,12 +358,12 @@ if your getters and setters just directly access the fields,
 then derive them
 
 ```
-#[derive(Properties)]
+@derive(Properties)
 type Decision {
-    #[get, set]
+    @get @set
     inFavor: Ternary,
 
-    #[get, set]
+    @get @set
     final: Binary,
 }
 ```
@@ -411,7 +411,7 @@ you can derive a named destructor for a type
 that just destructures all its fields
 
 ```
-#[derive(Destructure)]
+@derive(Destructure)
 type Decision {
     inFavor: Ternary,
     final: Binary,
