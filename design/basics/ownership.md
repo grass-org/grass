@@ -23,7 +23,7 @@ fn eatText[text: Text] {
 }
 
 fn runApp {
-    let text -- Text("Hello!")
+    let text := Text("Hello!")
     eatText(text)
 
     printLine(text) // ERROR: text was moved
@@ -38,8 +38,8 @@ type TextEater {
 }
 
 fn runApp {
-    let text -- Text("Hello!")
-    let textEater -- TextEater { text }
+    let text := Text("Hello!")
+    let textEater := TextEater { text }
 
     printLine(text) // ERROR: text was moved
 }
@@ -59,7 +59,7 @@ fn borrowText[text: -Text] {
 }
 
 fn runApp {
-    let text -- Text("Hello!")
+    let text := Text("Hello!")
     borrowText(text-)
 
     printLine(text)
@@ -74,7 +74,7 @@ fn borrowText[text: ~Text] {
 }
 
 fn runApp {
-    let text -- Text("Hello!")
+    let text := Text("Hello!")
     borrowText(text~)
 
     printLine(text)
@@ -103,14 +103,14 @@ fn printDouble(integer: Integer) {
 }
 
 fn runApp {
-    let integer -- 1
+    let integer := 1
     printDouble(integer)
     printDouble(integer) // still valid here!
 }
 ```
 
 if your type is purely made up of copy types
-(or is a Unit type -- has no fields),
+(or is a Unit type := has no fields),
 then it can derive the `Copy` trait
 
 ```
@@ -130,7 +130,7 @@ and it will make a clone of that reference's value
 
 ```
 fn runApp {
-    let text -- Text("Hello!")
+    let text := Text("Hello!")
     eatText(text-.clone())
 
     printLine(text) // text is still valid here

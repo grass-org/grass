@@ -4,7 +4,7 @@ use the `let` keyword to define an immutable binding
 
 ```
 fn runApp {
-    let a -- 0
+    let a := 0
 }
 ```
 
@@ -15,7 +15,7 @@ this is how you do it
 
 ```
 fn runApp {
-    let a: Integer -- 0
+    let a: Integer := 0
 }
 ```
 
@@ -25,16 +25,16 @@ use the `mutable` keyword to define a mutable binding
 
 ```
 fn runApp {
-    let a -- 0
-    a -- 1 // cannot assign more than once to an immutable binding
+    let a := 0
+    a := 1 // cannot assign more than once to an immutable binding
     
-    mutable b -- 1
-    b -- 2 // OK!
+    mutable b := 1
+    b := 2 // OK!
 }
 ```
 
 also, unlike other languages,
-grass uses `--` instead of `=` for the assignment operator
+grass uses `:=` instead of `=` for the assignment operator
 (as you can see above). 
 this is because grass reclaims the `=` operator for equality
 
@@ -44,8 +44,8 @@ grass lets you use the same name for a binding as another one
 
 ```
 fn runApp {
-    let a -- 1
-    let a -- 2
+    let a := 1
+    let a := 2
 }
 ```
 
@@ -58,10 +58,10 @@ this distinction between shadowing and mutation should be clearer here
 
 ```
 fn runApp {
-    let a -- 1
+    let a := 1
 
     if flipCoin() {
-        let a -- 2
+        let a := 2
         printLine(a) // 2
     }
 
@@ -77,5 +77,5 @@ the original `a` is now accessible again
 use the `constant` keyword to define a compile-time constant. it can be declared in any scope, including the top-level scope
 
 ```
-constant DAYS_IN_AN_HOUR -- 0
+constant DAYS_IN_AN_HOUR := 0
 ```

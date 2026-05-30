@@ -35,11 +35,11 @@ these are types that represent a single value
 
 ```
 fn runApp {
-    let sum -- 1 + 2
-    let difference -- 1 - 2
-    let product -- 1 * 2
-    let quotient -- 1 / 2
-    let remainder -- 1 % 2
+    let sum := 1 + 2
+    let difference := 1 - 2
+    let product := 1 * 2
+    let quotient := 1 / 2
+    let remainder := 1 % 2
 }
 ```
 
@@ -59,8 +59,8 @@ the binary type is the only type accepted as `if` predicates
 
 ```
 fn runApp {
-    let a -- Yea
-    let b -- Nah
+    let a := Yea
+    let b := Nah
 
     if a {
         printLine("YEA!") // will print
@@ -91,7 +91,7 @@ the `Character` type represents a single UTF-8 character
 
 ```
 fn runApp {
-    let a -- 'c'
+    let a := 'c'
     printLine(a) // will print 'c'
 }
 ```
@@ -110,7 +110,7 @@ a tuple is group of multiple values with fixed and independent types
 ```
 fn runApp {
     // explicit type for clarity; not required
-    let tuple: (Integer, Integer, Character, Binary) -- (1, 2, 'c', Yea)
+    let tuple: (Integer, Integer, Character, Binary) := (1, 2, 'c', Yea)
 }
 ```
 
@@ -118,13 +118,13 @@ an unnamed tuple can be destructured positionally
 
 ```
 fn printValues(tuple: (Integer, Integer, Character, Binary)) {
-    let (a, b, c, d) -- tuple
+    let (a, b, c, d) := tuple
 
     // explicit type added for clarity. not required
-    let a: Integer -- a
-    let b: Integer -- b
-    let c: Character -- c
-    let d: Binary -- d
+    let a: Integer := a
+    let b: Integer := b
+    let c: Character := c
+    let d: Binary := d
 }
 ```
 
@@ -147,7 +147,7 @@ named tuples can be destructured by name
 ```
 fn runApp {
     // using the same getTuple as the last example
-    let { a, c } -- getTuple()
+    let { a, c } := getTuple()
 }
 ```
 
@@ -176,9 +176,9 @@ fn getNamedTuples {
 fn runApp {
     // note: you can explicitly type destructured tuple fields
 
-    let (a: Integer, b: Integer, c: Character, d: Binary) -- getTuples()
+    let (a: Integer, b: Integer, c: Character, d: Binary) := getTuples()
 
-    let { a: Integer, b: Integer, c: Character, d: Binary } -- 
+    let { a: Integer, b: Integer, c: Character, d: Binary } := 
         getNamedTuples()
 }
 ```

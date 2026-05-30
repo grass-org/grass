@@ -335,7 +335,7 @@ here is how you declare a property setter
 ```
 public
 set [decision: ~Decision].inFavor: Ternary {
-    decision::inFavor -- inFavor
+    decision::inFavor := inFavor
 }
 ```
 
@@ -346,8 +346,8 @@ and here is how you set that property
 
 ```
 fn runApp {
-    let decision -- Decision(inFavor: Yea, final: Yea)
-    decision.inFavor -- Nah
+    let decision := Decision(inFavor: Yea, final: Yea)
+    decision.inFavor := Nah
     printLine(decision.inFavor) // prints Nah
 }
 ```
@@ -386,7 +386,7 @@ Decision: Destructure {
 }
 
 fn function(decision: Decision) {
-    let { inFavor, final } -- decision
+    let { inFavor, final } := decision
 }
 ```
 
@@ -403,7 +403,7 @@ Decision: Destructure {
 }
 
 fn function(decision: Decision) {
-    let (a, b) -- decision
+    let (a, b) := decision
 }
 ```
 

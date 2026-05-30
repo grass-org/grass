@@ -24,7 +24,7 @@ this is how you call a function
 
 ```
 fn runApp {
-    let number -- getNumber()
+    let number := getNumber()
     printLine(number)
 }
 ```
@@ -62,7 +62,7 @@ fn add(left: Integer, right: Integer) {
 }
 
 fn runApp {
-    let number -- add(left: 1, right: 2)
+    let number := add(left: 1, right: 2)
     printLine(number)
 }
 ```
@@ -83,14 +83,14 @@ then you don't have to name the argument itself
 
 ```
 fn runApp {
-    let left -- 1
-    let right -- 2
+    let left := 1
+    let right := 2
 
     // unnecessary named arguments
-    let sum -- add(right: right, left: left)
+    let sum := add(right: right, left: left)
 
     // simpler call. same as the one above
-    let sum -- add(right, left)
+    let sum := add(right, left)
 }
 ```
 
@@ -206,7 +206,7 @@ function parameters can have default values,
 allowing you to skip them when calling the function
 
 ```
-fn order[food: Food -- Grass, drink: Drink -- Water] {}
+fn order[food: Food := Grass, drink: Drink := Water] {}
 
 fn runApp {
     order(food: Pizza) // same as order food: Pizza, drink: Water
@@ -237,7 +237,7 @@ we call functions with captured values `closures`
 
 ```
 fn runApp {
-    let number -- 1
+    let number := 1
 
     fn printDoubledNumber -> printLine(number * 2)
 
@@ -279,7 +279,7 @@ taking another function as a parameter
 
 ```
 fn printValue(getValue: () -> Integer) {
-    let value -- getValue()
+    let value := getValue()
     printLine(value)
 }
 
@@ -288,13 +288,13 @@ fn getFive -> 5
 fn runApp {
     printValue(getValue: getFive)
 
-    let getSix -- || -> {
+    let getSix := || -> {
         out 6
     }
 
     printValue(getValue: getSix)
 
-    let getSeven -- || -> 7
+    let getSeven := || -> 7
     printValue(getValue: getSeven)
 }
 ```
@@ -314,11 +314,11 @@ fn (optional: Optional<Integer>).map[
 }
 
 fn runApp {
-    let optional: Optional<Integer> -- 2
+    let optional: Optional<Integer> := 2
 
-    let double -- |integer: Integer| -> integer * 2
+    let double := |integer: Integer| -> integer * 2
 
-    let optional -- optional.map(double)
+    let optional := optional.map(double)
 }
 ```
 
@@ -329,9 +329,9 @@ fn runApp {
     printValue(getValue: || -> 6)
     printValue(getValue: || -> 7)
 
-    let optional: Optional<Integer> -- 2
-    let x -- optional.map(|integer: Integer| -> integer * 2)
-    let y -- x.map(|x| -> {
+    let optional: Optional<Integer> := 2
+    let x := optional.map(|integer: Integer| -> integer * 2)
+    let y := x.map(|x| -> {
         if x % 2 = 0: out x * 2
 
         out x / 2
@@ -346,7 +346,7 @@ if the function argument is declared inline
 
 ```
 printValue[getValue: () -> Integer] -> {
-    let value -- getValue()
+    let value := getValue()
     printLine(value)
 }
 
@@ -356,8 +356,8 @@ runApp -> {
         out 7
     }
 
-    let optional: Optional<Integer> -- 2
-    let x -- optional.map() |x| -> x * 2
+    let optional: Optional<Integer> := 2
+    let x := optional.map() |x| -> x * 2
     let y -- optional.map() |x| -> {
         if x % 2: out x * 2
 

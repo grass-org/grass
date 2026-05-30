@@ -65,7 +65,7 @@ meaning it can return a value using the `out` keyword.
 
 ```
 fn myFunction(predicate: Binary) {
-    let value: Integer -- if predicate {
+    let value: Integer := if predicate {
         out 1
     } else {
         out 2
@@ -84,7 +84,7 @@ of whatever you return from it
 
 ```
 fn myFunction(predicate: Binary) {
-    let a: Optional<Integer> -- if predicate {
+    let a: Optional<Integer> := if predicate {
         out 1
     }
 }
@@ -96,8 +96,8 @@ can use the following shorthand
 
 ```
 fn myFunction(predicate: Binary) {
-    let a -- if predicate: 1
-    let b -- if predicate: 1, else: 2
+    let a := if predicate: 1
+    let b := if predicate: 1, else: 2
 }
 ```
 
@@ -113,7 +113,7 @@ fn myFunction(predicate: Ternary) {
         Idk: printLine("Idk..."),
     }
 
-    let a -- when predicate {
+    let a := when predicate {
         Yea: 1,
         Nah: 2,
         Idk: 67,
@@ -126,7 +126,7 @@ unhandled cases would make the type `Optional`
 
 ```
 fn myFunction(predicate: Ternary) {
-    let a: Optional<Integer> -- when predicate {
+    let a: Optional<Integer> := when predicate {
         Yea: 1,
         Idk: 67,
     }
@@ -193,14 +193,14 @@ the following will print "Hello, world!" 5 times
 
 ```
 fn function {
-    mutable x -- 0
+    mutable x := 0
 
     loop {
         if x >= 5: out
 
         printLine("Hello, world!")
 
-        x -- x + 1
+        x := x + 1
     }
 }
 ```
@@ -210,14 +210,14 @@ and you can return a single value with the `out` keyword
 
 ```
 fn function {
-    mutable x -- 0
+    mutable x := 0
 
-    let y: Integer -- loop {
+    let y: Integer := loop {
         if x >= 5: out x
 
         printLine("Hello, world!")
 
-        x -- x + 1
+        x := x + 1
     }
 
     printLine(y) // prints "5"
@@ -229,14 +229,14 @@ with the `yield` keyword
 
 ```
 fn function {
-    mutable x -- 0
+    mutable x := 0
 
-    let y: List<Integer> -- loop {
+    let y: List<Integer> := loop {
         if x >= 5: out
 
         printLine("Hello, world!")
 
-        x -- x + 1
+        x := x + 1
         yield x
     }
 
@@ -250,14 +250,14 @@ this is the equivalent of `continue` in other languages
 
 ```
 fn function {
-    mutable x -- 0
+    mutable x := 0
 
     loop {
         if x % 2 = 0: skip
 
         printLine(x)
 
-        x -- x + 1
+        x := x + 1
     }
 }
 ```
@@ -273,12 +273,12 @@ and acts exactly like a `loop`
 
 ```
 fn function {
-    mutable x -- 0
+    mutable x := 0
 
-    let y: List<Integer> -- while x < 5 {
+    let y: List<Integer> := while x < 5 {
         printLine("Hello, world!")
 
-        x -- x + 1
+        x := x + 1
         yield x
     }
 
@@ -302,7 +302,7 @@ fn function(numbers: Iterator<Integer>) {
 
 ```
 fn function(numbers: Iterator<Integer>) {
-    let a -- for numbers: number {
+    let a := for numbers: number {
         printLine(number)
 
         if number % 2: yield number
@@ -424,7 +424,7 @@ to indicate what scope you wanna exit
 
 ```
 fn runApp {
-    mutable i -- 0
+    mutable i := 0
 
     loop {
         if i >= 5 {
@@ -448,7 +448,7 @@ since it doesn't introduce a new scope
 
 ```
 fn runApp {
-    mutable i -- 0
+    mutable i := 0
 
     loop {
         if i >= 5: out
@@ -463,7 +463,7 @@ out of the innermost identifier match
 
 ```
 fn runApp {
-    mutable i -- 0
+    mutable i := 0
 
     loop {
         loop {

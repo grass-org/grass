@@ -11,28 +11,28 @@ that do the same thing but for different types like this
 
 ```
 fn getLargest[list: -[Integer]]: Optional<Integer> {
-    mutable largest -- None
+    mutable largest := None
 
     for list: value {
         if largest.any(largest -> value <= largest) {
             skip
         }
 
-        largest -- value
+        largest := value
     }
 
     out largest
 }
 
 fn getLargest[list: -[Character]]: Optional<Character> {
-    mutable largest -- None
+    mutable largest := None
 
     for list: value {
         if largest.any(largest -> value <= largest) {
             skip
         }
 
-        largest -- value
+        largest := value
     }
 
     out largest
@@ -44,14 +44,14 @@ then it might be time to generify
 ```
 <Element: Compare>
 fn getLargest[list: -[Element]]: Optional<Element> {
-    mutable largest -- None
+    mutable largest := None
 
     for list: value {
         if largest.any(largest -> value <= largest) {
             skip
         }
 
-        largest -- value
+        largest := value
     }
 
     out largest
@@ -68,10 +68,10 @@ this is how you call a generic function
 ```
 runApp -> {
     // explicit type arguments
-    let largest -- getLargest<Element: Integer>([1, 2, 3, 4]-)
+    let largest := getLargest<Element: Integer>([1, 2, 3, 4]-)
 
     // inferred type arguments
-    let largest -- getLargest([1, 2, 3, 4]-) // <Element: Integer>
+    let largest := getLargest([1, 2, 3, 4]-) // <Element: Integer>
 }
 ```
 
@@ -146,7 +146,7 @@ here is how you implement `Into`
 ```
 Decision: Into<String> {
     fn (decision).into -> {
-        let { inFavor, final } -- decision
+        let { inFavor, final } := decision
         out "Decision(inFavor: {inFavor}, final: {final})"
     }
 }
