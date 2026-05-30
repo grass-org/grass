@@ -284,7 +284,7 @@ fn [decision: Decision].isInFavor: Ternary {
 you can call a method like this
 
 ```
-fn printInFavor(decision: Decision): {
+fn printInFavor(decision: Decision) {
     printLine(decision.isInFavor())
 }
 ```
