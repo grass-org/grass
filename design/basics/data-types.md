@@ -87,7 +87,7 @@ grass has the `Ternary` type
 
 ### character
 
-the `Character` type represents a single UTF-8 character
+the `Character` type represents a single Unicode scalar value
 
 ```
 fn runApp {
