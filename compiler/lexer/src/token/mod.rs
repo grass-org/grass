@@ -2,7 +2,7 @@ mod builder;
 mod identifier;
 mod literal;
 mod new_line;
-mod single_character;
+mod operator;
 mod tokenizer;
 
 pub use literal::*;
@@ -10,7 +10,7 @@ pub use literal::*;
 pub(crate) use builder::*;
 pub(crate) use identifier::*;
 pub(crate) use new_line::*;
-pub(crate) use single_character::*;
+pub(crate) use operator::*;
 pub(crate) use tokenizer::*;
 
 use interfaces::Span;
@@ -24,15 +24,7 @@ pub struct TokenSpan {
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub enum Token {
     NewLine,
-
-    Dash,  // -
-    Tilde, // ~
-
-    Plus,    // +
-    Star,    // *
-    Slash,   // /
-    Percent, // %
-
+    Operator(String),
 
     NumericLiteral(NumericLiteral),
     CharacterLiteral(CharacterLiteral),

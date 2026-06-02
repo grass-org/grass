@@ -1,18 +1,19 @@
 mod atomic;
 mod binding_power;
 mod error;
+mod operator;
 
 pub use atomic::*;
+pub use binding_power::*;
 pub use error::*;
 
 use std::{iter::Peekable, result};
 
-use interfaces::{
-    BinaryExpression, BinaryOperator, BinaryOperatorSpan, ExpressionSpan, SyntaxKind,
-};
-use lexer::{Token, TokenSpan};
+use interfaces::{BinaryExpression, ExpressionSpan, OperatorSpan, SyntaxKind};
+use lexer::TokenSpan;
 
 use binding_power::BindingPowers;
+use operator::parse_operator;
 
 pub type Error = ParseExpressionError;
 pub type Result<T = ExpressionSpan, E = Error> = result::Result<T, E>;
@@ -72,11 +73,7 @@ where
     fn pratt_parse_right(&mut self, highest_binding_power: u32) -> Result<ExpressionRight> {
         let operator_span = self.peek_operator()?;
 
-        let operator = operator_span.operator;
-
-        let Some(binding_power) = self.binding_powers.binding_power(operator) else {
-            return Err(Error::undefined_binding_power(operator));
-        };
+        let binding_power = self.binding_powers.binding_power(&operator_span.operator)?;
 
         if binding_power.left < highest_binding_power {
             return Err(Error::NoMoreTokens);
@@ -92,39 +89,18 @@ where
         Ok(right)
     }
 
-    fn peek_operator(&mut self) -> Result<BinaryOperatorSpan> {
-        let Some(TokenSpan { token, span }) = self.tokens.peek() else {
+    fn peek_operator(&mut self) -> Result<OperatorSpan> {
+        let Some(token) = self.tokens.peek() else {
             return Err(Error::NoMoreTokens);
         };
 
-        let span = *span;
-
-        let Some(operator) = parse_operator(token) else {
-            return Err(Error::unexpected_syntax(SyntaxKind::BinaryOperator, span));
-        };
-
-        let operator = BinaryOperatorSpan { operator, span };
-
-        Ok(operator)
+        Ok(parse_operator(token)?)
     }
 }
 
 struct ExpressionRight {
-    pub operator: BinaryOperatorSpan,
+    pub operator: OperatorSpan,
     pub operand: ExpressionSpan,
-}
-
-const fn parse_operator(token: &Token) -> Option<BinaryOperator> {
-    let operator = match token {
-        Token::Plus => BinaryOperator::Add,
-        Token::Dash => BinaryOperator::Subtract,
-        Token::Star => BinaryOperator::Multiply,
-        Token::Slash => BinaryOperator::Divide,
-        Token::Percent => BinaryOperator::Remainder,
-        _ => return None,
-    };
-
-    Some(operator)
 }
 
 #[cfg(test)]

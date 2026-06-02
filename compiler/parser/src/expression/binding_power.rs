@@ -1,10 +1,13 @@
+use crate::ParseExpressionError;
+use interfaces::Operator;
 use std::collections::HashMap;
+use std::error::Error;
+use std::fmt;
+use std::fmt::{Display, Formatter};
 
-use interfaces::BinaryOperator;
-
-pub struct BindingPowers {
+pub(super) struct BindingPowers {
     // TODO: This could be simplified into a Vec instead to avoid hashing
-    map: HashMap<BinaryOperator, BindingPower>,
+    map: HashMap<Operator, BindingPower>,
 }
 
 impl BindingPowers {
@@ -12,7 +15,7 @@ impl BindingPowers {
         Self::from_order(operator_order())
     }
 
-    fn from_order(operator_order: Vec<Vec<(BinaryOperator, Associativity)>>) -> Self {
+    fn from_order(operator_order: Vec<Vec<(Operator, Associativity)>>) -> Self {
         let mut map = HashMap::new();
 
         for (index, operators) in operator_order.into_iter().rev().enumerate() {
@@ -25,27 +28,34 @@ impl BindingPowers {
         Self { map }
     }
 
-    pub fn binding_power(&self, operator: BinaryOperator) -> Option<BindingPower> {
-        self.map.get(&operator).cloned()
+    pub fn binding_power(
+        &self,
+        operator: &Operator,
+    ) -> Result<BindingPower, UndefinedBindingPowerError> {
+        self.map.get(operator).cloned().ok_or_else(|| {
+            let operator = operator.clone();
+            UndefinedBindingPowerError { operator }
+        })
     }
 }
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
-pub struct BindingPower {
+pub(crate) struct BindingPower {
     pub left: u32,
     pub right: u32,
 }
 
-fn operator_order() -> Vec<Vec<(BinaryOperator, Associativity)>> {
+// TODO: These are temporarily hardcoded, at least until we implement Grass operators
+fn operator_order() -> Vec<Vec<(Operator, Associativity)>> {
     vec![
         vec![
-            (BinaryOperator::Multiply, Associativity::Left),
-            (BinaryOperator::Divide, Associativity::Left),
-            (BinaryOperator::Remainder, Associativity::Left),
+            (Operator::multiply(), Associativity::Left),
+            (Operator::divide(), Associativity::Left),
+            (Operator::remainder(), Associativity::Left),
         ],
         vec![
-            (BinaryOperator::Add, Associativity::Left),
-            (BinaryOperator::Subtract, Associativity::Left),
+            (Operator::add(), Associativity::Left),
+            (Operator::subtract(), Associativity::Left),
         ],
     ]
 }
@@ -82,3 +92,22 @@ const fn right_binding_power(associativity: Associativity, base_binding_power: u
         Associativity::Right => base_binding_power,
     }
 }
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
+pub struct UndefinedBindingPowerError {
+    pub operator: Operator,
+}
+
+impl From<UndefinedBindingPowerError> for ParseExpressionError {
+    fn from(value: UndefinedBindingPowerError) -> Self {
+        Self::UndefinedBindingPower(value)
+    }
+}
+
+impl Display for UndefinedBindingPowerError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "undefined binding power for operator {}", self.operator)
+    }
+}
+
+impl Error for UndefinedBindingPowerError {}

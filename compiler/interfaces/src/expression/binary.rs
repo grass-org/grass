@@ -1,16 +1,16 @@
 use std::fmt::{self, Display, Formatter};
 
-use crate::{Expression, ExpressionSpan, Span};
+use crate::{Expression, ExpressionSpan, OperatorSpan, Span};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct BinaryExpression {
     pub left: Box<ExpressionSpan>,
-    pub operator: BinaryOperatorSpan,
+    pub operator: OperatorSpan,
     pub right: Box<ExpressionSpan>,
 }
 
 impl BinaryExpression {
-    pub fn new(left: ExpressionSpan, operator: BinaryOperatorSpan, right: ExpressionSpan) -> Self {
+    pub fn new(left: ExpressionSpan, operator: OperatorSpan, right: ExpressionSpan) -> Self {
         Self {
             left: Box::new(left),
             operator,
@@ -51,40 +51,5 @@ impl Display for BinaryExpression {
         } = self;
 
         write!(f, "({left} {operator} {right})")
-    }
-}
-
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
-pub struct BinaryOperatorSpan {
-    pub operator: BinaryOperator,
-    pub span: Span,
-}
-
-impl Display for BinaryOperatorSpan {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        self.operator.fmt(f)
-    }
-}
-
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
-pub enum BinaryOperator {
-    Add,
-    Subtract,
-    Multiply,
-    Divide,
-    Remainder,
-}
-
-impl Display for BinaryOperator {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let symbol = match self {
-            BinaryOperator::Add => "+",
-            BinaryOperator::Subtract => "-",
-            BinaryOperator::Multiply => "*",
-            BinaryOperator::Divide => "/",
-            BinaryOperator::Remainder => "%",
-        };
-
-        write!(f, "{symbol}")
     }
 }

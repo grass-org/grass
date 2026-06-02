@@ -44,25 +44,13 @@ impl<'source> Lexer<'source> {
 }
 
 fn tokenizer() -> impl Tokenizer {
-    let dash_template = dash_builder_template();
-    let tilde_template = tilde_builder_template();
-    let plus_template = plus_builder_template();
-    let star_template = star_builder_template();
-    let slash_template = slash_builder_template();
-    let percent_template = percent_builder_template();
-
     IdentifierBuilder::new
         .tokenizer()
         .with(NewLineTokenBuilder::new.tokenizer())
         .with(NumericLiteralBuilder::start.tokenizer())
         .with(CharacterLiteralBuilder::start.tokenizer())
         .with(StringLiteralBuilder::new.tokenizer())
-        .with((move |start| dash_template.create(start)).tokenizer())
-        .with((move |start| tilde_template.create(start)).tokenizer())
-        .with((move |start| plus_template.create(start)).tokenizer())
-        .with((move |start| star_template.create(start)).tokenizer())
-        .with((move |start| slash_template.create(start)).tokenizer())
-        .with((move |start| percent_template.create(start)).tokenizer())
+        .with(OperatorBuilder::new.tokenizer())
         .space_separate()
 }
 

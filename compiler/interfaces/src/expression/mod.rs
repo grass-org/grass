@@ -5,6 +5,7 @@ mod fraction;
 mod integer;
 mod magnitude;
 mod numeric;
+mod operator;
 
 use std::fmt::{self, Display, Formatter};
 
@@ -15,6 +16,7 @@ pub use fraction::*;
 pub use integer::*;
 pub use magnitude::*;
 pub use numeric::*;
+pub use operator::*;
 
 use crate::Span;
 

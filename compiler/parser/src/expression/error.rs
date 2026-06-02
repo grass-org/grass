@@ -3,9 +3,10 @@ use std::{
     fmt::{self, Display, Formatter},
 };
 
-use interfaces::{BinaryOperator, Span, SyntaxKind};
+use crate::UndefinedBindingPowerError;
+use interfaces::{Operator, Span, SyntaxKind};
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub enum ParseExpressionError {
     NoMoreTokens,
     UnexpectedSyntax(UnexpectedSyntaxError),
@@ -17,7 +18,7 @@ impl ParseExpressionError {
         Self::UnexpectedSyntax(UnexpectedSyntaxError { expected, span })
     }
 
-    pub const fn undefined_binding_power(operator: BinaryOperator) -> Self {
+    pub const fn undefined_binding_power(operator: Operator) -> Self {
         Self::UndefinedBindingPower(UndefinedBindingPowerError { operator })
     }
 }
@@ -40,6 +41,12 @@ pub struct UnexpectedSyntaxError {
     pub span: Span,
 }
 
+impl From<UnexpectedSyntaxError> for ParseExpressionError {
+    fn from(value: UnexpectedSyntaxError) -> Self {
+        Self::UnexpectedSyntax(value)
+    }
+}
+
 impl Display for UnexpectedSyntaxError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(
@@ -51,16 +58,3 @@ impl Display for UnexpectedSyntaxError {
 }
 
 impl Error for UnexpectedSyntaxError {}
-
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
-pub struct UndefinedBindingPowerError {
-    pub operator: BinaryOperator,
-}
-
-impl Display for UndefinedBindingPowerError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "undefined binding power for operator {}", self.operator)
-    }
-}
-
-impl Error for UndefinedBindingPowerError {}
