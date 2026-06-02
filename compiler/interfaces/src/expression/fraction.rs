@@ -1,22 +1,14 @@
 use crate::{AtomicExpression, NumericLiteralKind};
 use std::fmt;
 use std::fmt::{Display, Formatter};
-use repetitive::repetitive;
-use crate::expression::numeric::from;
 
+/// a fraction literal represented as f64.
+/// example: `365.67:F32`
+/// we'll just do further bounds check in later stages
 #[derive(PartialEq, PartialOrd, Clone, Copy, Debug)]
-pub enum FractionLiteral {
-    Fraction32(f32),
-    Fraction64(f64),
-}
-
-impl FractionLiteral {
-    pub fn kind(self) -> FractionLiteralKind {
-        match self {
-            FractionLiteral::Fraction32(_) => FractionLiteralKind::Fraction32,
-            FractionLiteral::Fraction64(_) => FractionLiteralKind::Fraction64,
-        }
-    }
+pub struct FractionLiteral {
+    pub value: f64,
+    pub kind: FractionLiteralKind,
 }
 
 impl From<FractionLiteral> for AtomicExpression {
@@ -27,16 +19,11 @@ impl From<FractionLiteral> for AtomicExpression {
 
 impl Display for FractionLiteral {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            FractionLiteral::Fraction32(value) => write!(f, "{value}:F32"),
-            FractionLiteral::Fraction64(value) => write!(f, "{value}:F64"),
+        let FractionLiteral { value, kind } = self;
+        match kind {
+            FractionLiteralKind::Fraction32 => write!(f, "{value}:F32"),
+            FractionLiteralKind::Fraction64 => write!(f, "{value}:F64"),
         }
-    }
-}
-
-repetitive! {
-    @for size in [32, 64] {
-        from!(@['f' size], FractionLiteral, @["Fraction" size]);
     }
 }
 

@@ -1,30 +1,18 @@
 use crate::{AtomicExpression, NumericLiteralKind};
 use std::fmt;
 use std::fmt::{Display, Formatter};
-use repetitive::repetitive;
-use crate::expression::numeric::from;
 
+/// a magnitude literal represented as u128, since it can only be positive.
+/// example: `365:I64`
+/// if there is a negation `-67`, only `67` will be represented by `IntegerLiteral`.
+/// we use `u128` instead of `u128`,
+/// since we need to be able to represent `i128::MIN.abs()`,
+/// which is `i128::MAX + 1`, which is `> i128::MAX`.
+/// we'll just do further bounds check in later stages
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
-pub enum IntegerLiteral {
-    Integer8(i8),
-    Integer16(i16),
-    Integer32(i32),
-    Integer64(i64),
-    Integer128(i128),
-    ArchInteger(isize),
-}
-
-impl IntegerLiteral {
-    pub fn kind(self) -> IntegerLiteralKind {
-        match self {
-            IntegerLiteral::Integer8(_) => IntegerLiteralKind::Integer8,
-            IntegerLiteral::Integer16(_) => IntegerLiteralKind::Integer16,
-            IntegerLiteral::Integer32(_) => IntegerLiteralKind::Integer32,
-            IntegerLiteral::Integer64(_) => IntegerLiteralKind::Integer64,
-            IntegerLiteral::Integer128(_) => IntegerLiteralKind::Integer128,
-            IntegerLiteral::ArchInteger(_) => IntegerLiteralKind::ArchInteger,
-        }
-    }
+pub struct IntegerLiteral {
+    pub value: u128,
+    pub kind: IntegerLiteralKind,
 }
 
 impl From<IntegerLiteral> for AtomicExpression {
@@ -33,23 +21,17 @@ impl From<IntegerLiteral> for AtomicExpression {
     }
 }
 
-repetitive! {
-    @for size in [8, 16, 32, 64, 128] {
-        from!(@['i' size], IntegerLiteral , @["Integer" size]);
-    }
-}
-
-from!(isize, IntegerLiteral, ArchInteger);
-
 impl Display for IntegerLiteral {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            IntegerLiteral::Integer8(value) => write!(f, "{value}:I8"),
-            IntegerLiteral::Integer16(value) => write!(f, "{value}:I16"),
-            IntegerLiteral::Integer32(value) => write!(f, "{value}:I32"),
-            IntegerLiteral::Integer64(value) => write!(f, "{value}:I64"),
-            IntegerLiteral::Integer128(value) => write!(f, "{value}:I128"),
-            IntegerLiteral::ArchInteger(value) => write!(f, "{value}:I128"),
+        let IntegerLiteral { value, kind } = self;
+
+        match kind {
+            IntegerLiteralKind::Integer8 => write!(f, "{value}:I8"),
+            IntegerLiteralKind::Integer16 => write!(f, "{value}:I16"),
+            IntegerLiteralKind::Integer32 => write!(f, "{value}:I32"),
+            IntegerLiteralKind::Integer64 => write!(f, "{value}:I64"),
+            IntegerLiteralKind::Integer128 => write!(f, "{value}:I128"),
+            IntegerLiteralKind::ArchInteger => write!(f, "{value}:I128"),
         }
     }
 }

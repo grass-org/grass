@@ -54,18 +54,6 @@ impl NumericLiteralKind {
     }
 }
 
-macro_rules! from {
-    ($from: ident, $into: ident, $variant: ident) => {
-        impl From<$from> for $into {
-            fn from(value: $from) -> Self {
-                Self::$variant(value)
-            }
-        }
-    };
-}
-
-pub(super) use from;
-
 impl Display for NumericLiteralKind {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{self:?}")

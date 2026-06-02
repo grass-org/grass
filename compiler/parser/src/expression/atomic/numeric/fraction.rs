@@ -1,8 +1,6 @@
-use crate::expression::atomic::numeric::magnitude::parse_magnitude;
+use super::parse_magnitude;
 use crate::NumericLiteralError;
 use interfaces::{FractionLiteral, FractionLiteralKind};
-use std::fmt::Debug;
-use std::str::FromStr;
 
 pub(super) fn parse_fraction_literal(
     base: u8,
@@ -22,32 +20,24 @@ pub(super) fn parse_fraction_literal(
 
     let fractional_part = fractional_part.unwrap_or_else(|| String::from("0"));
 
-    let literal = match kind {
-        FractionLiteralKind::Fraction32 => {
-            parse_fraction::<f32>(base, kind, integral_part, fractional_part)?.into()
-        }
-        FractionLiteralKind::Fraction64 => {
-            parse_fraction::<f64>(base, kind, integral_part, fractional_part)?.into()
-        }
+    let value = match kind {
+        FractionLiteralKind::Fraction32 => parse_fraction(base, integral_part, fractional_part)?,
+        FractionLiteralKind::Fraction64 => parse_fraction(base, integral_part, fractional_part)?,
     };
 
-    Ok(literal)
+    Ok(FractionLiteral { value, kind })
 }
 
-pub(super) fn parse_fraction<T>(
+pub(super) fn parse_fraction(
     base: u8,
-    kind: FractionLiteralKind,
     integral_part: String,
     fractional_part: String,
-) -> Result<T, NumericLiteralError>
-where
-    T: FromStr<Err: Debug> + Default,
-{
-    let integral_part = parse_magnitude::<u128>(base, kind, integral_part)?;
-    let fractional_part = parse_magnitude::<u128>(base, kind, fractional_part)?;
+) -> Result<f64, NumericLiteralError> {
+    let integral_part = parse_magnitude(base, integral_part)?;
+    let fractional_part = parse_magnitude(base, fractional_part)?;
 
     let fraction = format!("{integral_part}.{fractional_part}");
-    let fraction = str::parse::<T>(&fraction).expect("fraction must be a valid float");
+    let fraction = str::parse(&fraction).expect("fraction must be a valid float");
 
     Ok(fraction)
 }

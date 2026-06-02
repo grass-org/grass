@@ -55,7 +55,7 @@ pub enum NumericLiteralError {
     MissingIntegralPart,
     MissingFractionalPart,
     InvalidKind(InvalidNumericKindError),
-    IntegerOverflow(IntegerLiteralOverflowError),
+    IntegerOverflow(MaxIntegerLiteralOverflowError),
 }
 
 impl From<NumericLiteralError> for AtomicExpressionError {
@@ -128,21 +128,20 @@ impl Display for InvalidRaditError {
 impl Error for InvalidRaditError {}
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
-pub struct IntegerLiteralOverflowError {
+pub struct MaxIntegerLiteralOverflowError {
     pub base: u8,
-    pub kind: NumericLiteralKind,
     pub radits: String,
 }
 
-impl From<IntegerLiteralOverflowError> for NumericLiteralError {
-    fn from(value: IntegerLiteralOverflowError) -> Self {
+impl From<MaxIntegerLiteralOverflowError> for NumericLiteralError {
+    fn from(value: MaxIntegerLiteralOverflowError) -> Self {
         Self::IntegerOverflow(value)
     }
 }
 
-impl Display for IntegerLiteralOverflowError {
+impl Display for MaxIntegerLiteralOverflowError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let IntegerLiteralOverflowError { base, radits, kind } = self;
+        let MaxIntegerLiteralOverflowError { base, radits } = self;
 
         write!(f, "integer literal ")?;
 
@@ -150,16 +149,8 @@ impl Display for IntegerLiteralOverflowError {
             write!(f, "{base}#")?;
         }
 
-        write!(f, "{radits} overflowed; ")?;
-
-        let max_value = match kind {
-            NumericLiteralKind::Integer(kind) => kind.max_value(),
-            NumericLiteralKind::Magnitude(kind) => kind.max_value(),
-            NumericLiteralKind::Fraction(_) => panic!("a fraction cannot overflow!"),
-        };
-
-        write!(f, "{kind} can only fit up to {max_value}")
+        write!(f, "{radits} overflowed; integer literals can only fit up to u128::MAX")
     }
 }
 
-impl Error for IntegerLiteralOverflowError {}
+impl Error for MaxIntegerLiteralOverflowError {}
