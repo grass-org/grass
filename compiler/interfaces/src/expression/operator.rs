@@ -27,6 +27,12 @@ impl Display for Operator {
 
 // TODO: These are temporarily hardcoded, at least until we implement Grass operators
 impl Operator {
+    pub fn negate() -> Self {
+        Self {
+            symbol: String::from("-"),
+        }
+    }
+    
     pub fn add() -> Self {
         Self {
             symbol: String::from("+"),

@@ -9,7 +9,9 @@ pub use error::*;
 
 use std::{iter::Peekable, result};
 
-use interfaces::{BinaryExpression, ExpressionSpan, OperatorSpan, SyntaxKind};
+use interfaces::{
+    BinaryExpression, ExpressionSpan, Operator, OperatorSpan, Span, SyntaxKind, UnaryExpression,
+};
 use lexer::{Token, TokenSpan};
 
 use binding_power::BindingPowers;
@@ -37,44 +39,49 @@ where
 {
     pub fn new(tokens: Iter) -> Self {
         Self {
-            binding_powers: BindingPowers::new(),
+            binding_powers: BindingPowers::default(),
             tokens: tokens.peekable(),
         }
     }
 
     pub fn parse(&mut self) -> Result {
-        self.pratt_parse(0)
+        self.try_parse(0)
     }
 
-    fn pratt_parse(&mut self, highest_binding_power: u32) -> Result {
-        let mut expression = self.pratt_parse_left()?;
+    fn try_parse(&mut self, min_binding_power: u32) -> Result {
+        let mut expression = self.parse_left()?;
 
         loop {
-            let Ok(right) = self.pratt_parse_right(highest_binding_power) else {
+            let Ok(right) = self.parse_right(min_binding_power) else {
                 break;
             };
 
             let ExpressionRight { operator, operand } = right;
-            let binary_expression = BinaryExpression::new(expression, operator, operand);
-            expression = ExpressionSpan::binary(binary_expression);
+            let binary_expression = BinaryExpression::new(operator, expression, operand);
+            expression = binary_expression.into();
         }
 
         Ok(expression)
     }
 
-    fn pratt_parse_left(&mut self) -> Result {
+    fn parse_left(&mut self) -> Result {
         let TokenSpan { token, span } = self.next_token()?;
 
         if token == Token::OpenParenthesis {
-            return self.pratt_parse_parentheses();
+            return self.parse_parentheses();
+        }
+
+        if let Token::Operator(symbol) = token {
+            return self.parse_prefix_expression(symbol, span);
         }
 
         let expression = parse_atomic_expression(token)?;
-        Ok(ExpressionSpan::atomic(expression, span))
+        let expression = expression.into();
+        Ok(ExpressionSpan { expression, span })
     }
 
-    fn pratt_parse_parentheses(&mut self) -> Result {
-        let left = self.pratt_parse(0)?;
+    fn parse_parentheses(&mut self) -> Result {
+        let left = self.try_parse(0)?;
 
         let TokenSpan {
             token: next_token,
@@ -89,12 +96,25 @@ where
         Ok(left)
     }
 
-    fn pratt_parse_right(&mut self, highest_binding_power: u32) -> Result<ExpressionRight> {
+    fn parse_prefix_expression(&mut self, symbol: String, span: Span) -> Result {
+        let operator = Operator { symbol };
+
+        let binding_power = self.binding_powers.prefix_binding_power(&operator)?;
+
+        let operator = OperatorSpan { operator, span };
+        let operand = self.try_parse(binding_power)?;
+
+        Ok(UnaryExpression::new(operator, operand).into())
+    }
+
+    fn parse_right(&mut self, min_binding_power: u32) -> Result<ExpressionRight> {
         let operator_span = self.peek_operator()?;
 
-        let binding_power = self.binding_powers.binding_power(&operator_span.operator)?;
+        let binding_power = self
+            .binding_powers
+            .infix_binding_power(&operator_span.operator)?;
 
-        if binding_power.left < highest_binding_power {
+        if binding_power.left < min_binding_power {
             return Err(Error::NoMoreTokens);
         }
 
@@ -102,7 +122,7 @@ where
 
         let right = ExpressionRight {
             operator: operator_span,
-            operand: self.pratt_parse(binding_power.right)?,
+            operand: self.try_parse(binding_power.right)?,
         };
 
         Ok(right)
@@ -117,7 +137,8 @@ where
             return Err(Error::NoMoreTokens);
         };
 
-        Ok(parse_operator(token)?)
+        // TODO: this is a String clone!!
+        Ok(parse_operator(token.clone())?)
     }
 }
 
@@ -135,7 +156,7 @@ mod tests {
     #[test]
     fn test_sequential() -> Result<()> {
         let tokens = lex("1 % 2 / 3 * 4 - 5 + 6");
-        let expected = "(((((1:I32 % 2:I32) / 3:I32) * 4:I32) - 5:I32) + 6:I32)";
+        let expected = "+(-(*(/(%(1:I32, 2:I32), 3:I32), 4:I32), 5:I32), 6:I32)";
         let actual = format!("{}", parse_expression(tokens)?);
         assert_eq!(expected, actual);
 
@@ -145,7 +166,7 @@ mod tests {
     #[test]
     fn test_precedence() -> Result<()> {
         let tokens = lex("1 + 2 * 3 / 4 - 5 % 6 % 7");
-        let expected = "((1:I32 + ((2:I32 * 3:I32) / 4:I32)) - ((5:I32 % 6:I32) % 7:I32))";
+        let expected = "-(+(1:I32, /(*(2:I32, 3:I32), 4:I32)), %(%(5:I32, 6:I32), 7:I32))";
         let actual = format!("{}", parse_expression(tokens)?);
         assert_eq!(expected, actual);
 
@@ -155,7 +176,17 @@ mod tests {
     #[test]
     fn test_parentheses() -> Result<()> {
         let tokens = lex("(1 + 2) * 3 / (4 - 5) % 6 % 7");
-        let expected = "(((((1:I32 + 2:I32) * 3:I32) / (4:I32 - 5:I32)) % 6:I32) % 7:I32)";
+        let expected = "%(%(/(*(+(1:I32, 2:I32), 3:I32), -(4:I32, 5:I32)), 6:I32), 7:I32)";
+        let actual = format!("{}", parse_expression(tokens)?);
+        assert_eq!(expected, actual);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_prefix() -> Result<()> {
+        let tokens = lex("-1 + 2 * -3 / 4 - 5 % -6 % 7");
+        let expected = "-(+(-(1:I32), /(*(2:I32, -(3:I32)), 4:I32)), %(%(5:I32, -(6:I32)), 7:I32))";
         let actual = format!("{}", parse_expression(tokens)?);
         assert_eq!(expected, actual);
 

@@ -4,23 +4,27 @@ use crate::{Expression, ExpressionSpan, OperatorSpan, Span};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct BinaryExpression {
-    pub left: Box<ExpressionSpan>,
     pub operator: OperatorSpan,
-    pub right: Box<ExpressionSpan>,
+    pub operand_0: Box<ExpressionSpan>,
+    pub operand_1: Box<ExpressionSpan>,
 }
 
 impl BinaryExpression {
-    pub fn new(left: ExpressionSpan, operator: OperatorSpan, right: ExpressionSpan) -> Self {
+    pub fn new(
+        operator: OperatorSpan,
+        operand_0: ExpressionSpan,
+        operand_1: ExpressionSpan,
+    ) -> Self {
         Self {
-            left: Box::new(left),
             operator,
-            right: Box::new(right),
+            operand_0: Box::new(operand_0),
+            operand_1: Box::new(operand_1),
         }
     }
 
     pub const fn span(&self) -> Span {
-        let left_span = self.left.span;
-        let right_span = self.right.span;
+        let left_span = self.operand_0.span;
+        let right_span = self.operand_1.span;
 
         let start = left_span.start;
         let end = right_span.end();
@@ -38,18 +42,20 @@ impl From<BinaryExpression> for Expression {
 
 impl From<BinaryExpression> for ExpressionSpan {
     fn from(value: BinaryExpression) -> Self {
-        Self::binary(value)
+        let span = value.span();
+        let expression = value.into();
+        ExpressionSpan { expression, span }
     }
 }
 
 impl Display for BinaryExpression {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let BinaryExpression {
-            left,
             operator,
-            right,
+            operand_0,
+            operand_1,
         } = self;
 
-        write!(f, "({left} {operator} {right})")
+        write!(f, "{operator}({operand_0}, {operand_1})")
     }
 }

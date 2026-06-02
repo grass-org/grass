@@ -2,8 +2,7 @@ use crate::UnexpectedSyntaxError;
 use interfaces::{Operator, OperatorSpan, SyntaxKind};
 use lexer::{Token, TokenSpan};
 
-pub(super) fn parse_operator(token: &TokenSpan) -> Result<OperatorSpan, UnexpectedSyntaxError> {
-    // TODO: this is a String clone!!
+pub(super) fn parse_operator(token: TokenSpan) -> Result<OperatorSpan, UnexpectedSyntaxError> {
     let TokenSpan { token, span } = token.clone();
 
     let Token::Operator(symbol) = token else {

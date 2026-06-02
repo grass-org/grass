@@ -6,8 +6,11 @@ mod integer;
 mod magnitude;
 mod numeric;
 mod operator;
+mod unary;
 
 use std::fmt::{self, Display, Formatter};
+
+use crate::Span;
 
 pub use atomic::*;
 pub use binary::*;
@@ -17,26 +20,12 @@ pub use integer::*;
 pub use magnitude::*;
 pub use numeric::*;
 pub use operator::*;
-
-use crate::Span;
+pub use unary::*;
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct ExpressionSpan {
     pub expression: Expression,
     pub span: Span,
-}
-
-impl ExpressionSpan {
-    pub const fn atomic(atomic_expression: AtomicExpression, span: Span) -> Self {
-        let expression = Expression::Atomic(atomic_expression);
-        ExpressionSpan { expression, span }
-    }
-
-    pub const fn binary(binary_expression: BinaryExpression) -> Self {
-        let span = binary_expression.span();
-        let expression = Expression::Binary(binary_expression);
-        ExpressionSpan { expression, span }
-    }
 }
 
 impl Display for ExpressionSpan {
@@ -48,14 +37,16 @@ impl Display for ExpressionSpan {
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub enum Expression {
     Atomic(AtomicExpression),
+    Unary(UnaryExpression),
     Binary(BinaryExpression),
 }
 
 impl Display for Expression {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            Expression::Atomic(atomic_expression) => atomic_expression.fmt(f),
-            Expression::Binary(binary_expression) => binary_expression.fmt(f),
+            Expression::Atomic(expression) => expression.fmt(f),
+            Expression::Unary(expression) => expression.fmt(f),
+            Expression::Binary(expression) => expression.fmt(f),
         }
     }
 }
