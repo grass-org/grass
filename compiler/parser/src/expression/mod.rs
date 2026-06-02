@@ -9,8 +9,8 @@ pub use error::*;
 
 use std::{iter::Peekable, result};
 
-use interfaces::{BinaryExpression, ExpressionSpan, OperatorSpan};
-use lexer::TokenSpan;
+use interfaces::{BinaryExpression, ExpressionSpan, OperatorSpan, SyntaxKind};
+use lexer::{Token, TokenSpan};
 
 use binding_power::BindingPowers;
 use operator::parse_operator;
@@ -47,10 +47,7 @@ where
     }
 
     fn pratt_parse(&mut self, highest_binding_power: u32) -> Result {
-        let TokenSpan { token, span } = self.next_token()?;
-
-        let expression = parse_atomic_expression(token)?;
-        let mut expression = ExpressionSpan::atomic(expression, span);
+        let mut expression = self.pratt_parse_left()?;
 
         loop {
             let Ok(right) = self.pratt_parse_right(highest_binding_power) else {
@@ -63,6 +60,33 @@ where
         }
 
         Ok(expression)
+    }
+
+    fn pratt_parse_left(&mut self) -> Result {
+        let TokenSpan { token, span } = self.next_token()?;
+
+        if token == Token::OpenParenthesis {
+            return self.pratt_parse_parentheses();
+        }
+
+        let expression = parse_atomic_expression(token)?;
+        Ok(ExpressionSpan::atomic(expression, span))
+    }
+
+    fn pratt_parse_parentheses(&mut self) -> Result {
+        let left = self.pratt_parse(0)?;
+
+        let TokenSpan {
+            token: next_token,
+            span: next_span,
+        } = self.next_token()?;
+
+        if next_token != Token::CloseParenthesis {
+            let error = Error::unexpected_syntax(SyntaxKind::CloseParenthesis, next_span);
+            return Err(error);
+        }
+
+        Ok(left)
     }
 
     fn pratt_parse_right(&mut self, highest_binding_power: u32) -> Result<ExpressionRight> {
@@ -122,6 +146,16 @@ mod tests {
     fn test_precedence() -> Result<()> {
         let tokens = lex("1 + 2 * 3 / 4 - 5 % 6 % 7");
         let expected = "((1:I32 + ((2:I32 * 3:I32) / 4:I32)) - ((5:I32 % 6:I32) % 7:I32))";
+        let actual = format!("{}", parse_expression(tokens)?);
+        assert_eq!(expected, actual);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_parentheses() -> Result<()> {
+        let tokens = lex("(1 + 2) * 3 / (4 - 5) % 6 % 7");
+        let expected = "(((((1:I32 + 2:I32) * 3:I32) / (4:I32 - 5:I32)) % 6:I32) % 7:I32)";
         let actual = format!("{}", parse_expression(tokens)?);
         assert_eq!(expected, actual);
 

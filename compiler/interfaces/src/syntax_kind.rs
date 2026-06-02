@@ -2,4 +2,6 @@
 pub enum SyntaxKind {
     Expression,
     Operator,
+    OpenParenthesis,
+    CloseParenthesis,
 }
