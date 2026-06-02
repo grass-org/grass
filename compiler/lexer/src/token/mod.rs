@@ -1,18 +1,18 @@
-mod bracket;
 mod builder;
 mod identifier;
 mod literal;
 mod new_line;
 mod operator;
+mod single_character;
 mod tokenizer;
 
 pub use literal::*;
 
-pub(crate) use bracket::*;
 pub(crate) use builder::*;
 pub(crate) use identifier::*;
 pub(crate) use new_line::*;
 pub(crate) use operator::*;
+pub(crate) use single_character::*;
 pub(crate) use tokenizer::*;
 
 use interfaces::Span;
@@ -26,7 +26,6 @@ pub struct TokenSpan {
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub enum Token {
     NewLine,
-    Operator(String),
 
     OpenParenthesis,  // (
     CloseParenthesis, // )
@@ -34,6 +33,11 @@ pub enum Token {
     CloseBracket,     // ]
     OpenBrace,        // {
     CloseBrace,       // }
+
+    Comma, // ,
+    Colon, // :
+
+    Operator(String),
 
     NumericLiteral(NumericLiteral),
     CharacterLiteral(CharacterLiteral),

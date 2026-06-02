@@ -44,7 +44,7 @@ impl<'source> Lexer<'source> {
 }
 
 fn tokenizer() -> impl Tokenizer {
-    BracketBuilder::new
+    SingleCharacterTokenBuilder::new
         .tokenizer()
         .with(IdentifierBuilder::new.tokenizer())
         .with(NewLineTokenBuilder::new.tokenizer())
