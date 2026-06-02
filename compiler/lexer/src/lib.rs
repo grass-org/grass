@@ -44,8 +44,9 @@ impl<'source> Lexer<'source> {
 }
 
 fn tokenizer() -> impl Tokenizer {
-    IdentifierBuilder::new
+    BracketBuilder::new
         .tokenizer()
+        .with(IdentifierBuilder::new.tokenizer())
         .with(NewLineTokenBuilder::new.tokenizer())
         .with(NumericLiteralBuilder::start.tokenizer())
         .with(CharacterLiteralBuilder::start.tokenizer())
@@ -70,12 +71,12 @@ mod tests {
     #[test]
     fn test() {
         let lexer = Lexer::new(
-            r#"Hello pizza 1 rust35 5.5 2"5rust 10."0
-            25.0rust "Hi pizzzzzaa!!
+            r#"(Hello pizza 1) rust35 5.5 2"5rust 10."0
+            [25.0rust "Hi pizzzzzaa!!
                      \\
-            2.5 8" + 35 - *** / 42.5-~
-                \\
-            +*/%"#,
+            2.5 8" + 35] - *** / 42.5-~ {
+            }   \\
+            +*/%}"#,
         );
         for token in lexer.tokens() {
             println!("{token:?}")
