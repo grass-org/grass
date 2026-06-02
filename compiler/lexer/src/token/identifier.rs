@@ -1,10 +1,5 @@
 use crate::{PushTokenCharacterResult, Token, TokenBuilder};
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
-pub struct Identifier {
-    pub symbol: String,
-}
-
 #[derive(Debug)]
 pub(crate) struct IdentifierBuilder {
     symbol: String,
@@ -33,8 +28,7 @@ impl TokenBuilder for IdentifierBuilder {
     }
 
     fn build(self) -> Token {
-        let symbol = self.symbol;
-        Token::Identifier(Identifier { symbol })
+        Token::Identifier(self.symbol)
     }
 }
 

@@ -5,10 +5,10 @@ mod new_line;
 mod single_character;
 mod tokenizer;
 
-pub use identifier::*;
 pub use literal::*;
 
 pub(crate) use builder::*;
+pub(crate) use identifier::*;
 pub(crate) use new_line::*;
 pub(crate) use single_character::*;
 pub(crate) use tokenizer::*;
@@ -37,7 +37,7 @@ pub enum Token {
     NumericLiteral(NumericLiteral),
     CharacterLiteral(CharacterLiteral),
     StringLiteral(String),
-    Identifier(Identifier),
+    Identifier(String),
 
     Invalid,
 }
