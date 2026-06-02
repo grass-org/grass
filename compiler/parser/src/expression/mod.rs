@@ -9,7 +9,7 @@ pub use error::*;
 
 use std::{iter::Peekable, result};
 
-use interfaces::{BinaryExpression, ExpressionSpan, OperatorSpan, SyntaxKind};
+use interfaces::{BinaryExpression, ExpressionSpan, OperatorSpan};
 use lexer::TokenSpan;
 
 use binding_power::BindingPowers;
@@ -47,14 +47,9 @@ where
     }
 
     fn pratt_parse(&mut self, highest_binding_power: u32) -> Result {
-        let Some(TokenSpan { token, span }) = self.tokens.next() else {
-            return Err(Error::NoMoreTokens);
-        };
+        let TokenSpan { token, span } = self.next_token()?;
 
-        let Ok(expression) = parse_atomic(token) else {
-            return Err(Error::unexpected_syntax(SyntaxKind::Expression, span));
-        };
-
+        let expression = parse_atomic_expression(token)?;
         let mut expression = ExpressionSpan::atomic(expression, span);
 
         loop {
@@ -79,7 +74,7 @@ where
             return Err(Error::NoMoreTokens);
         }
 
-        _ = self.tokens.next();
+        _ = self.next_token();
 
         let right = ExpressionRight {
             operator: operator_span,
@@ -87,6 +82,10 @@ where
         };
 
         Ok(right)
+    }
+
+    fn next_token(&mut self) -> Result<TokenSpan> {
+        self.tokens.next().ok_or(ParseExpressionError::NoMoreTokens)
     }
 
     fn peek_operator(&mut self) -> Result<OperatorSpan> {

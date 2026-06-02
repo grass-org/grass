@@ -1,16 +1,16 @@
+use crate::{AtomicExpressionError, UndefinedBindingPowerError};
+use interfaces::{Operator, Span, SyntaxKind};
 use std::{
     error::Error,
     fmt::{self, Display, Formatter},
 };
-
-use crate::UndefinedBindingPowerError;
-use interfaces::{Operator, Span, SyntaxKind};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub enum ParseExpressionError {
     NoMoreTokens,
     UnexpectedSyntax(UnexpectedSyntaxError),
     UndefinedBindingPower(UndefinedBindingPowerError),
+    AtomicExpressionError(AtomicExpressionError),
 }
 
 impl ParseExpressionError {
@@ -31,6 +31,7 @@ impl Display for ParseExpressionError {
             Self::NoMoreTokens => write!(f, "no more tokens to parse"),
             Self::UnexpectedSyntax(error) => error.fmt(f),
             Self::UndefinedBindingPower(error) => error.fmt(f),
+            Self::AtomicExpressionError(error) => error.fmt(f),
         }
     }
 }
