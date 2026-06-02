@@ -33,11 +33,13 @@ pub(super) fn parse_fraction(
     integral_part: String,
     fractional_part: String,
 ) -> Result<f64, NumericLiteralError> {
-    let integral_part = parse_magnitude(base, integral_part)?;
-    let fractional_part = parse_magnitude(base, fractional_part)?;
+    let integral_part = parse_magnitude(base, integral_part)? as f64;
 
-    let fraction = format!("{integral_part}.{fractional_part}");
-    let fraction = str::parse(&fraction).expect("fraction must be a valid float");
+    let fractional_radit_count = fractional_part.len() as u32;
+    let fractional_numerator = parse_magnitude(base, fractional_part)? as f64;
+    let fractional_denominator = (base as u128).pow(fractional_radit_count) as f64;
 
-    Ok(fraction)
+    let fractional_part = fractional_numerator / fractional_denominator;
+
+    Ok(integral_part + fractional_part)
 }
