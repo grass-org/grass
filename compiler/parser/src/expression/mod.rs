@@ -1,15 +1,16 @@
+mod atomic;
 mod binding_power;
 mod error;
 
+pub use atomic::*;
 pub use error::*;
 
 use std::{iter::Peekable, result};
 
 use interfaces::{
-    AtomicExpression, BinaryExpression, BinaryOperator, BinaryOperatorSpan, ExpressionSpan,
-    LiteralExpression, SyntaxKind,
+    BinaryExpression, BinaryOperator, BinaryOperatorSpan, ExpressionSpan, SyntaxKind,
 };
-use lexer::{Literal, LiteralKind, Token, TokenSpan};
+use lexer::{Token, TokenSpan};
 
 use binding_power::BindingPowers;
 
@@ -49,7 +50,7 @@ where
             return Err(Error::NoMoreTokens);
         };
 
-        let Some(expression) = parse_atomic(token) else {
+        let Ok(expression) = parse_atomic(token) else {
             return Err(Error::unexpected_syntax(SyntaxKind::Expression, span));
         };
 
@@ -113,37 +114,6 @@ struct ExpressionRight {
     pub operand: ExpressionSpan,
 }
 
-fn parse_atomic(token: Token) -> Option<AtomicExpression> {
-    let operand = match token {
-        Token::Literal(literal) => AtomicExpression::Literal(parse_literal(literal)?),
-        Token::Identifier(_) => todo!(),
-        _ => return None,
-    };
-
-    Some(operand)
-}
-
-fn parse_literal(literal: Literal) -> Option<LiteralExpression> {
-    let kind = literal.kind();
-    let symbol = literal.take_symbol();
-
-    let expression = match kind {
-        LiteralKind::Integer => LiteralExpression::integer(parse_integer_literal(&symbol)?),
-        LiteralKind::Fraction => LiteralExpression::fraction(parse_fraction_literal(&symbol)?),
-        LiteralKind::String => LiteralExpression::string(symbol),
-    };
-
-    Some(expression)
-}
-
-fn parse_integer_literal(symbol: &str) -> Option<i32> {
-    symbol.parse().ok()
-}
-
-fn parse_fraction_literal(symbol: &str) -> Option<f64> {
-    symbol.parse().ok()
-}
-
 const fn parse_operator(token: &Token) -> Option<BinaryOperator> {
     let operator = match token {
         Token::Plus => BinaryOperator::Add,
@@ -161,12 +131,12 @@ const fn parse_operator(token: &Token) -> Option<BinaryOperator> {
 mod tests {
     use lexer::lex;
 
-    use crate::expression::{Result, parse_expression};
+    use crate::expression::{parse_expression, Result};
 
     #[test]
     fn test_sequential() -> Result<()> {
         let tokens = lex("1 % 2 / 3 * 4 - 5 + 6");
-        let expected = "(((((1i % 2i) / 3i) * 4i) - 5i) + 6i)";
+        let expected = "(((((1:I32 % 2:I32) / 3:I32) * 4:I32) - 5:I32) + 6:I32)";
         let actual = format!("{}", parse_expression(tokens)?);
         assert_eq!(expected, actual);
 
@@ -176,7 +146,7 @@ mod tests {
     #[test]
     fn test_precedence() -> Result<()> {
         let tokens = lex("1 + 2 * 3 / 4 - 5 % 6 % 7");
-        let expected = "((1i + ((2i * 3i) / 4i)) - ((5i % 6i) % 7i))";
+        let expected = "((1:I32 + ((2:I32 * 3:I32) / 4:I32)) - ((5:I32 % 6:I32) % 7:I32))";
         let actual = format!("{}", parse_expression(tokens)?);
         assert_eq!(expected, actual);
 

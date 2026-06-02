@@ -54,7 +54,8 @@ fn tokenizer() -> impl Tokenizer {
     IdentifierBuilder::new
         .tokenizer()
         .with(NewLineTokenBuilder::new.tokenizer())
-        .with(NumericLiteralBuilder::new.tokenizer())
+        .with(NumericLiteralBuilder::start.tokenizer())
+        .with(CharacterLiteralBuilder::start.tokenizer())
         .with(StringLiteralBuilder::new.tokenizer())
         .with((move |start| dash_template.create(start)).tokenizer())
         .with((move |start| tilde_template.create(start)).tokenizer())

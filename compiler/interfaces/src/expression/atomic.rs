@@ -1,10 +1,14 @@
 use std::fmt::{self, Display, Formatter};
 
-use crate::{Expression, LiteralExpression};
+use crate::{CharacterLiteral, Expression, FractionLiteral, IntegerLiteral, MagnitudeLiteral};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub enum AtomicExpression {
-    Literal(LiteralExpression),
+    IntegerLiteral(IntegerLiteral),
+    MagnitudeLiteral(MagnitudeLiteral),
+    FractionLiteral(FractionLiteral),
+    CharacterLiteral(CharacterLiteral),
+    // String(StringLiteral),
 }
 
 impl From<AtomicExpression> for Expression {
@@ -16,7 +20,10 @@ impl From<AtomicExpression> for Expression {
 impl Display for AtomicExpression {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            AtomicExpression::Literal(literal_expression) => literal_expression.fmt(f),
+            AtomicExpression::IntegerLiteral(literal) => write!(f, "{literal}"),
+            AtomicExpression::MagnitudeLiteral(literal) => write!(f, "{literal}"),
+            AtomicExpression::FractionLiteral(literal) => write!(f, "{literal}"),
+            AtomicExpression::CharacterLiteral(literal) => write!(f, "{literal}"),
         }
     }
 }

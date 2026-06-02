@@ -11,3 +11,4 @@ missing_const_for_fn = "warn"
 [dependencies]
 interfaces = { path = "../interfaces" }
 lexer = { path = "../lexer" }
+repetitive = "0.3.2"

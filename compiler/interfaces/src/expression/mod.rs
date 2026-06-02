@@ -1,12 +1,20 @@
 mod atomic;
 mod binary;
-mod literal;
+mod character;
+mod fraction;
+mod integer;
+mod magnitude;
+mod numeric;
 
 use std::fmt::{self, Display, Formatter};
 
 pub use atomic::*;
 pub use binary::*;
-pub use literal::*;
+pub use character::*;
+pub use fraction::*;
+pub use integer::*;
+pub use magnitude::*;
+pub use numeric::*;
 
 use crate::Span;
 

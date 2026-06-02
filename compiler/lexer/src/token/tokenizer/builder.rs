@@ -1,35 +1,35 @@
 use crate::{Cursor, IntoTokenizer, NextToken, PushTokenCharacterResult, TokenBuilder, Tokenizer};
 
 #[derive(Debug)]
-pub(crate) struct BuilderTokenizer<Builder, CreateBuilder>
+pub(crate) struct BuilderTokenizer<Builder, Start>
 where
     Builder: TokenBuilder,
-    CreateBuilder: Fn(char) -> Option<Builder>,
+    Start: Fn(char) -> Option<Builder>,
 {
-    create_builder: CreateBuilder,
+    start: Start,
 }
 
-impl<Builder, CreateBuilder> BuilderTokenizer<Builder, CreateBuilder>
+impl<Builder, Start> BuilderTokenizer<Builder, Start>
 where
     Builder: TokenBuilder,
-    CreateBuilder: Fn(char) -> Option<Builder>,
+    Start: Fn(char) -> Option<Builder>,
 {
-    pub const fn new(create_builder: CreateBuilder) -> Self {
-        BuilderTokenizer { create_builder }
+    pub const fn new(start: Start) -> Self {
+        BuilderTokenizer { start }
     }
 }
 
-impl<Builder, CreateBuilder> Tokenizer for BuilderTokenizer<Builder, CreateBuilder>
+impl<Builder, Start> Tokenizer for BuilderTokenizer<Builder, Start>
 where
     Builder: TokenBuilder,
-    CreateBuilder: Fn(char) -> Option<Builder>,
+    Start: Fn(char) -> Option<Builder>,
 {
     fn next_token<'source>(&mut self, cursor: &mut Cursor<'source>) -> NextToken {
         let Some(start) = cursor.pop() else {
             return NextToken::Done;
         };
 
-        let Some(mut builder) = (self.create_builder)(start) else {
+        let Some(mut builder) = (self.start)(start) else {
             return NextToken::Unrecognized(start);
         };
 
@@ -48,10 +48,10 @@ where
     }
 }
 
-impl<Builder, CreateBuilder> IntoTokenizer for CreateBuilder
+impl<Builder, Start> IntoTokenizer for Start
 where
     Builder: TokenBuilder,
-    CreateBuilder: Fn(char) -> Option<Builder>,
+    Start: Fn(char) -> Option<Builder>,
 {
     fn tokenizer(self) -> impl Tokenizer {
         BuilderTokenizer::new(self)

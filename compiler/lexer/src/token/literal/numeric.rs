@@ -1,111 +1,145 @@
-use crate::{Literal, LiteralKind, PushTokenCharacterResult, Token, TokenBuilder};
+use crate::{PushTokenCharacterResult, Token, TokenBuilder};
+use std::fmt::{Display, Formatter};
+use std::mem::take;
+use std::{char, fmt};
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
+pub struct NumericLiteral {
+    pub base: Option<String>,
+    pub integral_radits: String,
+    pub fractional_radits: Option<String>,
+    pub kind: Option<String>,
+}
+
+impl Display for NumericLiteral {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let NumericLiteral {
+            base,
+            integral_radits,
+            fractional_radits,
+            kind,
+        } = self;
+
+        if let Some(base) = base {
+            write!(f, "{base}#")?;
+        };
+
+        write!(f, "{integral_radits}")?;
+
+        if let Some(fractional_radits) = fractional_radits {
+            write!(f, ".{fractional_radits}")?;
+        };
+
+        if let Some(kind) = kind {
+            write!(f, ":{kind}")?;
+        };
+
+        Ok(())
+    }
+}
 
 #[derive(Debug)]
 pub(crate) struct NumericLiteralBuilder {
-    symbol: String,
-    kind: NumericLiteralKind,
+    pub base: Option<String>,
+    pub integral_radits: String,
+    pub fractional_radits: Option<String>,
+    pub kind: Option<String>,
 }
 
 impl NumericLiteralBuilder {
-    pub fn new(start: char) -> Option<Self> {
-        if !start.is_numeric() {
+    pub fn start(start: char) -> Option<Self> {
+        if !start.is_ascii_digit() {
             return None;
         }
 
-        let mut symbol = String::new();
-        symbol.push(start);
+        let mut integral_radits = String::new();
+        integral_radits.push(start);
 
         let builder = Self {
-            symbol,
-            kind: NumericLiteralKind::Integer,
+            base: None,
+            integral_radits,
+            fractional_radits: None,
+            kind: None,
         };
 
         Some(builder)
     }
 
-    const fn push_action(&self, character: char) -> NumericLiteralPushAction {
-        if character == '.' {
-            return match self.kind {
-                NumericLiteralKind::Integer => NumericLiteralPushAction::ToFraction,
-                NumericLiteralKind::Fraction => NumericLiteralPushAction::Fail,
-            };
+    #[must_use]
+    fn move_symbol_to_base(&mut self) -> PushTokenCharacterResult {
+        if self.base.is_some() || self.fractional_radits.is_some() || self.kind.is_some() {
+            return PushTokenCharacterResult::Failed;
         }
 
-        if !character.is_ascii_digit() {
-            return NumericLiteralPushAction::Fail;
-        }
-
-        NumericLiteralPushAction::Push
+        self.base = Some(take(&mut self.integral_radits));
+        PushTokenCharacterResult::Successful
     }
-}
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
-enum NumericLiteralPushAction {
-    Fail,
-    Push,
-    ToFraction,
+    #[must_use]
+    fn start_fractional(&mut self) -> PushTokenCharacterResult {
+        if self.fractional_radits.is_some() || self.kind.is_some() {
+            return PushTokenCharacterResult::Failed;
+        }
+
+        self.fractional_radits = Some(String::new());
+        PushTokenCharacterResult::Successful
+    }
+
+    #[must_use]
+    fn start_kind(&mut self) -> PushTokenCharacterResult {
+        if self.kind.is_some() {
+            return PushTokenCharacterResult::Failed;
+        }
+
+        self.kind = Some(String::new());
+        PushTokenCharacterResult::Successful
+    }
+
+    fn push_symbol(&mut self, character: char) {
+        if let Some(kind) = &mut self.kind {
+            kind.push(character);
+            return;
+        };
+
+        if let Some(fractional_radits) = &mut self.fractional_radits {
+            fractional_radits.push(character);
+            return;
+        };
+
+        self.integral_radits.push(character);
+    }
 }
 
 impl TokenBuilder for NumericLiteralBuilder {
     fn push(&mut self, character: char) -> PushTokenCharacterResult {
-        let push_action = self.push_action(character);
+        if character == '#' {
+            return self.move_symbol_to_base();
+        }
 
-        if push_action == NumericLiteralPushAction::Fail {
+        if character == '.' {
+            return self.start_fractional();
+        }
+
+        if character == ':' {
+            return self.start_kind();
+        }
+
+        if !character.is_ascii_alphanumeric() {
             return PushTokenCharacterResult::Failed;
         }
 
-        if push_action == NumericLiteralPushAction::ToFraction {
-            self.kind = NumericLiteralKind::Fraction;
-        }
-
-        self.symbol.push(character);
+        self.push_symbol(character);
         PushTokenCharacterResult::Successful
     }
 
     fn build(self) -> Token {
-        // SAFETY: We checked every character we pushed to `symbol` via `push`
-        let literal = unsafe { Literal::new_unchecked(self.kind.into(), self.symbol) };
-        Token::Literal(literal)
+        let literal = NumericLiteral {
+            base: self.base,
+            integral_radits: self.integral_radits,
+            fractional_radits: self.fractional_radits,
+            kind: self.kind,
+        };
+
+        Token::NumericLiteral(literal)
     }
-}
-
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
-enum NumericLiteralKind {
-    Integer,
-    Fraction,
-}
-
-impl From<NumericLiteralKind> for LiteralKind {
-    fn from(value: NumericLiteralKind) -> Self {
-        match value {
-            NumericLiteralKind::Integer => LiteralKind::Integer,
-            NumericLiteralKind::Fraction => LiteralKind::Fraction,
-        }
-    }
-}
-
-pub(super) fn is_valid_integer(symbol: &str) -> bool {
-    // TODO: Support suffixes for types
-    symbol.chars().all(|character| character.is_numeric())
-}
-
-pub(super) fn is_valid_fraction(symbol: &str) -> bool {
-    // TODO: Support suffixes for types
-    let mut has_dot = false;
-
-    for character in symbol.chars() {
-        if character == '.' {
-            if has_dot {
-                return false;
-            }
-
-            has_dot = true;
-        }
-
-        if !character.is_ascii_digit() {
-            return false;
-        }
-    }
-
-    has_dot
 }

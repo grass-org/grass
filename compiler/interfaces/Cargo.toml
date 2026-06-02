@@ -9,3 +9,4 @@ undocumented_unsafe_blocks = "warn"
 missing_const_for_fn = "warn"
 
 [dependencies]
+repetitive = "0.3.2"

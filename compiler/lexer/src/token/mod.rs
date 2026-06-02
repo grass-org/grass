@@ -33,7 +33,10 @@ pub enum Token {
     Slash,   // /
     Percent, // %
 
-    Literal(Literal),
+
+    NumericLiteral(NumericLiteral),
+    CharacterLiteral(CharacterLiteral),
+    StringLiteral(String),
     Identifier(Identifier),
 
     Invalid,

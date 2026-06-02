@@ -1,6 +1,4 @@
-use crate::{Literal, PushTokenCharacterResult, Token, TokenBuilder};
-
-use super::LiteralKind;
+use crate::{PushTokenCharacterResult, Token, TokenBuilder};
 
 #[derive(Debug)]
 pub(crate) struct StringLiteralBuilder {
@@ -48,22 +46,6 @@ impl TokenBuilder for StringLiteralBuilder {
         // SAFETY: We checked every character we pushed to `symbol` via `push`.
         // We also kept track if it's properly closed with `closed`,
         // which was updated on push.
-        let literal = unsafe { Literal::new_unchecked(LiteralKind::String, self.symbol) };
-        Token::Literal(literal)
+        Token::StringLiteral(self.symbol)
     }
-}
-
-pub(super) fn is_valid_string(symbol: &str) -> bool {
-    for (index, character) in symbol.chars().enumerate() {
-        if (index == 0 || index == symbol.len() - 1) && character != '"' {
-            return false;
-        }
-
-        // middle symbol cannot be `"`
-        if character == '"' {
-            return false;
-        }
-    }
-
-    true
 }
