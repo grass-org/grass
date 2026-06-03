@@ -1,85 +1,45 @@
+mod character_literal;
 mod cursor;
+mod error;
+mod fallback;
+mod new_line;
+mod numeric_literal;
+mod operator;
+mod single_character;
+mod span_tracker;
 mod token;
+mod whitespace;
 
-use std::iter;
-
-use interfaces::Span;
 pub use token::*;
 
-use crate::cursor::Cursor;
+use cursor::*;
+use error::*;
+use fallback::*;
+use new_line::*;
+use numeric_literal::*;
+use operator::*;
+use single_character::*;
+use span_tracker::*;
+use whitespace::*;
+
+use std::iter;
+use crate::character_literal::try_lex_character_literal;
+
+type LexResult<T = TokenSpan> = Result<T, LexError>;
 
 pub fn lex(source: &str) -> impl Iterator<Item = TokenSpan> {
-    Lexer::new(source).tokens()
+    let mut cursor = Cursor::new(source);
+
+    iter::from_fn(move || next_token(&mut cursor))
 }
 
-#[derive(Debug)]
-struct Lexer<'source> {
-    cursor: Cursor<'source>,
-}
+fn next_token(cursor: &mut Cursor) -> Option<TokenSpan> {
+    let has_leading_whitespace = skip_whitespaces(cursor) == SkipWhitespaceResult::Skipped;
 
-impl<'source> Lexer<'source> {
-    pub fn new(source: &'source str) -> Self {
-        Self {
-            cursor: Cursor::new(source),
-        }
-    }
-
-    pub fn tokens(mut self) -> impl Iterator<Item = TokenSpan> {
-        let mut tokenizer = tokenizer();
-        iter::from_fn(move || self.next_token(&mut tokenizer))
-    }
-
-    fn next_token(&mut self, tokenizer: &mut impl Tokenizer) -> Option<TokenSpan> {
-        let span_start = self.cursor.index();
-
-        match tokenizer.next_token(&mut self.cursor) {
-            NextToken::Token(token) => token_span(token, span_start, self.cursor.index()),
-            NextToken::Ignore => self.next_token(tokenizer),
-            NextToken::Done => None,
-            NextToken::Unrecognized(_) => {
-                token_span(Token::Invalid, span_start, self.cursor.index())
-            }
-        }
-    }
-}
-
-fn tokenizer() -> impl Tokenizer {
-    SingleCharacterTokenBuilder::new
-        .tokenizer()
-        .with(IdentifierBuilder::new.tokenizer())
-        .with(NewLineTokenBuilder::new.tokenizer())
-        .with(NumericLiteralBuilder::start.tokenizer())
-        .with(CharacterLiteralBuilder::start.tokenizer())
-        .with(StringLiteralBuilder::new.tokenizer())
-        .with(OperatorBuilder::new.tokenizer())
-        .space_separate()
-}
-
-const fn token_span(token: Token, span_start: usize, span_end: usize) -> Option<TokenSpan> {
-    let span = Span {
-        start: span_start,
-        length: span_end - span_start,
-    };
-
-    Some(TokenSpan { token, span })
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::Lexer;
-
-    #[test]
-    fn test() {
-        let lexer = Lexer::new(
-            r#"(Hello pizza 1) rust35 5.5 2"5rust 10."0
-            [25.0rust "Hi pizzzzzaa!!
-                     \\
-            2.5 8" + 35] - *** / 42.5-~ {
-            }   \\
-            +*/%}"#,
-        );
-        for token in lexer.tokens() {
-            println!("{token:?}")
-        }
-    }
+    try_lex_new_line(cursor)
+        .fallback(|| try_lex_single_character(cursor))
+        .fallback(|| try_lex_operator(cursor, has_leading_whitespace))
+        .fallback(|| try_lex_numeric_literal(cursor))
+        .fallback(|| try_lex_character_literal(cursor))
+        .ok()
 }

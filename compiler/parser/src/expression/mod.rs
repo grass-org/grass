@@ -71,8 +71,8 @@ where
             return self.parse_parentheses();
         }
 
-        if let Token::Operator(symbol) = token {
-            return self.parse_prefix_expression(symbol, span);
+        if let Token::Operator(operator) = token {
+            return self.parse_prefix_expression(operator.symbol, span);
         }
 
         let expression = parse_atomic_expression(token)?;

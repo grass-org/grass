@@ -12,7 +12,6 @@ pub(super) fn parse_atomic_expression(
 ) -> Result<AtomicExpression, AtomicExpressionError> {
     let operand = match token {
         Token::NumericLiteral(numeric_literal) => parse_numeric_literal(numeric_literal)?,
-        Token::Identifier(_) => return Err(AtomicExpressionError::UnknownError),
         _ => return Err(AtomicExpressionError::UnknownError),
     };
 

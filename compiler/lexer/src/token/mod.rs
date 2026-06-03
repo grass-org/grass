@@ -1,22 +1,11 @@
-mod builder;
-mod identifier;
 mod literal;
-mod new_line;
 mod operator;
-mod single_character;
-mod tokenizer;
 
 pub use literal::*;
-use std::fmt::{Display, Formatter};
-
-pub(crate) use builder::*;
-pub(crate) use identifier::*;
-pub(crate) use new_line::*;
-pub(crate) use operator::*;
-pub(crate) use single_character::*;
-pub(crate) use tokenizer::*;
+pub use operator::*;
 
 use interfaces::Span;
+use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub struct TokenSpan {
@@ -24,8 +13,11 @@ pub struct TokenSpan {
     pub span: Span,
 }
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug, Default)]
 pub enum Token {
+    #[default]
+    Invalid,
+
     NewLine,
 
     OpenParenthesis,  // (
@@ -38,18 +30,14 @@ pub enum Token {
     Comma, // ,
     Colon, // :
 
-    Operator(String),
+    Operator(Operator),
 
     NumericLiteral(NumericLiteral),
     CharacterLiteral(CharacterLiteral),
-    StringLiteral(String),
-    Identifier(String),
-
-    Invalid,
 }
 
 impl Display for Token {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Token::NewLine => write!(f, "\\n"),
             Token::OpenParenthesis => write!(f, "("),
@@ -63,8 +51,6 @@ impl Display for Token {
             Token::Operator(value) => value.fmt(f),
             Token::NumericLiteral(value) => value.fmt(f),
             Token::CharacterLiteral(value) => value.fmt(f),
-            Token::StringLiteral(value) => value.fmt(f),
-            Token::Identifier(value) => value.fmt(f),
             Token::Invalid => write!(f, "{{invalid_token}}"),
         }
     }

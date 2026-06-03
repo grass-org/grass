@@ -44,8 +44,8 @@ impl Display for InvalidNumericBaseError {
 
         write!(
             f,
-            "invalid numeric literal base {base}; \
-            numeric literals can only support bases from 2 to {max_base}"
+            "invalid literal literal base {base}; \
+            literal literals can only support bases from 2 to {max_base}"
         )
     }
 }

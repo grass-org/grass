@@ -1,42 +1,30 @@
-use crate::token::{PushTokenCharacterResult, TokenBuilder};
-use crate::Token;
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug)]
-pub(crate) struct OperatorBuilder {
-    symbol: String,
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
+pub struct Operator {
+    pub symbol: String,
+    pub has_leading_whitespace: bool,
+    pub has_trailing_whitespace: bool,
 }
 
-impl OperatorBuilder {
-    pub fn new(start: char) -> Option<Self> {
-        if !is_operator_character(start) {
-            return None;
+impl Display for Operator {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let Operator {
+            symbol,
+            has_leading_whitespace: has_leading_space,
+            has_trailing_whitespace: has_trailing_space,
+        } = self;
+
+        if !has_leading_space {
+            write!(f, " ")?;
         }
 
-        let mut symbol = String::new();
-        symbol.push(start);
+        write!(f, "{symbol}")?;
 
-        Some(OperatorBuilder { symbol })
-    }
-}
-
-impl TokenBuilder for OperatorBuilder {
-    fn push(&mut self, character: char) -> PushTokenCharacterResult {
-        if !is_operator_character(character) {
-            return PushTokenCharacterResult::Failed;
+        if !has_trailing_space {
+            write!(f, " ")?;
         }
 
-        self.symbol.push(character);
-        PushTokenCharacterResult::Successful
-    }
-
-    fn build(self) -> Token {
-        Token::Operator(self.symbol)
-    }
-}
-
-fn is_operator_character(character: char) -> bool {
-    match character {
-        '(' | ')' | '[' | ']' | '{' | '}' | ',' | ':' => false,
-        _ => !character.is_ascii_alphanumeric() && !character.is_whitespace(),
+        Ok(())
     }
 }

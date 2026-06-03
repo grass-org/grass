@@ -86,7 +86,7 @@ impl Display for InvalidNumericKindError {
 
         write!(
             f,
-            "unexpected numeric literal kind {kind}; kind must be one of ["
+            "unexpected literal literal kind {kind}; kind must be one of ["
         )?;
 
         for (index, expected_kind) in expected_kinds.iter().enumerate() {

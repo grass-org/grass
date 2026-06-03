@@ -80,16 +80,16 @@ impl Display for NumericLiteralError {
 fn format_missing_fractional_part(f: &mut Formatter) -> fmt::Result {
     write!(
         f,
-        "missing numeric literal fractional part; \
-        numeric literal has a '.' without any radits after it"
+        "missing literal literal fractional part; \
+        literal literal has a '.' without any radits after it"
     )
 }
 
 fn format_missing_integral_part(f: &mut Formatter) -> fmt::Result {
     write!(
         f,
-        "missing numeric literal integral part; \
-        numeric literal does not have any value; \
+        "missing literal literal integral part; \
+        literal literal does not have any value; \
         consider adding '0' if you meant for it to be zero"
     )
 }
@@ -119,7 +119,7 @@ impl Display for InvalidRaditError {
 
         write!(
             f,
-            "invalid numeric literal radit {radit}; \
+            "invalid literal literal radit {radit}; \
             an integer of base {base} can only have radits from 0 to {max_radit}",
         )
     }

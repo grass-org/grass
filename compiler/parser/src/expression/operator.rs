@@ -5,7 +5,7 @@ use lexer::{Token, TokenSpan};
 pub(super) fn parse_operator(token: TokenSpan) -> Result<OperatorSpan, UnexpectedSyntaxError> {
     let TokenSpan { token, span } = token.clone();
 
-    let Token::Operator(symbol) = token else {
+    let Token::Operator(operator) = token else {
         let error = UnexpectedSyntaxError {
             expected: SyntaxKind::Operator,
             span,
@@ -14,6 +14,9 @@ pub(super) fn parse_operator(token: TokenSpan) -> Result<OperatorSpan, Unexpecte
         return Err(error);
     };
 
-    let operator = Operator { symbol };
+    let operator = Operator {
+        symbol: operator.symbol,
+    };
+
     Ok(OperatorSpan { operator, span })
 }
