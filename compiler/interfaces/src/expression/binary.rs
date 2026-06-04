@@ -1,6 +1,5 @@
-use std::fmt::{self, Display, Formatter};
-
 use crate::{Expression, ExpressionSpan, OperatorSpan, Span};
+use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct BinaryExpression {

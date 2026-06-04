@@ -1,6 +1,5 @@
 use crate::{FractionLiteralKind, IntegerLiteralKind, MagnitudeLiteralKind};
-use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
 pub enum NumericLiteralArchetype {
@@ -33,7 +32,7 @@ impl NumericLiteralKind {
         }
     }
 
-    pub fn archetype(&self) -> NumericLiteralArchetype {
+    pub const fn archetype(&self) -> NumericLiteralArchetype {
         match self {
             NumericLiteralKind::Integer(_) => NumericLiteralArchetype::Integer,
             NumericLiteralKind::Magnitude(_) => NumericLiteralArchetype::Magnitude,

@@ -1,6 +1,5 @@
-use std::fmt::{self, Display, Formatter};
-
 use crate::{CharacterLiteral, Expression, FractionLiteral, IntegerLiteral, MagnitudeLiteral};
+use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub enum AtomicExpression {

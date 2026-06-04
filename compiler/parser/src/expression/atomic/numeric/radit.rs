@@ -15,12 +15,12 @@ pub(super) fn parse_radit(base: u8, character: char) -> Result<u8, InvalidRaditE
 }
 
 fn max_radit(base: u32) -> char {
-    if base >= 2 && base <= 9 {
+    if (2..=9).contains(&base) {
         return char::from_digit(base, 10)
             .expect("char::from_digit for radix within 2..=9 somehow failed");
     }
 
-    if base >= 10 && base <= 36 {
+    if (10..=36).contains(&base) {
         let offset = base - 10;
         return char::from_u32('a' as u32 + offset)
             .expect("char::from_u32 for char within 'a'..='z' somehow failed");

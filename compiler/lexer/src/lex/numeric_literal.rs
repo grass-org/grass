@@ -2,7 +2,7 @@ use crate::{Cursor, LexError, LexResult, NumericLiteral, SpanTracker, Token, Tok
 use std::mem::take;
 use std::result;
 
-pub(super) fn try_lex_numeric_literal(cursor: &mut Cursor) -> LexResult {
+pub(crate) fn try_lex_numeric_literal(cursor: &mut Cursor) -> LexResult {
     let start = cursor.peek().ok_or(LexError::EndOfSource)?;
 
     if !start.is_ascii_digit() {
@@ -48,7 +48,7 @@ struct NumericLiteralBuilder {
 }
 
 impl NumericLiteralBuilder {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             base: None,
             integral_radits: String::new(),

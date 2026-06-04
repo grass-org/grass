@@ -1,6 +1,5 @@
 use crate::{AtomicExpression, NumericLiteralKind};
-use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
 /// a magnitude literal represented as u128.
 /// example: `365:M64`
@@ -56,7 +55,7 @@ impl MagnitudeLiteralKind {
         Self::ALL.iter().cloned()
     }
 
-    pub fn max_value(self) -> u128 {
+    pub const fn max_value(self) -> u128 {
         match self {
             MagnitudeLiteralKind::Magnitude8 => u8::MAX as u128,
             MagnitudeLiteralKind::Magnitude16 => u16::MAX as u128,

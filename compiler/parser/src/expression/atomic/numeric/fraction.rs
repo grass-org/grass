@@ -12,10 +12,10 @@ pub(super) fn parse_fraction_literal(
         return Err(NumericLiteralError::MissingIntegralPart);
     }
 
-    if let Some(fractional_part) = &fractional_part {
-        if fractional_part.is_empty() {
-            return Err(NumericLiteralError::MissingFractionalPart);
-        }
+    if let Some(fractional_part) = &fractional_part
+        && fractional_part.is_empty()
+    {
+        return Err(NumericLiteralError::MissingFractionalPart);
     };
 
     let fractional_part = fractional_part.unwrap_or_else(|| String::from("0"));

@@ -1,6 +1,6 @@
 use crate::{is_newline, is_whitespace, Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan};
 
-pub(super) fn try_lex_new_line(cursor: &mut Cursor) -> LexResult {
+pub(crate) fn try_lex_new_line(cursor: &mut Cursor) -> LexResult {
     let start = cursor.peek().ok_or(LexError::EndOfSource)?;
 
     if !is_newline(start) {

@@ -39,7 +39,7 @@ pub(super) fn parse_magnitude(base: u8, radits: String) -> Result<u128, NumericL
         value = new_value;
     }
 
-    value.try_into().map_err(|_| overflow_error(base, radits))
+    Ok(value)
 }
 
 fn overflow_error(base: u8, radits: String) -> NumericLiteralError {

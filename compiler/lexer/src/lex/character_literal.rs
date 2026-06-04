@@ -1,6 +1,6 @@
 use crate::{CharacterLiteral, Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan};
 
-pub(super) fn try_lex_character_literal(cursor: &mut Cursor) -> LexResult {
+pub(crate) fn try_lex_character_literal(cursor: &mut Cursor) -> LexResult {
     let start = cursor.peek().ok_or(LexError::EndOfSource)?;
 
     if start != '\'' {
@@ -16,7 +16,7 @@ fn lex_character_literal(cursor: &mut Cursor) -> TokenSpan {
     cursor.advance();
 
     let token = lex_literal(cursor)
-        .map(|literal| Token::CharacterLiteral(literal))
+        .map(Token::CharacterLiteral)
         .unwrap_or_default();
 
     span_tracker.create_token_span(cursor, token)

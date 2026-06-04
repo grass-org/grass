@@ -1,6 +1,6 @@
 use crate::{Cursor, LexError, LexResult, SpanTracker, Token};
 
-pub(super) fn try_lex_single_character(cursor: &mut Cursor) -> LexResult {
+pub(crate) fn try_lex_single_character(cursor: &mut Cursor) -> LexResult {
     let character = cursor.peek().ok_or(LexError::EndOfSource)?;
 
     let token = lex_single_character(character).ok_or(LexError::Skipped)?;
@@ -11,7 +11,7 @@ pub(super) fn try_lex_single_character(cursor: &mut Cursor) -> LexResult {
     Ok(span_tracker.create_token_span(cursor, token))
 }
 
-fn lex_single_character(character: char) -> Option<Token> {
+const fn lex_single_character(character: char) -> Option<Token> {
     let token = match character {
         '(' => Token::OpenParenthesis,
         ')' => Token::CloseParenthesis,

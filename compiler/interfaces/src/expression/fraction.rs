@@ -1,6 +1,5 @@
 use crate::{AtomicExpression, NumericLiteralKind};
-use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
 /// a fraction literal represented as f64.
 /// example: `365.67:F32`

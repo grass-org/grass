@@ -2,7 +2,7 @@ use crate::{
     is_horizontal_whitespace, Cursor, LexError, LexResult, Operator, SpanTracker, Token, TokenSpan,
 };
 
-pub(super) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> LexResult {
+pub(crate) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> LexResult {
     let start = cursor.peek().ok_or(LexError::EndOfSource)?;
 
     if !is_operator_character(start) {

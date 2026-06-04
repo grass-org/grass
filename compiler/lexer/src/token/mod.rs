@@ -1,7 +1,9 @@
-mod literal;
+mod character;
+mod numeric;
 mod operator;
 
-pub use literal::*;
+pub use character::*;
+pub use numeric::*;
 pub use operator::*;
 
 use interfaces::Span;

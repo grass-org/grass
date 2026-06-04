@@ -8,10 +8,6 @@ mod numeric;
 mod operator;
 mod unary;
 
-use std::fmt::{self, Display, Formatter};
-
-use crate::Span;
-
 pub use atomic::*;
 pub use binary::*;
 pub use character::*;
@@ -21,6 +17,9 @@ pub use magnitude::*;
 pub use numeric::*;
 pub use operator::*;
 pub use unary::*;
+
+use crate::Span;
+use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct ExpressionSpan {

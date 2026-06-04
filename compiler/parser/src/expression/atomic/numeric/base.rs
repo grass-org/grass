@@ -1,7 +1,6 @@
 use crate::NumericLiteralError;
 use std::error::Error;
-use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
 pub(super) fn base(string: Option<String>) -> Result<u8, InvalidNumericBaseError> {
     let Some(string) = string else {
@@ -22,7 +21,7 @@ pub(super) fn base(string: Option<String>) -> Result<u8, InvalidNumericBaseError
     Ok(base)
 }
 
-fn base_error(base: String) -> InvalidNumericBaseError {
+const fn base_error(base: String) -> InvalidNumericBaseError {
     InvalidNumericBaseError { base, max_base: 36 }
 }
 

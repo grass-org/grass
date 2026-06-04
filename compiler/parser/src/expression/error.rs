@@ -1,9 +1,7 @@
 use crate::{AtomicExpressionError, UndefinedBindingPowerError};
 use interfaces::{Operator, Span, SyntaxKind};
-use std::{
-    error::Error,
-    fmt::{self, Display, Formatter},
-};
+use std::error::Error;
+use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub enum ParseExpressionError {

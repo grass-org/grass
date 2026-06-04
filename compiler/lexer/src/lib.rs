@@ -1,29 +1,21 @@
-mod character_literal;
 mod cursor;
 mod error;
 mod fallback;
-mod new_line;
-mod numeric_literal;
-mod operator;
-mod single_character;
 mod span_tracker;
 mod token;
 mod whitespace;
+mod lex;
 
 pub use token::*;
 
 use cursor::*;
 use error::*;
 use fallback::*;
-use new_line::*;
-use numeric_literal::*;
-use operator::*;
-use single_character::*;
+use lex::*;
 use span_tracker::*;
 use whitespace::*;
 
 use std::iter;
-use crate::character_literal::try_lex_character_literal;
 
 type LexResult<T = TokenSpan> = Result<T, LexError>;
 
