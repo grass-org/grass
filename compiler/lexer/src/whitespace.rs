@@ -55,3 +55,63 @@ pub(super) const fn is_newline(character: char) -> bool {
 pub(super) const fn is_whitespace(character: char) -> bool {
     is_horizontal_whitespace(character) || is_newline(character)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{skip_whitespaces, SkipWhitespaceResult};
+    use crate::Cursor;
+
+    #[test]
+    fn skipped_result() {
+        let mut cursor = Cursor::new("   67");
+
+        let expected = SkipWhitespaceResult::Skipped;
+        let actual = skip_whitespaces(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn stripped_spaces() {
+        let mut cursor = Cursor::new("   67");
+
+        _ = skip_whitespaces(&mut cursor);
+
+        let expected = Some('6');
+        let actual = cursor.peek();
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn none_found_result() {
+        let mut cursor = Cursor::new("67");
+
+        let expected = SkipWhitespaceResult::NoneFound;
+        let actual = skip_whitespaces(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn did_not_touch() {
+        let mut cursor = Cursor::new("67");
+
+        _ = skip_whitespaces(&mut cursor);
+
+        let expected = Some('6');
+        let actual = cursor.peek();
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn end_of_source() {
+        let mut cursor = Cursor::new("");
+
+        let expected = SkipWhitespaceResult::NoneFound;
+        let actual = skip_whitespaces(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+}

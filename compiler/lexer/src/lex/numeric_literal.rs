@@ -128,3 +128,250 @@ impl NumericLiteralBuilder {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::try_lex_numeric_literal;
+    use crate::{Cursor, LexError, NumericLiteral, Token, TokenSpan};
+    use interfaces::Span;
+
+    #[test]
+    fn basic_integer() {
+        let mut cursor = Cursor::new("365");
+
+        let expected = Ok(TokenSpan {
+            token: Token::NumericLiteral(NumericLiteral {
+                base: None,
+                integral_radits: String::from("365"),
+                fractional_radits: None,
+                kind: None,
+            }),
+            span: Span {
+                start: 0,
+                length: 3,
+            },
+        });
+
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn basic_fraction() {
+        let mut cursor = Cursor::new("365.67");
+
+        let expected = Ok(TokenSpan {
+            token: Token::NumericLiteral(NumericLiteral {
+                base: None,
+                integral_radits: String::from("365"),
+                fractional_radits: Some(String::from("67")),
+                kind: None,
+            }),
+            span: Span {
+                start: 0,
+                length: 6,
+            },
+        });
+
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn integer_with_base() {
+        let mut cursor = Cursor::new("67#365");
+
+        let expected = Ok(TokenSpan {
+            token: Token::NumericLiteral(NumericLiteral {
+                base: Some(String::from("67")),
+                integral_radits: String::from("365"),
+                fractional_radits: None,
+                kind: None,
+            }),
+            span: Span {
+                start: 0,
+                length: 6,
+            },
+        });
+
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn fraction_with_base() {
+        let mut cursor = Cursor::new("67#365.69");
+
+        let expected = Ok(TokenSpan {
+            token: Token::NumericLiteral(NumericLiteral {
+                base: Some(String::from("67")),
+                integral_radits: String::from("365"),
+                fractional_radits: Some(String::from("69")),
+                kind: None,
+            }),
+            span: Span {
+                start: 0,
+                length: 9,
+            },
+        });
+
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn integer_with_kind() {
+        let mut cursor = Cursor::new("369:I32");
+
+        let expected = Ok(TokenSpan {
+            token: Token::NumericLiteral(NumericLiteral {
+                base: None,
+                integral_radits: String::from("369"),
+                fractional_radits: None,
+                kind: Some(String::from("I32")),
+            }),
+            span: Span {
+                start: 0,
+                length: 7,
+            },
+        });
+
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn fraction_with_kind() {
+        let mut cursor = Cursor::new("369.67:F64");
+
+        let expected = Ok(TokenSpan {
+            token: Token::NumericLiteral(NumericLiteral {
+                base: None,
+                integral_radits: String::from("369"),
+                fractional_radits: Some(String::from("67")),
+                kind: Some(String::from("F64")),
+            }),
+            span: Span {
+                start: 0,
+                length: 10,
+            },
+        });
+
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn integer_with_base_and_type() {
+        let mut cursor = Cursor::new("2#369:I32");
+
+        let expected = Ok(TokenSpan {
+            token: Token::NumericLiteral(NumericLiteral {
+                base: Some(String::from("2")),
+                integral_radits: String::from("369"),
+                fractional_radits: None,
+                kind: Some(String::from("I32")),
+            }),
+            span: Span {
+                start: 0,
+                length: 9,
+            },
+        });
+
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn fraction_with_base_and_type() {
+        let mut cursor = Cursor::new("2#369.67:F64");
+
+        let expected = Ok(TokenSpan {
+            token: Token::NumericLiteral(NumericLiteral {
+                base: Some(String::from("2")),
+                integral_radits: String::from("369"),
+                fractional_radits: Some(String::from("67")),
+                kind: Some(String::from("F64")),
+            }),
+            span: Span {
+                start: 0,
+                length: 12,
+            },
+        });
+
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn has_adjacent() {
+        let mut cursor = Cursor::new("2#369:F64 35");
+
+        let expected = Ok(TokenSpan {
+            token: Token::NumericLiteral(NumericLiteral {
+                base: Some(String::from("2")),
+                integral_radits: String::from("369"),
+                fractional_radits: None,
+                kind: Some(String::from("F64")),
+            }),
+            span: Span {
+                start: 0,
+                length: 9,
+            },
+        });
+
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn delayed_start() {
+        let mut cursor = Cursor::new(" 2#369.67:F64 35");
+
+        let expected = Err(LexError::Skipped);
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn invalid_start() {
+        let mut cursor = Cursor::new("H2#369.67:F64 35");
+
+        let expected = Err(LexError::Skipped);
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn did_not_consume_invalid() {
+        let mut cursor = Cursor::new("pizza");
+
+        _ = try_lex_numeric_literal(&mut cursor);
+
+        let expected = Some('p');
+        let actual = cursor.peek();
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn end_of_source() {
+        let mut cursor = Cursor::new("");
+
+        let expected = Err(LexError::EndOfSource);
+        let actual = try_lex_numeric_literal(&mut cursor);
+
+        assert_eq!(expected, actual);
+    }
+}

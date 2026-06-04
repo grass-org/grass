@@ -35,3 +35,5 @@ fn next_token(cursor: &mut Cursor) -> Option<TokenSpan> {
         .fallback(|| try_lex_character_literal(cursor))
         .ok()
 }
+
+// TODO: TEST!
