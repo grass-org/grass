@@ -1,5 +1,7 @@
 use std::fmt::{self, Display, Formatter};
 
+// TODO: Maybe just return the whole symbol as a string, no matter how long it is
+//  so the parser can give a better error like "Character can only store a single character"
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
 pub struct CharacterLiteral {
     pub symbol: char,
