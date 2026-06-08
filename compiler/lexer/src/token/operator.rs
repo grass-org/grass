@@ -1,3 +1,4 @@
+use crate::Token;
 use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
@@ -5,6 +6,12 @@ pub struct Operator {
     pub symbol: String,
     pub has_leading_whitespace: bool,
     pub has_trailing_whitespace: bool,
+}
+
+impl From<Operator> for Token {
+    fn from(value: Operator) -> Self {
+        Token::Operator(value)
+    }
 }
 
 impl Display for Operator {

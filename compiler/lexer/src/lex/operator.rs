@@ -24,7 +24,7 @@ fn lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> TokenSpan 
         has_trailing_whitespace,
     };
 
-    span_tracker.create_token_span(cursor, Token::Operator(operator))
+    span_tracker.create_token_span(cursor, operator)
 }
 
 fn lex_symbol(cursor: &mut Cursor) -> String {

@@ -13,7 +13,8 @@ impl SpanTracker {
         }
     }
 
-    pub const fn create_token_span(self, cursor: &Cursor, token: Token) -> TokenSpan {
+    pub fn create_token_span(self, cursor: &Cursor, token: impl Into<Token>) -> TokenSpan {
+        let token = token.into();
         let span = self.end(cursor);
         TokenSpan { token, span }
     }

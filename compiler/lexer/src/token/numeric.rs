@@ -1,5 +1,6 @@
 use std::fmt;
 use std::fmt::{Display, Formatter};
+use crate::Token;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub struct NumericLiteral {
@@ -7,6 +8,12 @@ pub struct NumericLiteral {
     pub integral_radits: String,
     pub fractional_radits: Option<String>,
     pub kind: Option<String>,
+}
+
+impl From<NumericLiteral> for Token {
+    fn from(value: NumericLiteral) -> Self {
+        Token::NumericLiteral(value)
+    }
 }
 
 impl Display for NumericLiteral {
