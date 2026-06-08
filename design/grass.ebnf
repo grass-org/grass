@@ -1,0 +1,582 @@
+Grammar::Syntactic::grass-lang
+
+
++CustomRules
+
+{ $template, $separator }... ::= [ template { separator template } [ separator ] ]
+
+$start to $end ::= ? character range from start to end (inclusive) ?
+
+$start #to $end ::= ? numeric range from start to end (inclusive) ?
+
+$set except $exception ::= ? all possible states of set except exception ?
+
+
+?
+missing:
+- [ ] rework defer & yield
+- [ ] macros (including attribute macros)
+- [ ] unsafe
+- [ ] new-line specs
+- [ ] fix possible requirement of double new-lines / lack of new-line requirement
+- [ ] type alias anywhere
+- [ ] const anywhere
+- [ ] trait impl deep type inference
+?
+
++Syntax::Comment
+
+? filtered out by the lexer ?
+comment ::= end-of-line-comment | bound-comment | documentation-comment
+
+end-of-line-comment ::= "//" { non-new-line-character }
+
+bound-comment ::= "/*" { character } "*/"
+
+documentation-comment ::= "///" { non-new-line-character }
+
+
++Syntax::Module
+
+module ::= { module-element, new-line }...
+
+module-element ::= use-declaration
+                 | module-constant-definition
+                 | module-function-definition
+                 | type-definition
+                 | trait-definition
+                 | trait-implementation
+
+module-identifier ::= identifier | submodule | "parent" | "bundle"
+
+submodule ::= module-identifier '.' identifier
+
+
++Syntax::Use
+
+use-declaration ::= "use" use-identifier
+
+use-identifier ::= base-type-identifier | use-all-identifier
+
+use-all-identifier ::= module-identifier '.' '*'
+
+
++Syntax::Constant
+
+module-constant-definition ::= [ visibility-modifier ] constant-definition
+
+constant-definition ::= "constant" identifier [ explicit-type ] value-binding
+
+
++Syntax::Function
+
+module-function-definition ::= [ visibility-modifier ] function-definition
+
+function-definition ::= fully-defined-function | imported-function
+
+fully-defined-function ::= function-declaration function-body
+
+imported-function ::= "@import" function-declaration
+
+function-declaration ::= fn-declaration | property-declaration
+
+function-parameter ::= parameter-binding explicit-type [ default-value ]
+
+function-receiver-parameter ::= positional-binding explicit-type
+
+parameter-binding ::= binding | positional-binding
+
+positional-binding ::= '[' binding ']'
+
+default-value ::= ":=" expression
+
+function-body ::= inline-function-body | scope
+
+inline-function-body ::= "->" expression
+
+
++Syntax::Fn
+
+fn-declaration ::= type-parameters [ "async" ] "fn" [ fn-receiver ]
+                   fn-identifier fn-parameters [ explicit-type ]
+
+fn-identifier ::= qualified-fn-identifier
+
+qualified-fn-identifier ::= fn-identifier '.' 'identifier'
+
+fn-receiver ::= '(' ( type-identifier | function-receiver-parameter ) ')' '.'
+
+fn-parameters ::= '(' { fn-parameter, ',' }... ')'
+
+
++Syntax::Property
+
+property-declaration ::= type-parameters property-type property-receiver
+                         identifier ':' type-specifier
+
+property-receiver ::= '(' function-receiver-parameter ')' '.'
+
+property-type ::= "get" | "set"
+
+
++Syntax::Expression
+
+expression ::= parenthesized-expression
+             | scope
+             | declaration
+             | assignment
+             | constant-definition
+             | out-expression
+             | operation
+             | field-initializer
+             | field-access
+             | member-access
+             | lambda
+             | call
+             | control-flow
+             | literal
+             | identifier
+
+parenthesized-expression ::= '(' expression ')'
+
+scope ::= '{' { expression, new-line }... '}'
+
+
++Syntax::Binding
+
+declaration ::= "let" binding [ explicit-type ] value-binding
+
+binding ::= identifier | destructure
+
+assignment ::= identifier value-binding
+
+value-binding ::= ":=" expression
+
+
++Syntax::Destructure
+
+destructure ::= named-destructure | positional-destructure
+
+named-destructure ::= '{' { named-destructure-element, ',' }... '}'
+
+named-destructure-element ::= identifier [ ':' identifier ]
+
+positional-destructure ::= '(' { identifier, ',' }... ')'
+
+
++Syntax::Out
+
+out-expression ::= ( unnamed-out-start | named-out-start ) [ expression ]
+
+unnamed-out-start ::= "out" [ '!' ]
+
+named-out-start ::= "out" identifier
+
+
++Syntax::Operation
+
+operation ::= prefix-operation | infix-operation | postfix-operation
+
+prefix-operation ::= operator [ type-arguments ] expression
+
+infix-operation ::= expression operator  [ type-arguments ] expression
+
+postfix-operation ::= expression operator [ type-arguments ]
+
+
++Syntax::FieldInitializer
+
+field-initializer ::= identifier field-initializer-body
+
+field-initializer-body ::= '{' { field-initialization, ',' }... '}'
+
+field-initialization ::= [ identifier ':' ] expression
+
+
++Syntax::FieldAccess
+
+field-access ::= expression "::" identifier
+
+
++Syntax::MemberAccess
+
+member-access ::= expression '.' identifier
+
+
++Syntax::Lambda
+
+lambda ::= lambda-parameters [ explicit-type ] lambda-arrow lambda-body
+
+lambda-parameters ::= '|' { lambda-parameter, ',' }... '|'
+
+lambda-parameter ::= identifier [explicit-type]
+
+lambda-arrow ::= "->" | "~>" | "=>"
+
+lambda-body ::= expression | scope
+
+
++Syntax::Call
+
+call ::= expression [ type-arguments ] call-arguments
+
+call-arguments ::= ( parenthesized-call-arguments [ lambda ] ) | lambda
+
+parenthesized-call-arguments ::= '(' { call-argument, ',' }... ')'
+
+call-argument ::= named-call-argument | expression
+
+named-call-argument ::= identifier ':' expression
+
+
++Syntax::ControlFlow
+
+control-flow ::= if-expression
+               | when-expression
+               | loop-expression
+               | while-expression
+               | for-expression
+
+condition-clause ::= ( '(' condition ')' ) | condition
+
+condition ::= expression | pattern-matching
+
+control-flow-body ::= [ identifier ] compound-expression | inline-control-flow-body
+
+inline-control-flow-body ::= ':' expression
+
+
++Syntax::PatternMatching
+
+pattern-matching ::= expression pattern-matching-clause
+
+pattern-matching-clause ::= "is" binding
+
+
++Syntax::If
+
+if-expression ::= "if" condition-clause control-flow-body
+                  [ else-if-clause ]
+                  [ else-clause ]
+
+else-if-clause ::= "else" if-expression
+
+else-clause ::= "else" control-flow-body
+
+
++Syntax::When
+
+when-expression ::= "when" expression when-expression-body
+
+when-expression-body ::= '{' { when-condition-arm, new-line }... [ else-clause ] '}'
+
+when-condition-arm ::= when-condition control-flow-body
+
+when-condition ::= expression | pattern-matching-clause
+
+
++Syntax::Loop
+
+loop-expression ::= "loop" control-flow-body
+
+
++Syntax::While
+
+while-expression ::= "while" condition-clause control-flow-body
+
+
++Syntax::For
+
+for-expression ::= "for" expression [ for-binding ] control-flow-body
+
+for-binding ::= ':' identifier
+
+
++Syntax::Literal
+
+literal ::= integer-literal
+          | fraction-literal
+          | character-literal
+          | string-literal
+          | composite-literal
+
+
++Syntax::Numeric
+
+digits ::= { digit, '_'}...
+
+base-prefix ::= "2" #to "36"
+
+radits ::= { ? radit for base ?, [ '_' ] }...
+
+
++Syntax::IntegerLiteral
+
+integer-literal ::= ( digits | based-integer-literal ) [ integer-suffix ]
+
+based-integer-literal ::= base-prefix '#' ? radits for base ?
+
+integer-suffix ::= ':' integer-suffix-type integer-suffix-size
+
+integer-suffix-type ::= 'I' | 'M'
+
+integer-suffix-size ::= "8" | "16" | "32" | "64" | "128" | "Arch"
+
+
++Syntax::FractionLiteral
+
+fraction-literal ::= decimal-fractional-literal | based-fractional-literal
+
+decimal-fractional-literal ::= digits ( decimal-fractional-part | fraction-suffix )
+
+decimal-fractional-part ::= '.' digits
+
+based-fractional-literal ::= base-prefix '#' ? radits for base ?
+                           ( ? based-fractional-part for base ? | fraction-suffix )
+
+based-fractional-part ::= '.' ? radits for base ?
+
+fraction-suffix ::= ':' 'F' fraction-suffix-size
+
+fraction-suffix-size ::= "32" | "64"
+
+
++Syntax::CharacterLiteral
+
+character-literal ::= "'" character-literal-character "'"
+
+character-literal-character ::= ( character except "'" ) | escaped-character
+
+
++Syntax::StringLiteral
+
+string-literal ::= raw-string | string-template
+
+raw-string ::= "r" raw-string-delimiter '`' { character } '`' raw-string-delimiter
+             ? delimiters must have the same length ?
+
+raw-string-delimiter ::= { '#' }
+
+string-template ::= '"' { string-content } '"'
+
+string-content ::= string-character | string-interpolation
+
+string-character ::= ( character except '"' ) | escaped-character
+
+string-interpolation ::= '{' expression '}'
+
+
++Syntax::CompositeLiteral
+
+composite-literal ::= array-literal | tuple-literal
+
+
++Syntax::ArrayLiteral
+
+array-literal ::= '[' { expression, ',' }... ']'
+
+
++Syntax::TupleLiteral
+
+tuple-literal ::= named-tuple-literal | positional-tuple-literal
+
+named-tuple-literal ::= field-initializer-body
+
+positional-tuple-literal ::= '(' { expression, ',' }... ')'
+
+
++Syntax::Type
+
+type-definition ::= type-parameters "type" identifier [ type-definition-body ]
+
+type-definition-body ::= algebraic-type-body | type-alias-binding
+
+
++Syntax::AlgebraicType
+
+algebraic-type-body ::= '{' ( fields | variants ) '}'
+
+fields ::= { field, ',' }...
+
+field ::= identifier ':' type-identifier
+
+variants ::= { variant, ',' }...
+
+variant ::= identifier [ algebraic-type-body ]
+
+
++Syntax::TypeAlias
+
+type-alias-binding ::= ":=" type-specifier
+
+
++Syntax::TraitDefinition
+
+trait-definition ::= basic-trait-definition | operator-trait-definition
+
+basic-trait-definition ::= type-parameters "trait" identifier basic-trait-definition-body
+
+basic-trait-definition-body ::= '{' associated-type-declarations function-declarations '}'
+
+associated-type-declarations ::= { associated-type-declaration, new-line }...
+
+associated-type-declaration ::= "type" associated-type-identifier [ ':' type-identifier ] [ ":=" type-specifier ]
+
+associated-type-identifier ::= identifier | positional-associated-type-identifier
+
+positional-associated-type-identifier ::= '[' identifier ']'
+
+function-declarations ::= { function-declaration, new-line }...
+
+
++Syntax::Operator
+
+operator-trait-definition ::= unary-operator-definition | binary-operator-definition
+
+precedence-definitions ::= { precedence-definition, new-line }...
+
+precedence-definition ::= ( "before" | "after" | "peer" ) identifier
+
+
++Syntax::UnaryOperator
+
+unary-operator-definition ::= type-parameters ( "prefix" | "postfix" ) identifier unary-operator-definition-body
+
+unary-operator-definition-body ::= '{' precedence-definitions associated-type-declarations fn-declaration '}'
+
+
++Syntax::BinaryOperator
+
+binary-operator-definition ::= type-parameters "infix" identifier binary-operator-definition-body
+
+binary-operator-definition-body ::= '{' associativity-definition
+                                        precedence-definitions
+                                        associated-type-declarations
+                                        fn-declaration '}'
+
+associativity-definition ::= "associative" ( "left" | "right" )
+
+
++Syntax::TraitImplementation
+
+trait-implementation ::= type-parameters type-specifier ':' type-identifier trait-implementation-body
+
+trait-implementation-body ::= '{' associated-type-definitions [ new-line function-definitions ] '}'
+
+associated-type-definitions ::= { associated-type-definition, new-line }...
+
+associated-type-definition ::= "type" identifier ":=" type-specifier
+
+function-definitions ::= { function-definition, new-line }...
+
+
++Syntax::Type
+
+explicit-type ::= ':' identifier
+
+type-specifier ::= [ reference-marker ] [ "dynamic" ] type-identifier
+
+
++Syntax::TypeIdentifier
+
+type-identifier ::= base-type-identifier  | generic-named-type
+
+generic-named-type ::= named-type type-arguments
+
+base-type-identifier ::= named-type | tuple-type | function-type
+
+
++Syntax::NamedType
+
+named-type ::= identifier | type-qualified-type | module-qualified-type
+
+type-qualified-type ::= named-type '.' identifier
+
+module-qualified-type ::= module-identifier '.' named-type
+
+
++Syntax::Tuple
+
+tuple-type ::= named-product-tuple-type | positional-product-tuple-type | sum-tuple-type
+
+named-product-tuple-type ::= '{' fields '}'
+
+positional-product-tuple-type ::= '(' { type-specifier, ',' }... ')'
+
+sum-tuple-type ::= '{' variants '}'
+
+
++Syntax::FunctionType
+
+function-type ::= function-type-parameters lambda-arrow type-specifier
+
+function-type-parameters ::= '|' { type-specifier, ',' }... '|'
+
+reference-marker ::= '~' | '-'
+
+
++Syntax::TypeParameters
+
+type-parameters ::= { (
+                        { positional-type-parameters, new-line }...
+                        { named-type-parameters, new-line }...
+                    ), new-line }...
+
+positional-type-parameters ::= '[' comma-separated-type-parameters ']'
+
+named-type-parameters ::= '<' comma-separated-type-parameters '>'
+
+comma-separated-type-parameters ::= { type-parameter, ',' }...
+
+type-parameter ::= identifier [ ':' type-identifier ] [ ":=" type-specifier ]
+
+
++Syntax::TypeArguments
+
+type-arguments ::= '<' { type-argument, ',' }... '>'
+
+type-argument ::= [ identifier ':' ] type-identifier
+
+
++Syntax::Modifier
+
+visibility-modifier ::= "public" [ module-identifier ]
+
+
++Syntax::Continuation
+
+continuation ::= new-line indent
+
+indent ::= ? an increase in indent from the previous line ?
+
+
++Lexical
+
+identifier ::= non-digit-identifier-character { identifier-character }
+
+non-digit-identifier-character ::= ( 'a' to 'z' ) | ( 'A' to 'Z' )
+
+identifier-character ::= digit | non-digit-identifier-character
+
+operator ::= operator-character { operator-character }
+
+operator-character ::= character except identifier-character
+
+new-line ::= ? new line (\n) ?
+
+character ::= ( 'U+0000' to 'U+D7FF' ) | ( 'U+E000' to 'U+10FFFF' )
+
+escaped-character ::= '\' escapable
+
+escapable ::= 'n' | 'a' | 'b' | 't' | 'f' | 'r' | 'v' | '\'
+            | "'" | '"' | '`' | '?' | '0' | '{' | '}'
+
+digit ::= '0' to '9'
+
+radit ::= ? a radit (or "digit") that is valid for the given base,
+            represented by '0' to '9'
+            and ( ( 'a' to 'z' ) | ( 'A' to 'Z' ) ) ?
+
+non-new-line-character ::= character except new-line
+
+non-digit-character ::= character except digit
