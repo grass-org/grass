@@ -35,7 +35,7 @@ pub enum Token {
     Operator(Operator),
 
     NumericLiteral(NumericLiteral),
-    CharacterLiteral(CharacterLiteral),
+    CharacterLiteral(String),
 }
 
 impl Display for Token {
