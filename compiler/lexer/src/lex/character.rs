@@ -202,7 +202,7 @@ mod tests {
     }
 
     #[test]
-    fn test_lex_character_literal_complex_sequence() {
+    fn complex_sequence() {
         let mut cursor = Cursor::new(r#"'a\\""fhh27\'67'"#);
 
         let expected = Ok(TokenSpan {
@@ -219,7 +219,7 @@ mod tests {
     }
 
     #[test]
-    fn test_multi_byte_utf8_character() {
+    fn multi_byte_utf8_character() {
         let mut cursor = Cursor::new("'✨'");
         let expected = Ok(TokenSpan {
             token: Token::CharacterLiteral(String::from("✨")),
@@ -233,7 +233,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unclosed_literal_returns_invalid() {
+    fn unclosed() {
         let mut cursor = Cursor::new("'a");
         let expected = Ok(TokenSpan {
             token: Token::Invalid,
@@ -247,7 +247,7 @@ mod tests {
     }
 
     #[test]
-    fn test_escaped_backslash_before_closing_quote() {
+    fn escaped_backslash_before_closing_quote() {
         let mut cursor = Cursor::new(r#"'\\'"#);
         let expected = Ok(TokenSpan {
             token: Token::CharacterLiteral(String::from(r#"\\"#)),
