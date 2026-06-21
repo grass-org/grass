@@ -1,4 +1,4 @@
-use crate::{CharacterLiteral, Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan};
+use crate::{Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan};
 
 pub(crate) fn try_lex_character_literal(cursor: &mut Cursor) -> LexResult {
     let start = cursor.peek().ok_or(LexError::EndOfSource)?;
@@ -13,71 +13,42 @@ pub(crate) fn try_lex_character_literal(cursor: &mut Cursor) -> LexResult {
 fn lex_character_literal(cursor: &mut Cursor) -> TokenSpan {
     let span_tracker = SpanTracker::start(cursor);
 
-    let token = lex_literal(cursor)
-        .map(|literal| {
-            let symbol = literal.symbol;
+    cursor.advance();
 
-            if symbol.is_empty() {
-                return Token::Invalid;
-            }
-
-            if literal.escaped {
-                Token::CharacterLiteral(symbol)
-            } else {
-                if symbol.chars().count() == 1 {
-                    Token::CharacterLiteral(symbol)
-                } else {
-                    Token::Invalid 
-                }
-            }
-        })
-        .unwrap_or_default();
-
+    let token = lex_literal(cursor);
     span_tracker.create_token_span(cursor, token)
 }
 
-
-fn lex_literal(cursor: &mut Cursor) -> Option<CharacterLiteral> {
-    let open_quote = cursor.pop()?;
-    if open_quote != '\'' {
-        return None;
+fn lex_literal(cursor: &mut Cursor) -> Token {
+    match lex_symbol(cursor) {
+        None => Token::Invalid,
+        Some(symbol) => Token::CharacterLiteral(symbol),
     }
-
-    let mut symbol_buffer = String::new();
-    let mut has_escapes = false;
-
-    while let Some(ch) = cursor.pop() {
-        if ch == '\\' {
-            if let Some(escaped_char) = cursor.pop() {
-                symbol_buffer.push('\\');
-                symbol_buffer.push(escaped_char);
-                has_escapes = true;
-            } else {
-                return None; 
-            }
-        } else if ch == '\'' {
-            return Some(CharacterLiteral {
-                symbol: symbol_buffer,
-                escaped: has_escapes,
-            });
-        } else {
-            symbol_buffer.push(ch);
-        }
-    }
-
-    None 
 }
 
-fn close_character(cursor: &mut Cursor, mut symbol:String, escaped: bool) -> Option<CharacterLiteral> {
-    let end = cursor.pop()?;
+fn lex_symbol(cursor: &mut Cursor) -> Option<String> {
+    let mut symbol = String::new();
 
-    if end != '\'' {
-        return None;
+    loop {
+        let character = cursor.pop()?;
+
+        if character == '\'' {
+            break;
+        }
+
+        if character != '\\' {
+            symbol.push(character);
+
+            continue;
+        }
+
+        let new_character = cursor.pop()?;
+
+        symbol.push(character);
+        symbol.push(new_character);
     }
 
-    symbol.push('\'');
-
-    Some(CharacterLiteral { symbol, escaped })
+    Some(symbol)
 }
 
 #[cfg(test)]
@@ -89,7 +60,7 @@ mod tests {
     #[test]
     fn unescaped() {
         let mut cursor = Cursor::new("'a'");
-        
+
         let expected = Ok(TokenSpan {
             token: Token::CharacterLiteral(String::from("a")),
             span: Span {
@@ -159,7 +130,7 @@ mod tests {
         let mut cursor = Cursor::new("''");
 
         let expected = Ok(TokenSpan {
-            token: Token::Invalid,
+            token: Token::CharacterLiteral(String::from("")),
             span: Span {
                 start: 0,
                 length: 2,
@@ -172,11 +143,11 @@ mod tests {
     }
 
     #[test]
-    fn too_long() {
+    fn long() {
         let mut cursor = Cursor::new("'a1'");
 
         let expected = Ok(TokenSpan {
-            token: Token::Invalid,
+            token: Token::CharacterLiteral(String::from("a1")),
             span: Span {
                 start: 0,
                 length: 4,
@@ -236,10 +207,10 @@ mod tests {
 
         let expected = Ok(TokenSpan {
             token: Token::CharacterLiteral(String::from(r#"a\\""fhh27\'67"#)),
-            span: Span { 
-                start: 0, 
+            span: Span {
+                start: 0,
                 length: 16,
-            }
+            },
         });
 
         let actual = try_lex_character_literal(&mut cursor);
@@ -252,10 +223,10 @@ mod tests {
         let mut cursor = Cursor::new("'✨'");
         let expected = Ok(TokenSpan {
             token: Token::CharacterLiteral(String::from("✨")),
-            span: Span { 
-                start: 0, 
-                length: 5 
-            }, 
+            span: Span {
+                start: 0,
+                length: 5,
+            },
         });
 
         assert_eq!(expected, try_lex_character_literal(&mut cursor));
@@ -266,9 +237,9 @@ mod tests {
         let mut cursor = Cursor::new("'a");
         let expected = Ok(TokenSpan {
             token: Token::Invalid,
-            span: Span { 
-                start: 0, 
-                length: 2 
+            span: Span {
+                start: 0,
+                length: 2,
             },
         });
 
@@ -280,12 +251,11 @@ mod tests {
         let mut cursor = Cursor::new(r#"'\\'"#);
         let expected = Ok(TokenSpan {
             token: Token::CharacterLiteral(String::from(r#"\\"#)),
-            span: Span { 
-                start: 0, 
-                length: 4 
+            span: Span {
+                start: 0,
+                length: 4,
             },
         });
         assert_eq!(expected, try_lex_character_literal(&mut cursor));
     }
-  
 }

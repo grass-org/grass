@@ -1,8 +1,6 @@
-mod character;
 mod numeric;
 mod operator;
 
-pub use character::*;
 pub use numeric::*;
 pub use operator::*;
 
