@@ -42,10 +42,10 @@ fn lex_symbol(cursor: &mut Cursor) -> Option<String> {
             continue;
         }
 
-        let new_character = cursor.pop()?;
+        let next_character = cursor.pop()?;
 
         symbol.push(character);
-        symbol.push(new_character);
+        symbol.push(next_character);
     }
 
     Some(symbol)
