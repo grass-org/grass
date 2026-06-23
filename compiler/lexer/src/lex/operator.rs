@@ -1,5 +1,5 @@
 use crate::{
-    is_horizontal_whitespace, Cursor, LexError, LexResult, Operator, SpanTracker, Token, TokenSpan,
+    is_horizontal_whitespace, Cursor, LexError, LexResult, Operator, SpanTracker, TokenSpan,
 };
 
 pub(crate) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> LexResult {

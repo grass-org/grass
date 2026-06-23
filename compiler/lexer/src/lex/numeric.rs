@@ -1,4 +1,4 @@
-use crate::{Cursor, LexError, LexResult, NumericLiteral, SpanTracker, Token, TokenSpan};
+use crate::{Cursor, LexError, LexResult, NumericLiteral, SpanTracker, TokenSpan};
 use std::mem::take;
 use std::result;
 

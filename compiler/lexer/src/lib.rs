@@ -1,10 +1,10 @@
 mod cursor;
 mod error;
 mod fallback;
+mod lex;
 mod span_tracker;
 mod token;
 mod whitespace;
-mod lex;
 
 pub use token::*;
 

@@ -32,7 +32,7 @@ impl Operator {
             symbol: String::from("-"),
         }
     }
-    
+
     pub fn add() -> Self {
         Self {
             symbol: String::from("+"),

@@ -1,5 +1,5 @@
 use crate::{
-    is_newline, is_whitespace, Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan,
+    Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan, is_newline, is_whitespace,
 };
 
 pub(crate) fn try_lex_new_line(cursor: &mut Cursor) -> LexResult {

@@ -149,7 +149,10 @@ impl Display for MaxIntegerLiteralOverflowError {
             write!(f, "{base}#")?;
         }
 
-        write!(f, "{radits} overflowed; integer literals can only fit up to u128::MAX")
+        write!(
+            f,
+            "{radits} overflowed; integer literals can only fit up to u128::MAX"
+        )
     }
 }
 

@@ -44,7 +44,7 @@ mod tests {
             span: Span {
                 start: 0,
                 length: 1,
-            }
+            },
         });
 
         let actual = try_lex_single_character(&mut cursor);
@@ -61,7 +61,7 @@ mod tests {
             span: Span {
                 start: 0,
                 length: 1,
-            }
+            },
         });
 
         let actual = try_lex_single_character(&mut cursor);
