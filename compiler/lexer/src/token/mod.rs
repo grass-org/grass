@@ -48,6 +48,7 @@ pub enum Token {
 impl Display for Token {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
+            Token::Invalid => write!(f, "{{invalid_token}}"),
             Token::NewLine => write!(f, "\\n"),
             Token::OpenParenthesis => write!(f, "("),
             Token::CloseParenthesis => write!(f, ")"),
@@ -60,7 +61,6 @@ impl Display for Token {
             Token::Operator(value) => value.fmt(f),
             Token::NumericLiteral(value) => value.fmt(f),
             Token::CharacterLiteral(value) => value.fmt(f),
-            Token::Invalid => write!(f, "{{invalid_token}}"),
         }
     }
 }
