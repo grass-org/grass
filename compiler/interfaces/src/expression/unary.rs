@@ -5,8 +5,8 @@ use crate::{Expression, ExpressionSpan, OperatorSpan, Span};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct UnaryExpression {
-    pub operator: OperatorSpan,
-    pub operand: Box<ExpressionSpan>,
+    operator: OperatorSpan,
+    operand: Box<ExpressionSpan>,
 }
 
 impl UnaryExpression {
@@ -17,15 +17,28 @@ impl UnaryExpression {
         }
     }
 
+    pub const fn operator(&self) -> &OperatorSpan {
+        &self.operator
+    }
+
+    pub fn operand(&self) -> &ExpressionSpan {
+        &self.operand
+    }
+
     pub fn span(&self) -> Span {
-        let operator_span = self.operand.span;
-        let operand_span = self.operand.span;
+        let operator_span = self.operand().span;
+        let operand_span = self.operand().span;
 
         let start = min(operator_span.start, operand_span.start);
         let end = max(operator_span.end(), operand_span.end());
         let length = end - start;
 
         Span { start, length }
+    }
+
+    pub fn into_values(self) -> (OperatorSpan, ExpressionSpan) {
+        let UnaryExpression { operator, operand } = self;
+        (operator, *operand)
     }
 }
 

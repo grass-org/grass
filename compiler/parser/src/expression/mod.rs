@@ -57,7 +57,8 @@ where
             };
 
             let ExpressionRight { operator, operand } = right;
-            let binary_expression = BinaryExpression::new(operator, expression, operand);
+            let operands = [expression, operand];
+            let binary_expression = BinaryExpression::new(operator, operands);
             expression = binary_expression.into();
         }
 

@@ -3,33 +3,43 @@ use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct BinaryExpression {
-    pub operator: OperatorSpan,
-    pub operand_0: Box<ExpressionSpan>,
-    pub operand_1: Box<ExpressionSpan>,
+    operator: OperatorSpan,
+    operands: Box<[ExpressionSpan; 2]>,
 }
 
 impl BinaryExpression {
-    pub fn new(
-        operator: OperatorSpan,
-        operand_0: ExpressionSpan,
-        operand_1: ExpressionSpan,
-    ) -> Self {
+    pub fn new(operator: OperatorSpan, operands: [ExpressionSpan; 2]) -> Self {
         Self {
             operator,
-            operand_0: Box::new(operand_0),
-            operand_1: Box::new(operand_1),
+            operands: Box::new(operands),
         }
     }
 
-    pub const fn span(&self) -> Span {
-        let left_span = self.operand_0.span;
-        let right_span = self.operand_1.span;
+    pub const fn operator(&self) -> &OperatorSpan {
+        &self.operator
+    }
 
-        let start = left_span.start;
-        let end = right_span.end();
+    pub fn operands(&self) -> &[ExpressionSpan; 2] {
+        &self.operands
+    }
+
+    pub fn span(&self) -> Span {
+        let operands = self.operands();
+
+        let operand_0_span = operands[0].span;
+        let operand_1_span = operands[1].span;
+
+        let start = operand_0_span.start;
+        let end = operand_1_span.end();
         let length = end - start;
 
         Span { start, length }
+    }
+
+    pub fn into_values(self) -> (OperatorSpan, ExpressionSpan, ExpressionSpan) {
+        let BinaryExpression { operator, operands } = self;
+        let [operand0, operand1] = *operands;
+        (operator, operand0, operand1)
     }
 }
 
@@ -49,12 +59,9 @@ impl From<BinaryExpression> for ExpressionSpan {
 
 impl Display for BinaryExpression {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let BinaryExpression {
-            operator,
-            operand_0,
-            operand_1,
-        } = self;
+        let BinaryExpression { operator, operands } = self;
+        let [operand0, operand1] = &**operands;
 
-        write!(f, "{operator}({operand_0}, {operand_1})")
+        write!(f, "{operator}({operand0}, {operand1})")
     }
 }
