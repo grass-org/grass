@@ -29,7 +29,8 @@ fn lex_new_line(cursor: &mut Cursor) -> TokenSpan {
         cursor.advance();
     }
 
-    span_tracker.create_token_span(cursor, Token::NewLine)
+    let span = span_tracker.end(cursor);
+    TokenSpan::new(Token::NewLine, span)
 }
 
 #[cfg(test)]

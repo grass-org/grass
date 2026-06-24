@@ -13,6 +13,15 @@ pub struct TokenSpan {
     pub span: Span,
 }
 
+impl TokenSpan {
+    pub fn new(token: impl Into<Token>, span: Span) -> Self {
+        Self {
+            token: token.into(),
+            span,
+        }
+    }
+}
+
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug, Default)]
 pub enum Token {
     #[default]

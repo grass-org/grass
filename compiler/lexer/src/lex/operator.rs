@@ -1,5 +1,5 @@
 use crate::{
-    is_horizontal_whitespace, Cursor, LexError, LexResult, Operator, SpanTracker, TokenSpan,
+    Cursor, LexError, LexResult, Operator, SpanTracker, TokenSpan, is_horizontal_whitespace,
 };
 
 pub(crate) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> LexResult {
@@ -24,7 +24,8 @@ fn lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> TokenSpan 
         has_trailing_whitespace,
     };
 
-    span_tracker.create_token_span(cursor, operator)
+    let span = span_tracker.end(cursor);
+    TokenSpan::new(operator, span)
 }
 
 fn lex_symbol(cursor: &mut Cursor) -> String {

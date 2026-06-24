@@ -1,4 +1,4 @@
-use crate::{Cursor, LexError, LexResult, SpanTracker, Token};
+use crate::{Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan};
 
 pub(crate) fn try_lex_single_character(cursor: &mut Cursor) -> LexResult {
     let character = cursor.peek().ok_or(LexError::EndOfSource)?;
@@ -8,7 +8,8 @@ pub(crate) fn try_lex_single_character(cursor: &mut Cursor) -> LexResult {
     let span_tracker = SpanTracker::start(cursor);
     cursor.advance();
 
-    Ok(span_tracker.create_token_span(cursor, token))
+    let span = span_tracker.end(cursor);
+    Ok(TokenSpan::new(token, span))
 }
 
 const fn lex_single_character(character: char) -> Option<Token> {

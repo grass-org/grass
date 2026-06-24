@@ -1,4 +1,4 @@
-use crate::{Cursor, Token, TokenSpan};
+use crate::Cursor;
 use interfaces::Span;
 
 #[derive(Debug)]
@@ -13,13 +13,7 @@ impl SpanTracker {
         }
     }
 
-    pub fn create_token_span(self, cursor: &Cursor, token: impl Into<Token>) -> TokenSpan {
-        let token = token.into();
-        let span = self.end(cursor);
-        TokenSpan { token, span }
-    }
-
-    const fn end(self, cursor: &Cursor) -> Span {
+    pub const fn end(self, cursor: &Cursor) -> Span {
         let end = cursor.index();
 
         let start = self.start;
@@ -32,20 +26,8 @@ impl SpanTracker {
 #[cfg(test)]
 mod tests {
     use super::SpanTracker;
-    use crate::{Cursor, Token};
+    use crate::Cursor;
     use interfaces::Span;
-
-    #[test]
-    fn matches_token() {
-        let cursor = Cursor::new("1234567");
-        let span_tracker = SpanTracker::start(&cursor);
-        let dummy_token = Token::Invalid;
-
-        let expected = dummy_token.clone();
-        let actual = span_tracker.create_token_span(&cursor, dummy_token).token;
-
-        assert_eq!(expected, actual);
-    }
 
     #[test]
     fn did_not_move() {
@@ -57,7 +39,7 @@ mod tests {
             length: 0,
         };
 
-        let actual = span_tracker.create_token_span(&cursor, Token::Invalid).span;
+        let actual = span_tracker.end(&cursor);
 
         assert_eq!(expected, actual);
     }
@@ -74,7 +56,7 @@ mod tests {
             length: 1,
         };
 
-        let actual = span_tracker.create_token_span(&cursor, Token::Invalid).span;
+        let actual = span_tracker.end(&cursor);
 
         assert_eq!(expected, actual);
     }
@@ -93,7 +75,7 @@ mod tests {
             length: 3,
         };
 
-        let actual = span_tracker.create_token_span(&cursor, Token::Invalid).span;
+        let actual = span_tracker.end(&cursor);
 
         assert_eq!(expected, actual);
     }
@@ -115,7 +97,7 @@ mod tests {
             length: 2,
         };
 
-        let actual = span_tracker.create_token_span(&cursor, Token::Invalid).span;
+        let actual = span_tracker.end(&cursor);
 
         assert_eq!(expected, actual);
     }
@@ -138,7 +120,7 @@ mod tests {
             length: 3,
         };
 
-        let actual = span_tracker.create_token_span(&cursor, Token::Invalid).span;
+        let actual = span_tracker.end(&cursor);
 
         assert_eq!(expected, actual);
     }

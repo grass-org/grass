@@ -16,7 +16,8 @@ fn lex_character_literal(cursor: &mut Cursor) -> TokenSpan {
     cursor.advance();
 
     let token = lex_literal(cursor);
-    span_tracker.create_token_span(cursor, token)
+    let span = span_tracker.end(cursor);
+    TokenSpan::new(token, span)
 }
 
 fn lex_literal(cursor: &mut Cursor) -> Token {

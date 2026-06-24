@@ -14,8 +14,10 @@ pub(crate) fn try_lex_numeric_literal(cursor: &mut Cursor) -> LexResult {
 
 fn lex_numeric_literal(cursor: &mut Cursor) -> TokenSpan {
     let span_tracker = SpanTracker::start(cursor);
-    let literal = lex_literal(cursor);
-    span_tracker.create_token_span(cursor, literal)
+
+    let token = lex_literal(cursor);
+    let span = span_tracker.end(cursor);
+    TokenSpan::new(token, span)
 }
 
 fn lex_literal(cursor: &mut Cursor) -> NumericLiteral {
