@@ -1,24 +1,33 @@
-use crate::{NumericLiteralError, ParseExpressionError};
+use crate::{NumericLiteralError, ParseExpressionError, UnexpectedSyntaxError};
 use std::error::Error;
 use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub enum AtomicExpressionError {
+    UnexpectedSyntax(UnexpectedSyntaxError),
     NumericLiteralError(NumericLiteralError),
-    UnknownError, // TODO: This shouldn't be a thing
+}
+
+impl From<UnexpectedSyntaxError> for AtomicExpressionError {
+    fn from(value: UnexpectedSyntaxError) -> Self {
+        Self::UnexpectedSyntax(value)
+    }
 }
 
 impl From<AtomicExpressionError> for ParseExpressionError {
     fn from(value: AtomicExpressionError) -> Self {
-        Self::AtomicExpressionError(value)
+        match value {
+            AtomicExpressionError::UnexpectedSyntax(error) => Self::UnexpectedSyntax(error),
+            AtomicExpressionError::NumericLiteralError(error) => Self::NumericLiteralError(error),
+        }
     }
 }
 
 impl Display for AtomicExpressionError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
+            AtomicExpressionError::UnexpectedSyntax(error) => error.fmt(f),
             AtomicExpressionError::NumericLiteralError(error) => error.fmt(f),
-            AtomicExpressionError::UnknownError => write!(f, "unknown atomic expression error"),
         }
     }
 }

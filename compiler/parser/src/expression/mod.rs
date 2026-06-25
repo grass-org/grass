@@ -76,7 +76,7 @@ where
             return self.parse_prefix_expression(operator.symbol, span);
         }
 
-        let expression = parse_atomic_expression(token)?;
+        let expression = parse_atomic_expression(TokenSpan { token, span })?;
         let expression = expression.into();
         Ok(ExpressionSpan { expression, span })
     }
@@ -90,8 +90,11 @@ where
         } = self.next_token()?;
 
         if next_token != Token::CloseParenthesis {
-            let error = Error::unexpected_syntax(SyntaxKind::CloseParenthesis, next_span);
-            return Err(error);
+            Err(UnexpectedSyntaxError {
+                expected: SyntaxKind::CloseParenthesis,
+                actual: next_token,
+                span: next_span,
+            })?;
         }
 
         Ok(left)

@@ -1,5 +1,6 @@
-use crate::{AtomicExpressionError, UndefinedBindingPowerError};
-use interfaces::{Operator, Span, SyntaxKind};
+use crate::{NumericLiteralError, UndefinedBindingPowerError};
+use interfaces::{Span, SyntaxKind};
+use lexer::Token;
 use std::error::Error;
 use std::fmt::{self, Display, Formatter};
 
@@ -8,17 +9,7 @@ pub enum ParseExpressionError {
     NoMoreTokens,
     UnexpectedSyntax(UnexpectedSyntaxError),
     UndefinedBindingPower(UndefinedBindingPowerError),
-    AtomicExpressionError(AtomicExpressionError),
-}
-
-impl ParseExpressionError {
-    pub const fn unexpected_syntax(expected: SyntaxKind, span: Span) -> Self {
-        Self::UnexpectedSyntax(UnexpectedSyntaxError { expected, span })
-    }
-
-    pub const fn undefined_binding_power(operator: Operator) -> Self {
-        Self::UndefinedBindingPower(UndefinedBindingPowerError { operator })
-    }
+    NumericLiteralError(NumericLiteralError),
 }
 
 impl Error for ParseExpressionError {}
@@ -29,14 +20,15 @@ impl Display for ParseExpressionError {
             Self::NoMoreTokens => write!(f, "no more tokens to parse"),
             Self::UnexpectedSyntax(error) => error.fmt(f),
             Self::UndefinedBindingPower(error) => error.fmt(f),
-            Self::AtomicExpressionError(error) => error.fmt(f),
+            Self::NumericLiteralError(error) => error.fmt(f),
         }
     }
 }
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub struct UnexpectedSyntaxError {
     pub expected: SyntaxKind,
+    pub actual: Token,
     pub span: Span,
 }
 
@@ -48,10 +40,15 @@ impl From<UnexpectedSyntaxError> for ParseExpressionError {
 
 impl Display for UnexpectedSyntaxError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let UnexpectedSyntaxError {
+            expected,
+            actual,
+            span,
+        } = self;
+
         write!(
             f,
-            "unexpected syntax at {}; expected: {:?}",
-            self.span, self.expected
+            "unexpected syntax at {span}; expected: {expected:?}; actual: {actual:?}",
         )
     }
 }

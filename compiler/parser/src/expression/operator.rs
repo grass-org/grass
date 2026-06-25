@@ -8,6 +8,7 @@ pub(super) fn parse_operator(token: TokenSpan) -> Result<OperatorSpan, Unexpecte
     let Token::Operator(operator) = token else {
         let error = UnexpectedSyntaxError {
             expected: SyntaxKind::Operator,
+            actual: token,
             span,
         };
 
