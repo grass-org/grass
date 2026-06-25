@@ -1,12 +1,10 @@
-use crate::{
-    Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan, is_newline, is_whitespace,
-};
+use crate::{Cursor, Error, Result, SpanTracker, Token, TokenSpan, is_newline, is_whitespace};
 
-pub(crate) fn try_lex_new_line(cursor: &mut Cursor) -> LexResult {
-    let start = cursor.peek().ok_or(LexError::EndOfSource)?;
+pub(crate) fn try_lex_new_line(cursor: &mut Cursor) -> Result {
+    let start = cursor.peek().ok_or(Error::EndOfSource)?;
 
     if !is_newline(start) {
-        return Err(LexError::Skipped);
+        return Err(Error::Skipped);
     }
 
     Ok(lex_new_line(cursor))
@@ -36,7 +34,7 @@ fn lex_new_line(cursor: &mut Cursor) -> TokenSpan {
 #[cfg(test)]
 mod tests {
     use super::try_lex_new_line;
-    use crate::{Cursor, LexError, Token, TokenSpan};
+    use crate::{Cursor, Error, Token, TokenSpan};
     use interfaces::Span;
 
     #[test]
@@ -94,7 +92,7 @@ mod tests {
     fn delayed_start() {
         let mut cursor = Cursor::new(" \n        ");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_new_line(&mut cursor);
 
         assert_eq!(expected, actual);
@@ -104,7 +102,7 @@ mod tests {
     fn invalid_start() {
         let mut cursor = Cursor::new("1\n        ");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_new_line(&mut cursor);
 
         assert_eq!(expected, actual);
@@ -126,7 +124,7 @@ mod tests {
     fn end_of_source() {
         let mut cursor = Cursor::new("");
 
-        let expected = Err(LexError::EndOfSource);
+        let expected = Err(Error::EndOfSource);
         let actual = try_lex_new_line(&mut cursor);
 
         assert_eq!(expected, actual);

@@ -1,11 +1,11 @@
-use crate::{LexError, LexResult};
+use crate::{Error, Result};
 
 pub(super) trait Fallback {
-    fn fallback(self, function: impl FnOnce() -> LexResult) -> LexResult;
+    fn fallback(self, function: impl FnOnce() -> Result) -> Result;
 }
 
-impl Fallback for LexResult {
-    fn fallback(self, function: impl FnOnce() -> LexResult) -> LexResult {
+impl Fallback for Result {
+    fn fallback(self, function: impl FnOnce() -> Result) -> Result {
         match self {
             ok @ Ok(_) => ok,
             Err(error) => fallback(error, function),
@@ -13,17 +13,17 @@ impl Fallback for LexResult {
     }
 }
 
-fn fallback(error: LexError, function: impl FnOnce() -> LexResult) -> LexResult {
+fn fallback(error: Error, function: impl FnOnce() -> Result) -> Result {
     match error {
-        LexError::Skipped => function(),
-        error @ LexError::EndOfSource => Err(error),
+        Error::Skipped => function(),
+        error @ Error::EndOfSource => Err(error),
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::Fallback;
-    use crate::{LexError, Token, TokenSpan};
+    use crate::{Error, Token, TokenSpan};
     use interfaces::Span;
 
     #[test]
@@ -61,7 +61,7 @@ mod tests {
         });
 
         let expected = secondary.clone();
-        let actual = Err(LexError::Skipped).fallback(|| secondary);
+        let actual = Err(Error::Skipped).fallback(|| secondary);
 
         assert_eq!(expected, actual);
     }
@@ -76,8 +76,8 @@ mod tests {
             },
         });
 
-        let expected = Err(LexError::EndOfSource);
-        let actual = Err(LexError::EndOfSource).fallback(|| secondary);
+        let expected = Err(Error::EndOfSource);
+        let actual = Err(Error::EndOfSource).fallback(|| secondary);
 
         assert_eq!(expected, actual);
     }
@@ -94,7 +94,7 @@ mod tests {
 
         let mut called_fallback = false;
 
-        _ = Err(LexError::EndOfSource).fallback(|| {
+        _ = Err(Error::EndOfSource).fallback(|| {
             called_fallback = true;
             secondary
         });

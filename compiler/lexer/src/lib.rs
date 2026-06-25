@@ -15,9 +15,10 @@ use lex::*;
 use span_tracker::*;
 use whitespace::*;
 
-use std::iter;
+use std::{iter, result};
 
-type LexResult<T = TokenSpan> = Result<T, LexError>;
+type Error = LexError;
+type Result<T = TokenSpan> = result::Result<T, Error>;
 
 pub fn lex(source: &str) -> impl Iterator<Item = TokenSpan> {
     let mut cursor = Cursor::new(source);

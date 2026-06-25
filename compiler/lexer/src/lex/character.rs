@@ -1,10 +1,10 @@
-use crate::{Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan};
+use crate::{Cursor, Error, Result, SpanTracker, Token, TokenSpan};
 
-pub(crate) fn try_lex_character_literal(cursor: &mut Cursor) -> LexResult {
-    let start = cursor.peek().ok_or(LexError::EndOfSource)?;
+pub(crate) fn try_lex_character_literal(cursor: &mut Cursor) -> Result {
+    let start = cursor.peek().ok_or(Error::EndOfSource)?;
 
     if start != '\'' {
-        return Err(LexError::Skipped);
+        return Err(Error::Skipped);
     }
 
     Ok(lex_character_literal(cursor))
@@ -55,7 +55,7 @@ fn lex_symbol(cursor: &mut Cursor) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::try_lex_character_literal;
-    use crate::{Cursor, LexError, Token, TokenSpan};
+    use crate::{Cursor, Error, Token, TokenSpan};
     use interfaces::Span;
 
     #[test]
@@ -164,7 +164,7 @@ mod tests {
     fn delayed_start() {
         let mut cursor = Cursor::new(" 'a'");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_character_literal(&mut cursor);
 
         assert_eq!(expected, actual);
@@ -174,7 +174,7 @@ mod tests {
     fn invalid_start() {
         let mut cursor = Cursor::new("pizza");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_character_literal(&mut cursor);
 
         assert_eq!(expected, actual);
@@ -196,7 +196,7 @@ mod tests {
     fn end_of_source() {
         let mut cursor = Cursor::new("");
 
-        let expected = Err(LexError::EndOfSource);
+        let expected = Err(Error::EndOfSource);
         let actual = try_lex_character_literal(&mut cursor);
 
         assert_eq!(expected, actual);

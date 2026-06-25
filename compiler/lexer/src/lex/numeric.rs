@@ -1,12 +1,14 @@
-use crate::{Cursor, LexError, LexResult, NumericLiteral, SpanTracker, TokenSpan};
+use crate::{Cursor, Error, NumericLiteral, SpanTracker, TokenSpan};
 use std::mem::take;
 use std::result;
 
-pub(crate) fn try_lex_numeric_literal(cursor: &mut Cursor) -> LexResult {
-    let start = cursor.peek().ok_or(LexError::EndOfSource)?;
+type Result<T = (), E = ()> = result::Result<T, E>;
+
+pub(crate) fn try_lex_numeric_literal(cursor: &mut Cursor) -> Result<TokenSpan, Error> {
+    let start = cursor.peek().ok_or(Error::EndOfSource)?;
 
     if !start.is_ascii_digit() {
-        return Err(LexError::Skipped);
+        return Err(Error::Skipped);
     }
 
     Ok(lex_numeric_literal(cursor))
@@ -37,10 +39,6 @@ fn lex_literal(cursor: &mut Cursor) -> NumericLiteral {
 
     builder.build()
 }
-
-type Result = result::Result<(), ()>;
-const OK: Result = Ok(());
-const ERR: Result = Err(());
 
 struct NumericLiteralBuilder {
     base: Option<String>,
@@ -73,38 +71,38 @@ impl NumericLiteralBuilder {
         }
 
         if !character.is_ascii_alphanumeric() {
-            return ERR;
+            return Err(());
         }
 
         self.push_character(character);
-        OK
+        Ok(())
     }
 
     fn move_symbol_to_base(&mut self) -> Result {
         if self.base.is_some() || self.fractional_radits.is_some() || self.kind.is_some() {
-            return ERR;
+            return Err(());
         }
 
         self.base = Some(take(&mut self.integral_radits));
-        OK
+        Ok(())
     }
 
     fn start_fractional(&mut self) -> Result {
         if self.fractional_radits.is_some() || self.kind.is_some() {
-            return ERR;
+            return Err(());
         }
 
         self.fractional_radits = Some(String::new());
-        OK
+        Ok(())
     }
 
     fn start_kind(&mut self) -> Result {
         if self.kind.is_some() {
-            return ERR;
+            return Err(());
         }
 
         self.kind = Some(String::new());
-        OK
+        Ok(())
     }
 
     fn push_character(&mut self, character: char) {
@@ -134,7 +132,7 @@ impl NumericLiteralBuilder {
 #[cfg(test)]
 mod tests {
     use super::try_lex_numeric_literal;
-    use crate::{Cursor, LexError, NumericLiteral, Token, TokenSpan};
+    use crate::{Cursor, Error, NumericLiteral, Token, TokenSpan};
     use interfaces::Span;
 
     #[test]
@@ -339,7 +337,7 @@ mod tests {
     fn delayed_start() {
         let mut cursor = Cursor::new(" 2#369.67:F64 35");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_numeric_literal(&mut cursor);
 
         assert_eq!(expected, actual);
@@ -349,7 +347,7 @@ mod tests {
     fn invalid_start() {
         let mut cursor = Cursor::new("H2#369.67:F64 35");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_numeric_literal(&mut cursor);
 
         assert_eq!(expected, actual);
@@ -371,7 +369,7 @@ mod tests {
     fn end_of_source() {
         let mut cursor = Cursor::new("");
 
-        let expected = Err(LexError::EndOfSource);
+        let expected = Err(Error::EndOfSource);
         let actual = try_lex_numeric_literal(&mut cursor);
 
         assert_eq!(expected, actual);

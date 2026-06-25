@@ -1,12 +1,10 @@
-use crate::{
-    Cursor, LexError, LexResult, Operator, SpanTracker, TokenSpan, is_horizontal_whitespace,
-};
+use crate::{Cursor, Error, Operator, Result, SpanTracker, TokenSpan, is_horizontal_whitespace};
 
-pub(crate) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> LexResult {
-    let start = cursor.peek().ok_or(LexError::EndOfSource)?;
+pub(crate) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> Result {
+    let start = cursor.peek().ok_or(Error::EndOfSource)?;
 
     if !is_operator_character(start) {
-        return Err(LexError::Skipped);
+        return Err(Error::Skipped);
     }
 
     Ok(lex_operator(cursor, has_leading_whitespace))
@@ -65,7 +63,7 @@ fn has_trailing_whitespace(cursor: &mut Cursor) -> bool {
 #[cfg(test)]
 mod tests {
     use super::try_lex_operator;
-    use crate::{Cursor, LexError, Operator, Token, TokenSpan};
+    use crate::{Cursor, Error, Operator, Token, TokenSpan};
     use interfaces::Span;
 
     #[test]
@@ -198,7 +196,7 @@ mod tests {
     fn delayed_start() {
         let mut cursor = Cursor::new(" +");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_operator(&mut cursor, false);
 
         assert_eq!(expected, actual);
@@ -208,7 +206,7 @@ mod tests {
     fn invalid_start() {
         let mut cursor = Cursor::new("6+");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_operator(&mut cursor, false);
 
         assert_eq!(expected, actual);
@@ -230,7 +228,7 @@ mod tests {
     fn end_of_source() {
         let mut cursor = Cursor::new("");
 
-        let expected = Err(LexError::EndOfSource);
+        let expected = Err(Error::EndOfSource);
         let actual = try_lex_operator(&mut cursor, false);
 
         assert_eq!(expected, actual);

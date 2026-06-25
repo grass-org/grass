@@ -1,9 +1,9 @@
-use crate::{Cursor, LexError, LexResult, SpanTracker, Token, TokenSpan};
+use crate::{Cursor, Error, Result, SpanTracker, Token, TokenSpan};
 
-pub(crate) fn try_lex_single_character(cursor: &mut Cursor) -> LexResult {
-    let character = cursor.peek().ok_or(LexError::EndOfSource)?;
+pub(crate) fn try_lex_single_character(cursor: &mut Cursor) -> Result {
+    let character = cursor.peek().ok_or(Error::EndOfSource)?;
 
-    let token = lex_single_character(character).ok_or(LexError::Skipped)?;
+    let token = lex_single_character(character).ok_or(Error::Skipped)?;
 
     let span_tracker = SpanTracker::start(cursor);
     cursor.advance();
@@ -33,7 +33,7 @@ const fn lex_single_character(character: char) -> Option<Token> {
 #[cfg(test)]
 mod tests {
     use super::try_lex_single_character;
-    use crate::{Cursor, LexError, Token, TokenSpan};
+    use crate::{Cursor, Error, Token, TokenSpan};
     use interfaces::Span;
 
     #[test]
@@ -74,7 +74,7 @@ mod tests {
     fn delayed_start() {
         let mut cursor = Cursor::new(" {");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_single_character(&mut cursor);
 
         assert_eq!(expected, actual);
@@ -84,7 +84,7 @@ mod tests {
     fn invalid_start() {
         let mut cursor = Cursor::new("A{");
 
-        let expected = Err(LexError::Skipped);
+        let expected = Err(Error::Skipped);
         let actual = try_lex_single_character(&mut cursor);
 
         assert_eq!(expected, actual);
@@ -106,7 +106,7 @@ mod tests {
     fn end_of_source() {
         let mut cursor = Cursor::new("");
 
-        let expected = Err(LexError::EndOfSource);
+        let expected = Err(Error::EndOfSource);
         let actual = try_lex_single_character(&mut cursor);
 
         assert_eq!(expected, actual);
