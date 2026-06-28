@@ -1,36 +1,33 @@
 use super::{Error, ExpressionParser, Result};
 use crate::UnexpectedSyntaxError;
-use interfaces::{Operator, OperatorSpan, Span};
+use interfaces::{Operator, OperatorSpan, Span, SyntaxKind};
 use lexer::{Token, TokenSpan};
-
-type OperatorToken = lexer::Operator;
 
 impl<Iter> ExpressionParser<Iter>
 where
     Iter: Iterator<Item = TokenSpan>,
 {
-    pub(super) fn next_if_operator(&mut self) -> Result<OperatorSpan> {
-        let (operator, span) = self
-            .tokens
-            .next_if_map(if_operator_map)
-            .ok_or(Error::NoMoreTokens)?;
+    pub(super) fn peek_operator(&mut self) -> Result<OperatorSpan> {
+        let Some(token) = self.tokens.peek() else {
+            return Err(Error::NoMoreTokens);
+        };
 
-        Ok(parse_operator(operator, span)?)
+        // TODO: this is a String clone!!
+        Ok(parse_operator(token.clone())?)
     }
 }
 
-fn if_operator_map(token_span: TokenSpan) -> Result<(OperatorToken, Span), TokenSpan> {
-    let Token::Operator(operator) = token_span.token else {
-        return Err(token_span);
+fn parse_operator(token: TokenSpan) -> Result<OperatorSpan, UnexpectedSyntaxError> {
+    let TokenSpan { token, span } = token;
+
+    let Token::Operator(operator) = token else {
+        return Err(UnexpectedSyntaxError {
+            expected: SyntaxKind::Operator,
+            actual: token,
+            span,
+        });
     };
 
-    Ok((operator, token_span.span))
-}
-
-fn parse_operator(
-    operator: OperatorToken,
-    span: Span,
-) -> Result<OperatorSpan, UnexpectedSyntaxError> {
     let operator = Operator {
         symbol: operator.symbol,
     };

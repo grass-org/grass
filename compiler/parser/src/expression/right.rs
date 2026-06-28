@@ -10,7 +10,7 @@ where
         &mut self,
         min_binding_power: u32,
     ) -> Result<(OperatorSpan, ExpressionSpan)> {
-        let operator_span = self.next_if_operator()?;
+        let operator_span = self.peek_operator()?;
 
         let binding_power = self
             .binding_powers
