@@ -1,13 +1,13 @@
 use super::{Error, ExpressionParser, Result};
-use interfaces::{ExpressionSpan, Operator, OperatorSpan};
-use lexer::{Token, TokenSpan};
+use interfaces::{ExpressionSpan, Operator, OperatorSpan, Spanned};
+use lexer::Token;
 use std::iter::Peekable;
 
 type OperatorToken = lexer::Operator;
 
 impl<Iter> ExpressionParser<Iter>
 where
-    Iter: Iterator<Item = TokenSpan>,
+    Iter: Iterator<Item = Spanned<Token>>,
 {
     pub(super) fn parse_right(
         &mut self,
@@ -30,21 +30,21 @@ where
 }
 
 fn peek_operator_token(
-    tokens: &mut Peekable<impl Iterator<Item = TokenSpan>>,
+    tokens: &mut Peekable<impl Iterator<Item = Spanned<Token>>>,
 ) -> Option<&OperatorToken> {
-    let TokenSpan { token, .. } = tokens.peek()?;
+    let Spanned { content, .. } = tokens.peek()?;
 
-    let Token::Operator(operator) = token else {
+    let Token::Operator(operator) = content else {
         return None;
     };
 
     Some(operator)
 }
 
-fn next_infix_operator(mut tokens: impl Iterator<Item = TokenSpan>) -> Option<OperatorSpan> {
-    let TokenSpan { token, span } = tokens.next()?;
+fn next_infix_operator(mut tokens: impl Iterator<Item = Spanned<Token>>) -> Option<OperatorSpan> {
+    let Spanned { content, span } = tokens.next()?;
 
-    let Token::Operator(OperatorToken { symbol, .. }) = token else {
+    let Token::Operator(OperatorToken { symbol, .. }) = content else {
         return None;
     };
 

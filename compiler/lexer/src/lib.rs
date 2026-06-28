@@ -16,17 +16,18 @@ use span_tracker::*;
 use whitespace::*;
 
 use std::{iter, result};
+use interfaces::Spanned;
 
 type Error = LexError;
-type Result<T = TokenSpan> = result::Result<T, Error>;
+type Result<T = Spanned<Token>> = result::Result<T, Error>;
 
-pub fn lex(source: &str) -> impl Iterator<Item = TokenSpan> {
+pub fn lex(source: &str) -> impl Iterator<Item = Spanned<Token>> {
     let mut cursor = Cursor::new(source);
 
     iter::from_fn(move || next_token(&mut cursor))
 }
 
-fn next_token(cursor: &mut Cursor) -> Option<TokenSpan> {
+fn next_token(cursor: &mut Cursor) -> Option<Spanned<Token>> {
     let has_leading_whitespace = skip_whitespaces(cursor) == SkipWhitespaceResult::Skipped;
 
     try_lex_new_line(cursor)

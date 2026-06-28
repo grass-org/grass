@@ -1,4 +1,5 @@
-use crate::{Cursor, Error, Result, SpanTracker, Token, TokenSpan, is_newline, is_whitespace};
+use interfaces::Spanned;
+use crate::{Cursor, Error, Result, SpanTracker, Token, is_newline, is_whitespace};
 
 pub(crate) fn try_lex_new_line(cursor: &mut Cursor) -> Result {
     let start = cursor.peek().ok_or(Error::EndOfSource)?;
@@ -10,7 +11,7 @@ pub(crate) fn try_lex_new_line(cursor: &mut Cursor) -> Result {
     Ok(lex_new_line(cursor))
 }
 
-fn lex_new_line(cursor: &mut Cursor) -> TokenSpan {
+fn lex_new_line(cursor: &mut Cursor) -> Spanned<Token> {
     let span_tracker = SpanTracker::start(cursor);
     cursor.advance();
 
@@ -28,21 +29,21 @@ fn lex_new_line(cursor: &mut Cursor) -> TokenSpan {
     }
 
     let span = span_tracker.end(cursor);
-    TokenSpan::new(Token::NewLine, span)
+    Spanned::new(Token::NewLine, span)
 }
 
 #[cfg(test)]
 mod tests {
     use super::try_lex_new_line;
-    use crate::{Cursor, Error, Token, TokenSpan};
-    use interfaces::Span;
+    use crate::{Cursor, Error, Token};
+    use interfaces::{Span, Spanned};
 
     #[test]
     fn single_new_line() {
         let mut cursor = Cursor::new("\n");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NewLine,
+        let expected = Ok(Spanned {
+            content: Token::NewLine,
             span: Span {
                 start: 0,
                 length: 1,
@@ -58,8 +59,8 @@ mod tests {
     fn extended_new_line() {
         let mut cursor = Cursor::new("\n        ");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NewLine,
+        let expected = Ok(Spanned {
+            content: Token::NewLine,
             span: Span {
                 start: 0,
                 length: 9,
@@ -75,8 +76,8 @@ mod tests {
     fn has_adjacent() {
         let mut cursor = Cursor::new("\n        67");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NewLine,
+        let expected = Ok(Spanned {
+            content: Token::NewLine,
             span: Span {
                 start: 0,
                 length: 9,

@@ -23,21 +23,21 @@ fn fallback(error: Error, function: impl FnOnce() -> Result) -> Result {
 #[cfg(test)]
 mod tests {
     use super::Fallback;
-    use crate::{Error, Token, TokenSpan};
-    use interfaces::Span;
+    use crate::{Error, Token};
+    use interfaces::{Span, Spanned};
 
     #[test]
     fn prefer_primary() {
-        let primary = Ok(TokenSpan {
-            token: Token::Comma,
+        let primary = Ok(Spanned {
+            content: Token::Comma,
             span: Span {
                 start: 0,
                 length: 1,
             },
         });
 
-        let secondary = Ok(TokenSpan {
-            token: Token::Colon,
+        let secondary = Ok(Spanned {
+            content: Token::Colon,
             span: Span {
                 start: 0,
                 length: 1,
@@ -52,8 +52,8 @@ mod tests {
 
     #[test]
     fn fallback() {
-        let secondary = Ok(TokenSpan {
-            token: Token::Colon,
+        let secondary = Ok(Spanned {
+            content: Token::Colon,
             span: Span {
                 start: 0,
                 length: 1,
@@ -68,8 +68,8 @@ mod tests {
 
     #[test]
     fn end_of_source() {
-        let secondary = Ok(TokenSpan {
-            token: Token::Colon,
+        let secondary = Ok(Spanned {
+            content: Token::Colon,
             span: Span {
                 start: 0,
                 length: 1,
@@ -84,8 +84,8 @@ mod tests {
 
     #[test]
     fn skip_fallback_end_of_source() {
-        let secondary = Ok(TokenSpan {
-            token: Token::Colon,
+        let secondary = Ok(Spanned {
+            content: Token::Colon,
             span: Span {
                 start: 0,
                 length: 1,

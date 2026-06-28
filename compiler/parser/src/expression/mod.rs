@@ -12,21 +12,21 @@ pub use error::*;
 
 use binding_power::BindingPowers;
 
-use interfaces::{BinaryExpression, ExpressionSpan};
-use lexer::TokenSpan;
+use interfaces::{BinaryExpression, ExpressionSpan, Spanned};
 use std::{iter::Peekable, result};
+use lexer::Token;
 
 type Error = ParseExpressionError;
 type Result<T = ExpressionSpan, E = Error> = result::Result<T, E>;
 
-pub fn parse_expression(tokens: impl Iterator<Item = TokenSpan>) -> Result {
+pub fn parse_expression(tokens: impl Iterator<Item = Spanned<Token>>) -> Result {
     let mut parser = ExpressionParser::new(tokens);
     parser.parse()
 }
 
 struct ExpressionParser<Iter>
 where
-    Iter: Iterator<Item = TokenSpan>,
+    Iter: Iterator<Item = Spanned<Token>>,
 {
     binding_powers: BindingPowers,
     tokens: Peekable<Iter>,
@@ -34,7 +34,7 @@ where
 
 impl<Iter> ExpressionParser<Iter>
 where
-    Iter: Iterator<Item = TokenSpan>,
+    Iter: Iterator<Item = Spanned<Token>>,
 {
     pub fn new(tokens: Iter) -> Self {
         Self {

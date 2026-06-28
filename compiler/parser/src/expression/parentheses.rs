@@ -1,16 +1,16 @@
 use super::{Error, ExpressionParser, Result, UnexpectedSyntaxError};
-use interfaces::SyntaxKind;
-use lexer::{Token, TokenSpan};
+use interfaces::{SyntaxKind, Spanned};
+use lexer::Token;
 
 impl<Iter> ExpressionParser<Iter>
 where
-    Iter: Iterator<Item = TokenSpan>,
+    Iter: Iterator<Item = Spanned<Token>>,
 {
     pub(super) fn parse_parentheses(&mut self) -> Result {
         let left = self.parse_folding(0)?;
 
-        let TokenSpan {
-            token: next_token,
+        let Spanned {
+            content: next_token,
             span: next_span,
         } = self.tokens.next().ok_or(Error::NoMoreTokens)?;
 

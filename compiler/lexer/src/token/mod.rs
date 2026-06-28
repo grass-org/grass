@@ -4,23 +4,7 @@ mod operator;
 pub use numeric::*;
 pub use operator::*;
 
-use interfaces::Span;
 use std::fmt::{self, Display, Formatter};
-
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
-pub struct TokenSpan {
-    pub token: Token,
-    pub span: Span,
-}
-
-impl TokenSpan {
-    pub fn new(token: impl Into<Token>, span: Span) -> Self {
-        Self {
-            token: token.into(),
-            span,
-        }
-    }
-}
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug, Default)]
 pub enum Token {
