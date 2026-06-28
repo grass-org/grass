@@ -1,5 +1,20 @@
 use std::fmt::{self, Display, Formatter};
 
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
+pub struct Spanned<T> {
+    pub content: T,
+    pub span: Span
+}
+
+impl<T> Spanned<T> {
+    pub fn new(token: impl Into<T>, span: Span) -> Self {
+        Self {
+            content: token.into(),
+            span,
+        }
+    }
+}
+
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
 pub struct Span {
     pub start: usize,

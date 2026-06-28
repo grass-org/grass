@@ -1,4 +1,5 @@
-use crate::{Cursor, Error, Result, SpanTracker, Token, TokenSpan};
+use interfaces::{Spanned};
+use crate::{Cursor, Error, Result, SpanTracker, Token};
 
 pub(crate) fn try_lex_character_literal(cursor: &mut Cursor) -> Result {
     let start = cursor.peek().ok_or(Error::EndOfSource)?;
@@ -10,14 +11,14 @@ pub(crate) fn try_lex_character_literal(cursor: &mut Cursor) -> Result {
     Ok(lex_character_literal(cursor))
 }
 
-fn lex_character_literal(cursor: &mut Cursor) -> TokenSpan {
+fn lex_character_literal(cursor: &mut Cursor) -> Spanned<Token> {
     let span_tracker = SpanTracker::start(cursor);
 
     cursor.advance();
 
     let token = lex_literal(cursor);
     let span = span_tracker.end(cursor);
-    TokenSpan::new(token, span)
+    Spanned::new(token, span)
 }
 
 fn lex_literal(cursor: &mut Cursor) -> Token {
@@ -55,15 +56,15 @@ fn lex_symbol(cursor: &mut Cursor) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::try_lex_character_literal;
-    use crate::{Cursor, Error, Token, TokenSpan};
-    use interfaces::Span;
+    use crate::{Cursor, Error, Token};
+    use interfaces::{Span, Spanned};
 
     #[test]
     fn unescaped() {
         let mut cursor = Cursor::new("'a'");
 
-        let expected = Ok(TokenSpan {
-            token: Token::CharacterLiteral(String::from("a")),
+        let expected = Ok(Spanned {
+            content: Token::CharacterLiteral(String::from("a")),
             span: Span {
                 start: 0,
                 length: 3,
@@ -79,8 +80,8 @@ mod tests {
     fn escaped() {
         let mut cursor = Cursor::new(r#"'\a'"#);
 
-        let expected = Ok(TokenSpan {
-            token: Token::CharacterLiteral(r#"\a"#.to_string()),
+        let expected = Ok(Spanned {
+            content: Token::CharacterLiteral(r#"\a"#.to_string()),
             span: Span {
                 start: 0,
                 length: 4,
@@ -96,8 +97,8 @@ mod tests {
     fn whitespace() {
         let mut cursor = Cursor::new("' '");
 
-        let expected = Ok(TokenSpan {
-            token: Token::CharacterLiteral(String::from(" ")),
+        let expected = Ok(Spanned {
+            content: Token::CharacterLiteral(String::from(" ")),
             span: Span {
                 start: 0,
                 length: 3,
@@ -113,8 +114,8 @@ mod tests {
     fn has_adjacent() {
         let mut cursor = Cursor::new("' '67");
 
-        let expected = Ok(TokenSpan {
-            token: Token::CharacterLiteral(" ".to_string()),
+        let expected = Ok(Spanned {
+            content: Token::CharacterLiteral(" ".to_string()),
             span: Span {
                 start: 0,
                 length: 3,
@@ -130,8 +131,8 @@ mod tests {
     fn empty() {
         let mut cursor = Cursor::new("''");
 
-        let expected = Ok(TokenSpan {
-            token: Token::CharacterLiteral(String::from("")),
+        let expected = Ok(Spanned {
+            content: Token::CharacterLiteral(String::from("")),
             span: Span {
                 start: 0,
                 length: 2,
@@ -147,8 +148,8 @@ mod tests {
     fn long() {
         let mut cursor = Cursor::new("'a1'");
 
-        let expected = Ok(TokenSpan {
-            token: Token::CharacterLiteral(String::from("a1")),
+        let expected = Ok(Spanned {
+            content: Token::CharacterLiteral(String::from("a1")),
             span: Span {
                 start: 0,
                 length: 4,
@@ -206,8 +207,8 @@ mod tests {
     fn complex_sequence() {
         let mut cursor = Cursor::new(r#"'a\\""fhh27\'67'"#);
 
-        let expected = Ok(TokenSpan {
-            token: Token::CharacterLiteral(String::from(r#"a\\""fhh27\'67"#)),
+        let expected = Ok(Spanned {
+            content: Token::CharacterLiteral(String::from(r#"a\\""fhh27\'67"#)),
             span: Span {
                 start: 0,
                 length: 16,
@@ -222,8 +223,8 @@ mod tests {
     #[test]
     fn multi_byte_utf8_character() {
         let mut cursor = Cursor::new("'✨'");
-        let expected = Ok(TokenSpan {
-            token: Token::CharacterLiteral(String::from("✨")),
+        let expected = Ok(Spanned {
+            content: Token::CharacterLiteral(String::from("✨")),
             span: Span {
                 start: 0,
                 length: 5,
@@ -236,8 +237,8 @@ mod tests {
     #[test]
     fn unclosed() {
         let mut cursor = Cursor::new("'a");
-        let expected = Ok(TokenSpan {
-            token: Token::Invalid,
+        let expected = Ok(Spanned {
+            content: Token::Invalid,
             span: Span {
                 start: 0,
                 length: 2,
@@ -250,8 +251,8 @@ mod tests {
     #[test]
     fn escaped_backslash_before_closing_quote() {
         let mut cursor = Cursor::new(r#"'\\'"#);
-        let expected = Ok(TokenSpan {
-            token: Token::CharacterLiteral(String::from(r#"\\"#)),
+        let expected = Ok(Spanned {
+            content: Token::CharacterLiteral(String::from(r#"\\"#)),
             span: Span {
                 start: 0,
                 length: 4,

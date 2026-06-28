@@ -1,4 +1,5 @@
-use crate::{Cursor, Error, Result, SpanTracker, Token, TokenSpan};
+use interfaces::Spanned;
+use crate::{Cursor, Error, Result, SpanTracker, Token};
 
 pub(crate) fn try_lex_single_character(cursor: &mut Cursor) -> Result {
     let character = cursor.peek().ok_or(Error::EndOfSource)?;
@@ -9,7 +10,7 @@ pub(crate) fn try_lex_single_character(cursor: &mut Cursor) -> Result {
     cursor.advance();
 
     let span = span_tracker.end(cursor);
-    Ok(TokenSpan::new(token, span))
+    Ok(Spanned::new(token, span))
 }
 
 const fn lex_single_character(character: char) -> Option<Token> {
@@ -33,15 +34,15 @@ const fn lex_single_character(character: char) -> Option<Token> {
 #[cfg(test)]
 mod tests {
     use super::try_lex_single_character;
-    use crate::{Cursor, Error, Token, TokenSpan};
-    use interfaces::Span;
+    use crate::{Cursor, Error, Token};
+    use interfaces::{Span, Spanned};
 
     #[test]
     fn open_parenthesis() {
         let mut cursor = Cursor::new("(");
 
-        let expected = Ok(TokenSpan {
-            token: Token::OpenParenthesis,
+        let expected = Ok(Spanned {
+            content: Token::OpenParenthesis,
             span: Span {
                 start: 0,
                 length: 1,
@@ -57,8 +58,8 @@ mod tests {
     fn colon() {
         let mut cursor = Cursor::new(":");
 
-        let expected = Ok(TokenSpan {
-            token: Token::Colon,
+        let expected = Ok(Spanned {
+            content: Token::Colon,
             span: Span {
                 start: 0,
                 length: 1,

@@ -1,4 +1,5 @@
-use crate::{Cursor, Error, Operator, Result, SpanTracker, TokenSpan, is_horizontal_whitespace};
+use interfaces::Spanned;
+use crate::{Cursor, Error, Operator, Result, SpanTracker, is_horizontal_whitespace, Token};
 
 pub(crate) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> Result {
     let start = cursor.peek().ok_or(Error::EndOfSource)?;
@@ -10,7 +11,7 @@ pub(crate) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool
     Ok(lex_operator(cursor, has_leading_whitespace))
 }
 
-fn lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> TokenSpan {
+fn lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> Spanned<Token> {
     let span_tracker = SpanTracker::start(cursor);
 
     let symbol = lex_symbol(cursor);
@@ -23,7 +24,7 @@ fn lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> TokenSpan 
     };
 
     let span = span_tracker.end(cursor);
-    TokenSpan::new(operator, span)
+    Spanned::new(operator, span)
 }
 
 fn lex_symbol(cursor: &mut Cursor) -> String {
@@ -63,15 +64,15 @@ fn has_trailing_whitespace(cursor: &mut Cursor) -> bool {
 #[cfg(test)]
 mod tests {
     use super::try_lex_operator;
-    use crate::{Cursor, Error, Operator, Token, TokenSpan};
-    use interfaces::Span;
+    use crate::{Cursor, Error, Operator, Token};
+    use interfaces::{Span, Spanned};
 
     #[test]
     fn single_character() {
         let mut cursor = Cursor::new("+");
 
-        let expected = Ok(TokenSpan {
-            token: Token::Operator(Operator {
+        let expected = Ok(Spanned {
+            content: Token::Operator(Operator {
                 symbol: String::from("+"),
                 has_leading_whitespace: false,
                 has_trailing_whitespace: false,
@@ -91,8 +92,8 @@ mod tests {
     fn multi_character() {
         let mut cursor = Cursor::new("+=");
 
-        let expected = Ok(TokenSpan {
-            token: Token::Operator(Operator {
+        let expected = Ok(Spanned {
+            content: Token::Operator(Operator {
                 symbol: String::from("+="),
                 has_leading_whitespace: false,
                 has_trailing_whitespace: false,
@@ -112,8 +113,8 @@ mod tests {
     fn has_leading_whitespace() {
         let mut cursor = Cursor::new("+=");
 
-        let expected = Ok(TokenSpan {
-            token: Token::Operator(Operator {
+        let expected = Ok(Spanned {
+            content: Token::Operator(Operator {
                 symbol: String::from("+="),
                 has_leading_whitespace: true,
                 has_trailing_whitespace: false,
@@ -133,8 +134,8 @@ mod tests {
     fn has_trailing_whitespace() {
         let mut cursor = Cursor::new("+= ");
 
-        let expected = Ok(TokenSpan {
-            token: Token::Operator(Operator {
+        let expected = Ok(Spanned {
+            content: Token::Operator(Operator {
                 symbol: String::from("+="),
                 has_leading_whitespace: false,
                 has_trailing_whitespace: true,
@@ -154,8 +155,8 @@ mod tests {
     fn has_leading_and_trailing_whitespace() {
         let mut cursor = Cursor::new("+= ");
 
-        let expected = Ok(TokenSpan {
-            token: Token::Operator(Operator {
+        let expected = Ok(Spanned {
+            content: Token::Operator(Operator {
                 symbol: String::from("+="),
                 has_leading_whitespace: true,
                 has_trailing_whitespace: true,
@@ -175,8 +176,8 @@ mod tests {
     fn has_adjacent() {
         let mut cursor = Cursor::new("-35");
 
-        let expected = Ok(TokenSpan {
-            token: Token::Operator(Operator {
+        let expected = Ok(Spanned {
+            content: Token::Operator(Operator {
                 symbol: String::from("-"),
                 has_leading_whitespace: false,
                 has_trailing_whitespace: false,

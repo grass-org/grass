@@ -1,10 +1,11 @@
-use crate::{Cursor, Error, NumericLiteral, SpanTracker, TokenSpan};
+use crate::{Cursor, Error, NumericLiteral, SpanTracker, Token};
 use std::mem::take;
 use std::result;
+use interfaces::Spanned;
 
 type Result<T = (), E = ()> = result::Result<T, E>;
 
-pub(crate) fn try_lex_numeric_literal(cursor: &mut Cursor) -> Result<TokenSpan, Error> {
+pub(crate) fn try_lex_numeric_literal(cursor: &mut Cursor) -> Result<Spanned<Token>, Error> {
     let start = cursor.peek().ok_or(Error::EndOfSource)?;
 
     if !start.is_ascii_digit() {
@@ -14,12 +15,12 @@ pub(crate) fn try_lex_numeric_literal(cursor: &mut Cursor) -> Result<TokenSpan, 
     Ok(lex_numeric_literal(cursor))
 }
 
-fn lex_numeric_literal(cursor: &mut Cursor) -> TokenSpan {
+fn lex_numeric_literal(cursor: &mut Cursor) -> Spanned<Token> {
     let span_tracker = SpanTracker::start(cursor);
 
     let token = lex_literal(cursor);
     let span = span_tracker.end(cursor);
-    TokenSpan::new(token, span)
+    Spanned::new(token, span)
 }
 
 fn lex_literal(cursor: &mut Cursor) -> NumericLiteral {
@@ -132,15 +133,15 @@ impl NumericLiteralBuilder {
 #[cfg(test)]
 mod tests {
     use super::try_lex_numeric_literal;
-    use crate::{Cursor, Error, NumericLiteral, Token, TokenSpan};
-    use interfaces::Span;
+    use crate::{Cursor, Error, NumericLiteral, Token};
+    use interfaces::{Span, Spanned};
 
     #[test]
     fn basic_integer() {
         let mut cursor = Cursor::new("365");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NumericLiteral(NumericLiteral {
+        let expected = Ok(Spanned {
+            content: Token::NumericLiteral(NumericLiteral {
                 base: None,
                 integral_radits: String::from("365"),
                 fractional_radits: None,
@@ -161,8 +162,8 @@ mod tests {
     fn basic_fraction() {
         let mut cursor = Cursor::new("365.67");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NumericLiteral(NumericLiteral {
+        let expected = Ok(Spanned {
+            content: Token::NumericLiteral(NumericLiteral {
                 base: None,
                 integral_radits: String::from("365"),
                 fractional_radits: Some(String::from("67")),
@@ -183,8 +184,8 @@ mod tests {
     fn integer_with_base() {
         let mut cursor = Cursor::new("67#365");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NumericLiteral(NumericLiteral {
+        let expected = Ok(Spanned {
+            content: Token::NumericLiteral(NumericLiteral {
                 base: Some(String::from("67")),
                 integral_radits: String::from("365"),
                 fractional_radits: None,
@@ -205,8 +206,8 @@ mod tests {
     fn fraction_with_base() {
         let mut cursor = Cursor::new("67#365.69");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NumericLiteral(NumericLiteral {
+        let expected = Ok(Spanned {
+            content: Token::NumericLiteral(NumericLiteral {
                 base: Some(String::from("67")),
                 integral_radits: String::from("365"),
                 fractional_radits: Some(String::from("69")),
@@ -227,8 +228,8 @@ mod tests {
     fn integer_with_kind() {
         let mut cursor = Cursor::new("369:I32");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NumericLiteral(NumericLiteral {
+        let expected = Ok(Spanned {
+            content: Token::NumericLiteral(NumericLiteral {
                 base: None,
                 integral_radits: String::from("369"),
                 fractional_radits: None,
@@ -249,8 +250,8 @@ mod tests {
     fn fraction_with_kind() {
         let mut cursor = Cursor::new("369.67:F64");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NumericLiteral(NumericLiteral {
+        let expected = Ok(Spanned {
+            content: Token::NumericLiteral(NumericLiteral {
                 base: None,
                 integral_radits: String::from("369"),
                 fractional_radits: Some(String::from("67")),
@@ -271,8 +272,8 @@ mod tests {
     fn integer_with_base_and_type() {
         let mut cursor = Cursor::new("2#369:I32");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NumericLiteral(NumericLiteral {
+        let expected = Ok(Spanned {
+            content: Token::NumericLiteral(NumericLiteral {
                 base: Some(String::from("2")),
                 integral_radits: String::from("369"),
                 fractional_radits: None,
@@ -293,8 +294,8 @@ mod tests {
     fn fraction_with_base_and_type() {
         let mut cursor = Cursor::new("2#369.67:F64");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NumericLiteral(NumericLiteral {
+        let expected = Ok(Spanned {
+            content: Token::NumericLiteral(NumericLiteral {
                 base: Some(String::from("2")),
                 integral_radits: String::from("369"),
                 fractional_radits: Some(String::from("67")),
@@ -315,8 +316,8 @@ mod tests {
     fn has_adjacent() {
         let mut cursor = Cursor::new("2#369:F64 35");
 
-        let expected = Ok(TokenSpan {
-            token: Token::NumericLiteral(NumericLiteral {
+        let expected = Ok(Spanned {
+            content: Token::NumericLiteral(NumericLiteral {
                 base: Some(String::from("2")),
                 integral_radits: String::from("369"),
                 fractional_radits: None,

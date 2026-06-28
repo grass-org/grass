@@ -1,10 +1,10 @@
 use super::{ExpressionParser, Result};
-use interfaces::{Operator, OperatorSpan, Span, UnaryExpression};
-use lexer::TokenSpan;
+use interfaces::{Operator, OperatorSpan, Span, UnaryExpression, Spanned};
+use lexer::Token;
 
 impl<Iter> ExpressionParser<Iter>
 where
-    Iter: Iterator<Item = TokenSpan>,
+    Iter: Iterator<Item = Spanned<Token>>,
 {
     pub(super) fn parse_prefix_expression(&mut self, symbol: String, span: Span) -> Result {
         let binding_power = self.binding_powers.prefix_binding_power(&symbol)?;
