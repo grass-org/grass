@@ -1,5 +1,5 @@
 use super::{ExpressionParser, Result};
-use interfaces::{Operator, OperatorSpan, Span, UnaryExpression, Spanned};
+use interfaces::{Operator, Span, Spanned, UnaryExpression};
 use lexer::Token;
 
 impl<Iter> ExpressionParser<Iter>
@@ -10,7 +10,10 @@ where
         let binding_power = self.binding_powers.prefix_binding_power(&symbol)?;
 
         let operator = Operator { symbol };
-        let operator = OperatorSpan { operator, span };
+        let operator = Spanned {
+            content: operator,
+            span,
+        };
         let operand = self.parse_folding(binding_power)?;
 
         Ok(UnaryExpression::new(operator, operand).into())

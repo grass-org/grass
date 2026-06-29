@@ -1,23 +1,23 @@
 use std::cmp::{max, min};
 use std::fmt::{self, Display, Formatter};
 
-use crate::{Expression, ExpressionSpan, OperatorSpan, Span};
+use crate::{Expression, ExpressionSpan, Operator, Span, Spanned};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct UnaryExpression {
-    operator: OperatorSpan,
+    operator: Spanned<Operator>,
     operand: Box<ExpressionSpan>,
 }
 
 impl UnaryExpression {
-    pub fn new(operator: OperatorSpan, operand: ExpressionSpan) -> Self {
+    pub fn new(operator: Spanned<Operator>, operand: ExpressionSpan) -> Self {
         Self {
             operator,
             operand: Box::new(operand),
         }
     }
 
-    pub const fn operator(&self) -> &OperatorSpan {
+    pub const fn operator(&self) -> &Spanned<Operator> {
         &self.operator
     }
 
@@ -36,7 +36,7 @@ impl UnaryExpression {
         Span { start, length }
     }
 
-    pub fn into_values(self) -> (OperatorSpan, ExpressionSpan) {
+    pub fn into_values(self) -> (Spanned<Operator>, ExpressionSpan) {
         let UnaryExpression { operator, operand } = self;
         (operator, *operand)
     }

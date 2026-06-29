@@ -1,5 +1,5 @@
 use super::{Error, ExpressionParser, Result};
-use interfaces::{ExpressionSpan, Operator, OperatorSpan, Spanned};
+use interfaces::{ExpressionSpan, Operator, Spanned};
 use lexer::Token;
 use std::iter::Peekable;
 
@@ -12,7 +12,7 @@ where
     pub(super) fn parse_right(
         &mut self,
         min_binding_power: u32,
-    ) -> Result<(OperatorSpan, ExpressionSpan)> {
+    ) -> Result<(Spanned<Operator>, ExpressionSpan)> {
         let OperatorToken { symbol, .. } =
             peek_operator_token(&mut self.tokens).ok_or(Error::NoMoreTokens)?;
 
@@ -41,7 +41,9 @@ fn peek_operator_token(
     Some(operator)
 }
 
-fn next_infix_operator(mut tokens: impl Iterator<Item = Spanned<Token>>) -> Option<OperatorSpan> {
+fn next_infix_operator(
+    mut tokens: impl Iterator<Item = Spanned<Token>>,
+) -> Option<Spanned<Operator>> {
     let Spanned { content, span } = tokens.next()?;
 
     let Token::Operator(OperatorToken { symbol, .. }) = content else {
@@ -49,5 +51,8 @@ fn next_infix_operator(mut tokens: impl Iterator<Item = Spanned<Token>>) -> Opti
     };
 
     let operator = Operator { symbol };
-    Some(OperatorSpan { operator, span })
+    Some(Spanned {
+        content: operator,
+        span,
+    })
 }
