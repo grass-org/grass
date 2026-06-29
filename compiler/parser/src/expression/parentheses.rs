@@ -1,4 +1,4 @@
-use super::{ExpressionParser, Result, UnexpectedSyntaxError};
+use super::{Error, ExpressionParser, Result, UnexpectedSyntaxError};
 use interfaces::SyntaxKind;
 use lexer::{Token, TokenSpan};
 
@@ -12,7 +12,7 @@ where
         let TokenSpan {
             token: next_token,
             span: next_span,
-        } = self.next_token()?;
+        } = self.tokens.next().ok_or(Error::NoMoreTokens)?;
 
         if next_token != Token::CloseParenthesis {
             Err(UnexpectedSyntaxError {

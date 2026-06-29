@@ -1,4 +1,4 @@
-use super::{ExpressionParser, Result, parse_atomic_expression};
+use super::{Error, ExpressionParser, Result, parse_atomic_expression};
 use interfaces::ExpressionSpan;
 use lexer::{Token, TokenSpan};
 
@@ -7,7 +7,7 @@ where
     Iter: Iterator<Item = TokenSpan>,
 {
     pub(super) fn parse_left(&mut self) -> Result {
-        let TokenSpan { token, span } = self.next_token()?;
+        let TokenSpan { token, span } = self.tokens.next().ok_or(Error::NoMoreTokens)?;
 
         if token == Token::OpenParenthesis {
             return self.parse_parentheses();

@@ -63,10 +63,6 @@ where
 
         Ok(expression)
     }
-
-    fn next_token(&mut self) -> Result<TokenSpan> {
-        self.tokens.next().ok_or(ParseExpressionError::NoMoreTokens)
-    }
 }
 
 #[cfg(test)]
