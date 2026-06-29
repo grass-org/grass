@@ -12,12 +12,12 @@ pub use error::*;
 
 use binding_power::BindingPowers;
 
-use interfaces::{BinaryExpression, ExpressionSpan, Spanned};
-use std::{iter::Peekable, result};
+use interfaces::{BinaryExpression, Expression, Spanned};
 use lexer::Token;
+use std::{iter::Peekable, result};
 
 type Error = ParseExpressionError;
-type Result<T = ExpressionSpan, E = Error> = result::Result<T, E>;
+type Result<T = Spanned<Expression>, E = Error> = result::Result<T, E>;
 
 pub fn parse_expression(tokens: impl Iterator<Item = Spanned<Token>>) -> Result {
     let mut parser = ExpressionParser::new(tokens);
@@ -69,7 +69,7 @@ where
 mod tests {
     use lexer::lex;
 
-    use crate::expression::{Result, parse_expression};
+    use crate::expression::{parse_expression, Result};
 
     #[test]
     fn test_sequential() -> Result<()> {
