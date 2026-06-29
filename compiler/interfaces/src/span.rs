@@ -15,6 +15,12 @@ impl<T> Spanned<T> {
     }
 }
 
+impl<T: Display> Display for Spanned<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        self.content.fmt(f)
+    }
+}
+
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
 pub struct Span {
     pub start: usize,
