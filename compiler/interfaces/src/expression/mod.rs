@@ -18,20 +18,7 @@ pub use numeric::*;
 pub use operator::*;
 pub use unary::*;
 
-use crate::Span;
 use std::fmt::{self, Display, Formatter};
-
-#[derive(PartialEq, PartialOrd, Clone, Debug)]
-pub struct ExpressionSpan {
-    pub expression: Expression,
-    pub span: Span,
-}
-
-impl Display for ExpressionSpan {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        self.expression.fmt(f)
-    }
-}
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub enum Expression {

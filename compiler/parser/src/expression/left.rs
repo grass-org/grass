@@ -1,5 +1,5 @@
-use super::{Error, ExpressionParser, Result, parse_atomic_expression};
-use interfaces::{ExpressionSpan, Spanned};
+use super::{parse_atomic_expression, Error, ExpressionParser, Result};
+use interfaces::Spanned;
 use lexer::Token;
 
 impl<Iter> ExpressionParser<Iter>
@@ -19,6 +19,9 @@ where
 
         let expression = parse_atomic_expression(Spanned { content, span })?;
         let expression = expression.into();
-        Ok(ExpressionSpan { expression, span })
+        Ok(Spanned {
+            content: expression,
+            span,
+        })
     }
 }
