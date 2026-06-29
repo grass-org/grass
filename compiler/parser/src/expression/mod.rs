@@ -2,7 +2,6 @@ mod atomic;
 mod binding_power;
 mod error;
 mod left;
-mod operator;
 mod parentheses;
 mod prefix;
 mod right;

@@ -1,18 +1,19 @@
 use crate::ParseExpressionError;
-use interfaces::Operator;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::{self, Display, Formatter};
 
+type OperatorSymbol = String;
+
 pub(super) struct BindingPowers {
     // TODO: This could be simplified into a Vec instead to avoid hashing
-    prefix_map: HashMap<Operator, u32>,
-    infix_map: HashMap<Operator, BindingPower>,
-    postfix_map: HashMap<Operator, u32>,
+    prefix_map: HashMap<OperatorSymbol, u32>,
+    infix_map: HashMap<OperatorSymbol, BindingPower>,
+    postfix_map: HashMap<OperatorSymbol, u32>,
 }
 
 impl BindingPowers {
-    pub fn from_order(operator_order: Vec<Vec<(Operator, Binding)>>) -> Self {
+    pub fn from_order(operator_order: Vec<Vec<(OperatorSymbol, Binding)>>) -> Self {
         let mut binding_powers = Self::new();
 
         for (reverse_index, operators) in operator_order.into_iter().rev().enumerate() {
@@ -32,7 +33,7 @@ impl BindingPowers {
         }
     }
 
-    fn add_operator(&mut self, operator: Operator, binding: Binding, reverse_index: usize) {
+    fn add_operator(&mut self, operator: OperatorSymbol, binding: Binding, reverse_index: usize) {
         match binding {
             Binding::Prefix => self.add_prefix(operator, reverse_index),
             Binding::Infix(associativity) => self.add_infix(operator, reverse_index, associativity),
@@ -40,14 +41,14 @@ impl BindingPowers {
         }
     }
 
-    fn add_prefix(&mut self, operator: Operator, reverse_index: usize) {
+    fn add_prefix(&mut self, operator: OperatorSymbol, reverse_index: usize) {
         let binding_power = binding_power(reverse_index);
         self.prefix_map.insert(operator, binding_power);
     }
 
     fn add_infix(
         &mut self,
-        operator: Operator,
+        operator: OperatorSymbol,
         reverse_index: usize,
         associativity: Associativity,
     ) {
@@ -55,37 +56,31 @@ impl BindingPowers {
         self.infix_map.insert(operator, binding_power);
     }
 
-    fn add_postfix(&mut self, operator: Operator, reverse_index: usize) {
+    fn add_postfix(&mut self, operator: OperatorSymbol, reverse_index: usize) {
         let binding_power = binding_power(reverse_index);
         self.postfix_map.insert(operator, binding_power);
     }
 
-    pub fn prefix_binding_power(
-        &self,
-        operator: &Operator,
-    ) -> Result<u32, UndefinedBindingPowerError> {
+    pub fn prefix_binding_power(&self, operator: &str) -> Result<u32, UndefinedBindingPowerError> {
         self.prefix_map.get(operator).cloned().ok_or_else(|| {
-            let operator = operator.clone();
+            let operator = operator.into();
             UndefinedBindingPowerError { operator }
         })
     }
 
     pub fn infix_binding_power(
         &self,
-        operator: &Operator,
+        operator: &str,
     ) -> Result<BindingPower, UndefinedBindingPowerError> {
         self.infix_map.get(operator).cloned().ok_or_else(|| {
-            let operator = operator.clone();
+            let operator = operator.into();
             UndefinedBindingPowerError { operator }
         })
     }
 
-    pub fn postfix_binding_power(
-        &self,
-        operator: &Operator,
-    ) -> Result<u32, UndefinedBindingPowerError> {
+    pub fn postfix_binding_power(&self, operator: &str) -> Result<u32, UndefinedBindingPowerError> {
         self.postfix_map.get(operator).cloned().ok_or_else(|| {
-            let operator = operator.clone();
+            let operator = operator.into();
             UndefinedBindingPowerError { operator }
         })
     }
@@ -104,17 +99,17 @@ pub(super) struct BindingPower {
 }
 
 // TODO: These are temporarily hardcoded, at least until we implement Grass operators
-fn operator_order() -> Vec<Vec<(Operator, Binding)>> {
+fn operator_order() -> Vec<Vec<(OperatorSymbol, Binding)>> {
     vec![
-        vec![(Operator::negate(), Binding::Prefix)],
+        vec![("-".into(), Binding::Prefix)],
         vec![
-            (Operator::multiply(), Binding::Infix(Associativity::Left)),
-            (Operator::divide(), Binding::Infix(Associativity::Left)),
-            (Operator::remainder(), Binding::Infix(Associativity::Left)),
+            ("*".into(), Binding::Infix(Associativity::Left)),
+            ("/".into(), Binding::Infix(Associativity::Left)),
+            ("%".into(), Binding::Infix(Associativity::Left)),
         ],
         vec![
-            (Operator::add(), Binding::Infix(Associativity::Left)),
-            (Operator::subtract(), Binding::Infix(Associativity::Left)),
+            ("+".into(), Binding::Infix(Associativity::Left)),
+            ("-".into(), Binding::Infix(Associativity::Left)),
         ],
     ]
 }
@@ -164,7 +159,7 @@ const fn right_binding_power(associativity: Associativity, base_binding_power: u
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub struct UndefinedBindingPowerError {
-    pub operator: Operator,
+    pub operator: OperatorSymbol,
 }
 
 impl From<UndefinedBindingPowerError> for ParseExpressionError {
