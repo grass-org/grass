@@ -1,21 +1,21 @@
-use crate::{Expression, ExpressionSpan, OperatorSpan, Span};
+use crate::{Expression, ExpressionSpan, Operator, Span, Spanned};
 use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct BinaryExpression {
-    operator: OperatorSpan,
+    operator: Spanned<Operator>,
     operands: Box<[ExpressionSpan; 2]>,
 }
 
 impl BinaryExpression {
-    pub fn new(operator: OperatorSpan, operands: [ExpressionSpan; 2]) -> Self {
+    pub fn new(operator: Spanned<Operator>, operands: [ExpressionSpan; 2]) -> Self {
         Self {
             operator,
             operands: Box::new(operands),
         }
     }
 
-    pub const fn operator(&self) -> &OperatorSpan {
+    pub const fn operator(&self) -> &Spanned<Operator> {
         &self.operator
     }
 
@@ -36,7 +36,7 @@ impl BinaryExpression {
         Span { start, length }
     }
 
-    pub fn into_values(self) -> (OperatorSpan, ExpressionSpan, ExpressionSpan) {
+    pub fn into_values(self) -> (Spanned<Operator>, ExpressionSpan, ExpressionSpan) {
         let BinaryExpression { operator, operands } = self;
         let [operand0, operand1] = *operands;
         (operator, operand0, operand1)
