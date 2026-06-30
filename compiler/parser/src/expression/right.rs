@@ -16,7 +16,7 @@ where
         let OperatorToken { symbol, .. } =
             peek_operator_token(&mut self.tokens).ok_or(Error::NoMoreTokens)?;
 
-        let binding_power = self.binding_powers.infix_binding_power(&symbol)?;
+        let binding_power = self.binding_powers.infix_binding_power(symbol)?;
 
         if binding_power.left < min_binding_power {
             return Err(Error::NoMoreTokens);
