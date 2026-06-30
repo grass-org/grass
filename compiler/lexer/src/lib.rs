@@ -15,8 +15,8 @@ use lex::*;
 use span_tracker::*;
 use whitespace::*;
 
-use std::{iter, result};
 use interfaces::Spanned;
+use std::{iter, result};
 
 type Error = LexError;
 type Result<T = Spanned<Token>> = result::Result<T, Error>;

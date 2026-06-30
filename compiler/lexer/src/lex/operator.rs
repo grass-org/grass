@@ -1,5 +1,5 @@
+use crate::{Cursor, Error, Operator, Result, SpanTracker, Token, is_horizontal_whitespace};
 use interfaces::Spanned;
-use crate::{Cursor, Error, Operator, Result, SpanTracker, is_horizontal_whitespace, Token};
 
 pub(crate) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> Result {
     let start = cursor.peek().ok_or(Error::EndOfSource)?;
