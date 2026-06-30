@@ -69,7 +69,7 @@ where
 mod tests {
     use lexer::lex;
 
-    use crate::expression::{parse_expression, Result};
+    use crate::expression::{Result, parse_expression};
 
     #[test]
     fn test_sequential() -> Result<()> {

@@ -1,4 +1,4 @@
-use super::{parse_atomic_expression, Error, ExpressionParser, Result};
+use super::{Error, ExpressionParser, Result, parse_atomic_expression};
 use interfaces::Spanned;
 use lexer::Token;
 

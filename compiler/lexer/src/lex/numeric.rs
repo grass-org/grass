@@ -1,7 +1,7 @@
 use crate::{Cursor, Error, NumericLiteral, SpanTracker, Token};
+use interfaces::Spanned;
 use std::mem::take;
 use std::result;
-use interfaces::Spanned;
 
 type Result<T = (), E = ()> = result::Result<T, E>;
 

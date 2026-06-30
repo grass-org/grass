@@ -1,5 +1,5 @@
 use super::{Error, ExpressionParser, Result, UnexpectedSyntaxError};
-use interfaces::{SyntaxKind, Spanned};
+use interfaces::{Spanned, SyntaxKind};
 use lexer::Token;
 
 impl<Iter> ExpressionParser<Iter>

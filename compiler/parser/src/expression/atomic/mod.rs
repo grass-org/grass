@@ -4,7 +4,7 @@ mod numeric;
 pub use error::*;
 pub use numeric::*;
 
-use interfaces::{AtomicExpression, SyntaxKind, Spanned};
+use interfaces::{AtomicExpression, Spanned, SyntaxKind};
 use lexer::Token;
 use std::result;
 

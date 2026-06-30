@@ -1,5 +1,5 @@
-use interfaces::{Spanned};
 use crate::{Cursor, Error, Result, SpanTracker, Token};
+use interfaces::Spanned;
 
 pub(crate) fn try_lex_character_literal(cursor: &mut Cursor) -> Result {
     let start = cursor.peek().ok_or(Error::EndOfSource)?;
