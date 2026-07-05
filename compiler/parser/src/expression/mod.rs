@@ -2,6 +2,7 @@ mod atomic;
 mod binding_power;
 mod error;
 mod left;
+mod operator;
 mod parentheses;
 mod prefix;
 mod right;
@@ -10,13 +11,13 @@ use std::iter::Peekable;
 use std::result;
 
 pub use atomic::*;
-use binding_power::BindingPowers;
 pub use binding_power::*;
 pub use error::*;
 use interfaces::BinaryExpression;
 use interfaces::Expression;
 use interfaces::Spanned;
 use lexer::Token;
+use operator::*;
 
 type Error = ParseExpressionError;
 type Result<T = Spanned<Expression>, E = Error> = result::Result<T, E>;

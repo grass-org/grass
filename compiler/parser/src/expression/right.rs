@@ -1,5 +1,3 @@
-use std::iter::Peekable;
-
 use interfaces::Expression;
 use interfaces::Operator;
 use interfaces::Spanned;
@@ -7,9 +5,9 @@ use lexer::Token;
 
 use super::Error;
 use super::ExpressionParser;
+use super::OperatorToken;
 use super::Result;
-
-type OperatorToken = lexer::Operator;
+use super::peek_operator_token;
 
 impl<Iter> ExpressionParser<Iter>
 where
@@ -33,18 +31,6 @@ where
         let expression = self.parse_folding(binding_power.right)?;
         Ok((operator, expression))
     }
-}
-
-fn peek_operator_token(
-    tokens: &mut Peekable<impl Iterator<Item = Spanned<Token>>>,
-) -> Option<&OperatorToken> {
-    let Spanned { content, .. } = tokens.peek()?;
-
-    let Token::Operator(operator) = content else {
-        return None;
-    };
-
-    Some(operator)
 }
 
 fn next_infix_operator(
