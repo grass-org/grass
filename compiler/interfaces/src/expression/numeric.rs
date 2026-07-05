@@ -1,5 +1,10 @@
-use crate::{FractionLiteralKind, IntegerLiteralKind, MagnitudeLiteralKind};
-use std::fmt::{self, Display, Formatter};
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
+use crate::FractionLiteralKind;
+use crate::IntegerLiteralKind;
+use crate::MagnitudeLiteralKind;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
 pub enum NumericLiteralArchetype {

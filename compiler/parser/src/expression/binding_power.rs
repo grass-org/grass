@@ -1,7 +1,10 @@
-use crate::ParseExpressionError;
 use std::collections::HashMap;
 use std::error::Error;
-use std::fmt::{self, Display, Formatter};
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
+use crate::ParseExpressionError;
 
 type OperatorSymbol = String;
 

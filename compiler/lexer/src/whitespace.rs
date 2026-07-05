@@ -58,7 +58,8 @@ pub(super) const fn is_whitespace(character: char) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{SkipWhitespaceResult, skip_whitespaces};
+    use super::SkipWhitespaceResult;
+    use super::skip_whitespaces;
     use crate::Cursor;
 
     #[test]

@@ -1,9 +1,14 @@
-use crate::NumericLiteralError;
-use interfaces::{
-    FractionLiteralKind, IntegerLiteralKind, MagnitudeLiteralKind, NumericLiteralKind,
-};
 use std::error::Error;
-use std::fmt::{self, Display, Formatter};
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
+use interfaces::FractionLiteralKind;
+use interfaces::IntegerLiteralKind;
+use interfaces::MagnitudeLiteralKind;
+use interfaces::NumericLiteralKind;
+
+use crate::NumericLiteralError;
 
 pub(super) fn kind(
     kind: Option<String>,

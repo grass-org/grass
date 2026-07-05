@@ -1,10 +1,12 @@
 mod numeric;
 mod operator;
 
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
 pub use numeric::*;
 pub use operator::*;
-
-use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug, Default)]
 pub enum Token {

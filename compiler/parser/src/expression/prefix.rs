@@ -1,6 +1,11 @@
-use super::{ExpressionParser, Result};
-use interfaces::{Operator, Span, Spanned, UnaryExpression};
+use interfaces::Operator;
+use interfaces::Span;
+use interfaces::Spanned;
+use interfaces::UnaryExpression;
 use lexer::Token;
+
+use super::ExpressionParser;
+use super::Result;
 
 impl<Iter> ExpressionParser<Iter>
 where

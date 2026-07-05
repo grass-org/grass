@@ -1,6 +1,8 @@
+use interfaces::FractionLiteral;
+use interfaces::FractionLiteralKind;
+
 use super::parse_magnitude;
 use crate::NumericLiteralError;
-use interfaces::{FractionLiteral, FractionLiteralKind};
 
 pub(super) fn parse_fraction_literal(
     base: u8,

@@ -1,5 +1,12 @@
-use crate::{Cursor, Error, Result, SpanTracker, Token, is_newline, is_whitespace};
 use interfaces::Spanned;
+
+use crate::Cursor;
+use crate::Error;
+use crate::Result;
+use crate::SpanTracker;
+use crate::Token;
+use crate::is_newline;
+use crate::is_whitespace;
 
 pub(crate) fn try_lex_new_line(cursor: &mut Cursor) -> Result {
     let start = cursor.peek().ok_or(Error::EndOfSource)?;
@@ -34,9 +41,13 @@ fn lex_new_line(cursor: &mut Cursor) -> Spanned<Token> {
 
 #[cfg(test)]
 mod tests {
+    use interfaces::Span;
+    use interfaces::Spanned;
+
     use super::try_lex_new_line;
-    use crate::{Cursor, Error, Token};
-    use interfaces::{Span, Spanned};
+    use crate::Cursor;
+    use crate::Error;
+    use crate::Token;
 
     #[test]
     fn single_new_line() {

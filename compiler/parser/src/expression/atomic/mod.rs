@@ -1,12 +1,14 @@
 mod error;
 mod numeric;
 
-pub use error::*;
-pub use numeric::*;
-
-use interfaces::{AtomicExpression, Spanned, SyntaxKind};
-use lexer::Token;
 use std::result;
+
+pub use error::*;
+use interfaces::AtomicExpression;
+use interfaces::Spanned;
+use interfaces::SyntaxKind;
+use lexer::Token;
+pub use numeric::*;
 
 use crate::UnexpectedSyntaxError;
 

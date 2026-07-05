@@ -1,7 +1,13 @@
-use crate::{Cursor, Error, NumericLiteral, SpanTracker, Token};
-use interfaces::Spanned;
 use std::mem::take;
 use std::result;
+
+use interfaces::Spanned;
+
+use crate::Cursor;
+use crate::Error;
+use crate::NumericLiteral;
+use crate::SpanTracker;
+use crate::Token;
 
 type Result<T = (), E = ()> = result::Result<T, E>;
 
@@ -132,9 +138,14 @@ impl NumericLiteralBuilder {
 
 #[cfg(test)]
 mod tests {
+    use interfaces::Span;
+    use interfaces::Spanned;
+
     use super::try_lex_numeric_literal;
-    use crate::{Cursor, Error, NumericLiteral, Token};
-    use interfaces::{Span, Spanned};
+    use crate::Cursor;
+    use crate::Error;
+    use crate::NumericLiteral;
+    use crate::Token;
 
     #[test]
     fn basic_integer() {

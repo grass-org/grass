@@ -8,15 +8,14 @@ mod radit;
 
 pub use base::*;
 pub use error::*;
-pub use kind::*;
-
 use fraction::*;
 use integer::*;
+use interfaces::AtomicExpression;
+use interfaces::NumericLiteralKind;
+pub use kind::*;
+use lexer::NumericLiteral;
 use magnitude::*;
 use radit::*;
-
-use interfaces::{AtomicExpression, NumericLiteralKind};
-use lexer::NumericLiteral;
 
 pub(crate) fn parse_numeric_literal(
     numeric_literal: NumericLiteral,

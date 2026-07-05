@@ -1,6 +1,11 @@
-use super::{Error, ExpressionParser, Result, UnexpectedSyntaxError};
-use interfaces::{Spanned, SyntaxKind};
+use interfaces::Spanned;
+use interfaces::SyntaxKind;
 use lexer::Token;
+
+use super::Error;
+use super::ExpressionParser;
+use super::Result;
+use super::UnexpectedSyntaxError;
 
 impl<Iter> ExpressionParser<Iter>
 where

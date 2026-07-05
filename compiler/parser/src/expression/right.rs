@@ -1,7 +1,13 @@
-use super::{Error, ExpressionParser, Result};
-use interfaces::{Expression, Operator, Spanned};
-use lexer::Token;
 use std::iter::Peekable;
+
+use interfaces::Expression;
+use interfaces::Operator;
+use interfaces::Spanned;
+use lexer::Token;
+
+use super::Error;
+use super::ExpressionParser;
+use super::Result;
 
 type OperatorToken = lexer::Operator;
 

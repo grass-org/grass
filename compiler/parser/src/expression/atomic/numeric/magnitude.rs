@@ -1,6 +1,9 @@
+use interfaces::MagnitudeLiteral;
+use interfaces::MagnitudeLiteralKind;
+
 use super::parse_radit;
-use crate::{MaxIntegerLiteralOverflowError, NumericLiteralError};
-use interfaces::{MagnitudeLiteral, MagnitudeLiteralKind};
+use crate::MaxIntegerLiteralOverflowError;
+use crate::NumericLiteralError;
 
 pub(super) fn parse_magnitude_literal(
     base: u8,
