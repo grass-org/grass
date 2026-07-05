@@ -1,5 +1,12 @@
-use crate::{Cursor, Error, Operator, Result, SpanTracker, Token, is_horizontal_whitespace};
 use interfaces::Spanned;
+
+use crate::Cursor;
+use crate::Error;
+use crate::Operator;
+use crate::Result;
+use crate::SpanTracker;
+use crate::Token;
+use crate::is_horizontal_whitespace;
 
 pub(crate) fn try_lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> Result {
     let start = cursor.peek().ok_or(Error::EndOfSource)?;
@@ -63,9 +70,14 @@ fn has_trailing_whitespace(cursor: &mut Cursor) -> bool {
 
 #[cfg(test)]
 mod tests {
+    use interfaces::Span;
+    use interfaces::Spanned;
+
     use super::try_lex_operator;
-    use crate::{Cursor, Error, Operator, Token};
-    use interfaces::{Span, Spanned};
+    use crate::Cursor;
+    use crate::Error;
+    use crate::Operator;
+    use crate::Token;
 
     #[test]
     fn single_character() {

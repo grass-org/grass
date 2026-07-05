@@ -1,6 +1,10 @@
-use super::{Error, ExpressionParser, Result, parse_atomic_expression};
 use interfaces::Spanned;
 use lexer::Token;
+
+use super::Error;
+use super::ExpressionParser;
+use super::Result;
+use super::parse_atomic_expression;
 
 impl<Iter> ExpressionParser<Iter>
 where

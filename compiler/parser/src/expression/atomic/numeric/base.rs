@@ -1,6 +1,9 @@
-use crate::NumericLiteralError;
 use std::error::Error;
-use std::fmt::{self, Display, Formatter};
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
+use crate::NumericLiteralError;
 
 pub(super) fn base(string: Option<String>) -> Result<u8, InvalidNumericBaseError> {
     let Some(string) = string else {

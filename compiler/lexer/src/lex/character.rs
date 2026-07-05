@@ -1,5 +1,10 @@
-use crate::{Cursor, Error, Result, SpanTracker, Token};
 use interfaces::Spanned;
+
+use crate::Cursor;
+use crate::Error;
+use crate::Result;
+use crate::SpanTracker;
+use crate::Token;
 
 pub(crate) fn try_lex_character_literal(cursor: &mut Cursor) -> Result {
     let start = cursor.peek().ok_or(Error::EndOfSource)?;
@@ -55,9 +60,13 @@ fn lex_symbol(cursor: &mut Cursor) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
+    use interfaces::Span;
+    use interfaces::Spanned;
+
     use super::try_lex_character_literal;
-    use crate::{Cursor, Error, Token};
-    use interfaces::{Span, Spanned};
+    use crate::Cursor;
+    use crate::Error;
+    use crate::Token;
 
     #[test]
     fn unescaped() {

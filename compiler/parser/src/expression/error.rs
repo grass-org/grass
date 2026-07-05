@@ -1,8 +1,14 @@
-use crate::{NumericLiteralError, UndefinedBindingPowerError};
-use interfaces::{Span, SyntaxKind};
-use lexer::Token;
 use std::error::Error;
-use std::fmt::{self, Display, Formatter};
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
+use interfaces::Span;
+use interfaces::SyntaxKind;
+use lexer::Token;
+
+use crate::NumericLiteralError;
+use crate::UndefinedBindingPowerError;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub enum ParseExpressionError {

@@ -1,5 +1,10 @@
-use crate::{Cursor, Error, Result, SpanTracker, Token};
 use interfaces::Spanned;
+
+use crate::Cursor;
+use crate::Error;
+use crate::Result;
+use crate::SpanTracker;
+use crate::Token;
 
 pub(crate) fn try_lex_single_character(cursor: &mut Cursor) -> Result {
     let character = cursor.peek().ok_or(Error::EndOfSource)?;
@@ -33,9 +38,13 @@ const fn lex_single_character(character: char) -> Option<Token> {
 
 #[cfg(test)]
 mod tests {
+    use interfaces::Span;
+    use interfaces::Spanned;
+
     use super::try_lex_single_character;
-    use crate::{Cursor, Error, Token};
-    use interfaces::{Span, Spanned};
+    use crate::Cursor;
+    use crate::Error;
+    use crate::Token;
 
     #[test]
     fn open_parenthesis() {

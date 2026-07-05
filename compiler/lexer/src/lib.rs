@@ -6,17 +6,17 @@ mod span_tracker;
 mod token;
 mod whitespace;
 
-pub use token::*;
+use std::iter;
+use std::result;
 
 use cursor::*;
 use error::*;
 use fallback::*;
+use interfaces::Spanned;
 use lex::*;
 use span_tracker::*;
+pub use token::*;
 use whitespace::*;
-
-use interfaces::Spanned;
-use std::{iter, result};
 
 type Error = LexError;
 type Result<T = Spanned<Token>> = result::Result<T, Error>;

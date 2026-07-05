@@ -1,6 +1,11 @@
-use crate::{AtomicExpressionError, InvalidNumericBaseError, InvalidNumericKindError};
 use std::error::Error;
-use std::fmt::{self, Display, Formatter};
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
+use crate::AtomicExpressionError;
+use crate::InvalidNumericBaseError;
+use crate::InvalidNumericKindError;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub enum NumericLiteralError {

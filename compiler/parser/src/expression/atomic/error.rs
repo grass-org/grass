@@ -1,6 +1,11 @@
-use crate::{NumericLiteralError, ParseExpressionError, UnexpectedSyntaxError};
 use std::error::Error;
-use std::fmt::{self, Display, Formatter};
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
+use crate::NumericLiteralError;
+use crate::ParseExpressionError;
+use crate::UnexpectedSyntaxError;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub enum AtomicExpressionError {

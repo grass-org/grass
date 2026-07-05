@@ -6,15 +6,17 @@ mod parentheses;
 mod prefix;
 mod right;
 
+use std::iter::Peekable;
+use std::result;
+
 pub use atomic::*;
+use binding_power::BindingPowers;
 pub use binding_power::*;
 pub use error::*;
-
-use binding_power::BindingPowers;
-
-use interfaces::{BinaryExpression, Expression, Spanned};
+use interfaces::BinaryExpression;
+use interfaces::Expression;
+use interfaces::Spanned;
 use lexer::Token;
-use std::{iter::Peekable, result};
 
 type Error = ParseExpressionError;
 type Result<T = Spanned<Expression>, E = Error> = result::Result<T, E>;
@@ -69,7 +71,8 @@ where
 mod tests {
     use lexer::lex;
 
-    use crate::expression::{Result, parse_expression};
+    use crate::expression::Result;
+    use crate::expression::parse_expression;
 
     #[test]
     fn test_sequential() -> Result<()> {

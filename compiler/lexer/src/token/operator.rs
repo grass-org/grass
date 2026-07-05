@@ -1,5 +1,8 @@
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
 use crate::Token;
-use std::fmt::{self, Display, Formatter};
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub struct Operator {

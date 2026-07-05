@@ -1,6 +1,8 @@
-use crate::Token;
 use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::Display;
+use std::fmt::Formatter;
+
+use crate::Token;
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
 pub struct NumericLiteral {

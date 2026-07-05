@@ -1,4 +1,5 @@
-use crate::{Error, Result};
+use crate::Error;
+use crate::Result;
 
 pub(super) trait Fallback {
     fn fallback(self, function: impl FnOnce() -> Result) -> Result;
@@ -22,9 +23,12 @@ fn fallback(error: Error, function: impl FnOnce() -> Result) -> Result {
 
 #[cfg(test)]
 mod tests {
+    use interfaces::Span;
+    use interfaces::Spanned;
+
     use super::Fallback;
-    use crate::{Error, Token};
-    use interfaces::{Span, Spanned};
+    use crate::Error;
+    use crate::Token;
 
     #[test]
     fn prefer_primary() {

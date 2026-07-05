@@ -1,5 +1,6 @@
-use crate::Cursor;
 use interfaces::Span;
+
+use crate::Cursor;
 
 #[derive(Debug)]
 pub(super) struct SpanTracker {
@@ -25,9 +26,10 @@ impl SpanTracker {
 
 #[cfg(test)]
 mod tests {
+    use interfaces::Span;
+
     use super::SpanTracker;
     use crate::Cursor;
-    use interfaces::Span;
 
     #[test]
     fn did_not_move() {

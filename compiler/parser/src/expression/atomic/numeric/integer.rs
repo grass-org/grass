@@ -1,6 +1,8 @@
+use interfaces::IntegerLiteral;
+use interfaces::IntegerLiteralKind;
+
 use super::parse_magnitude;
 use crate::NumericLiteralError;
-use interfaces::{IntegerLiteral, IntegerLiteralKind};
 
 pub(super) fn parse_integer_literal(
     base: u8,

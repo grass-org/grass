@@ -1,5 +1,9 @@
-use crate::{AtomicExpression, NumericLiteralKind};
-use std::fmt::{self, Display, Formatter};
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
+use crate::AtomicExpression;
+use crate::NumericLiteralKind;
 
 /// a magnitude literal represented as u128, since it can only be positive.
 /// example: `365:I64`
