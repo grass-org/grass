@@ -64,7 +64,7 @@ mod tests {
         let mut cursor = Cursor::new("'a'");
 
         let expected = Ok(Spanned {
-            content: Token::CharacterLiteral(String::from("a")),
+            content: Token::CharacterLiteral("a".into()),
             span: Span {
                 start: 0,
                 length: 3,
@@ -98,7 +98,7 @@ mod tests {
         let mut cursor = Cursor::new("' '");
 
         let expected = Ok(Spanned {
-            content: Token::CharacterLiteral(String::from(" ")),
+            content: Token::CharacterLiteral(" ".into()),
             span: Span {
                 start: 0,
                 length: 3,
@@ -132,7 +132,7 @@ mod tests {
         let mut cursor = Cursor::new("''");
 
         let expected = Ok(Spanned {
-            content: Token::CharacterLiteral(String::from("")),
+            content: Token::CharacterLiteral("".into()),
             span: Span {
                 start: 0,
                 length: 2,
@@ -149,7 +149,7 @@ mod tests {
         let mut cursor = Cursor::new("'a1'");
 
         let expected = Ok(Spanned {
-            content: Token::CharacterLiteral(String::from("a1")),
+            content: Token::CharacterLiteral("a1".into()),
             span: Span {
                 start: 0,
                 length: 4,
@@ -208,7 +208,7 @@ mod tests {
         let mut cursor = Cursor::new(r#"'a\\""fhh27\'67'"#);
 
         let expected = Ok(Spanned {
-            content: Token::CharacterLiteral(String::from(r#"a\\""fhh27\'67"#)),
+            content: Token::CharacterLiteral(r#"a\\""fhh27\'67"#.into()),
             span: Span {
                 start: 0,
                 length: 16,
@@ -224,7 +224,7 @@ mod tests {
     fn multi_byte_utf8_character() {
         let mut cursor = Cursor::new("'✨'");
         let expected = Ok(Spanned {
-            content: Token::CharacterLiteral(String::from("✨")),
+            content: Token::CharacterLiteral("✨".into()),
             span: Span {
                 start: 0,
                 length: 5,
@@ -252,7 +252,7 @@ mod tests {
     fn escaped_backslash_before_closing_quote() {
         let mut cursor = Cursor::new(r#"'\\'"#);
         let expected = Ok(Spanned {
-            content: Token::CharacterLiteral(String::from(r#"\\"#)),
+            content: Token::CharacterLiteral(r#"\\"#.into()),
             span: Span {
                 start: 0,
                 length: 4,
