@@ -143,7 +143,7 @@ mod tests {
         let expected = Ok(Spanned {
             content: Token::NumericLiteral(NumericLiteral {
                 base: None,
-                integral_radits: String::from("365"),
+                integral_radits: "365".into(),
                 fractional_radits: None,
                 kind: None,
             }),
@@ -165,8 +165,8 @@ mod tests {
         let expected = Ok(Spanned {
             content: Token::NumericLiteral(NumericLiteral {
                 base: None,
-                integral_radits: String::from("365"),
-                fractional_radits: Some(String::from("67")),
+                integral_radits: "365".into(),
+                fractional_radits: Some("67".into()),
                 kind: None,
             }),
             span: Span {
@@ -186,8 +186,8 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::NumericLiteral(NumericLiteral {
-                base: Some(String::from("67")),
-                integral_radits: String::from("365"),
+                base: Some("67".into()),
+                integral_radits: "365".into(),
                 fractional_radits: None,
                 kind: None,
             }),
@@ -208,9 +208,9 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::NumericLiteral(NumericLiteral {
-                base: Some(String::from("67")),
-                integral_radits: String::from("365"),
-                fractional_radits: Some(String::from("69")),
+                base: Some("67".into()),
+                integral_radits: "365".into(),
+                fractional_radits: Some("69".into()),
                 kind: None,
             }),
             span: Span {
@@ -231,9 +231,9 @@ mod tests {
         let expected = Ok(Spanned {
             content: Token::NumericLiteral(NumericLiteral {
                 base: None,
-                integral_radits: String::from("369"),
+                integral_radits: "369".into(),
                 fractional_radits: None,
-                kind: Some(String::from("I32")),
+                kind: Some("I32".into()),
             }),
             span: Span {
                 start: 0,
@@ -253,9 +253,9 @@ mod tests {
         let expected = Ok(Spanned {
             content: Token::NumericLiteral(NumericLiteral {
                 base: None,
-                integral_radits: String::from("369"),
-                fractional_radits: Some(String::from("67")),
-                kind: Some(String::from("F64")),
+                integral_radits: "369".into(),
+                fractional_radits: Some("67".into()),
+                kind: Some("F64".into()),
             }),
             span: Span {
                 start: 0,
@@ -274,10 +274,10 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::NumericLiteral(NumericLiteral {
-                base: Some(String::from("2")),
-                integral_radits: String::from("369"),
+                base: Some("2".into()),
+                integral_radits: "369".into(),
                 fractional_radits: None,
-                kind: Some(String::from("I32")),
+                kind: Some("I32".into()),
             }),
             span: Span {
                 start: 0,
@@ -296,10 +296,10 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::NumericLiteral(NumericLiteral {
-                base: Some(String::from("2")),
-                integral_radits: String::from("369"),
-                fractional_radits: Some(String::from("67")),
-                kind: Some(String::from("F64")),
+                base: Some("2".into()),
+                integral_radits: "369".into(),
+                fractional_radits: Some("67".into()),
+                kind: Some("F64".into()),
             }),
             span: Span {
                 start: 0,
@@ -318,10 +318,10 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::NumericLiteral(NumericLiteral {
-                base: Some(String::from("2")),
-                integral_radits: String::from("369"),
+                base: Some("2".into()),
+                integral_radits: "369".into(),
                 fractional_radits: None,
-                kind: Some(String::from("F64")),
+                kind: Some("F64".into()),
             }),
             span: Span {
                 start: 0,

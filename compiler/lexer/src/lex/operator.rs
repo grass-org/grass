@@ -73,7 +73,7 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::Operator(Operator {
-                symbol: String::from("+"),
+                symbol: "+".into(),
                 has_leading_whitespace: false,
                 has_trailing_whitespace: false,
             }),
@@ -94,7 +94,7 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::Operator(Operator {
-                symbol: String::from("+="),
+                symbol: "+=".into(),
                 has_leading_whitespace: false,
                 has_trailing_whitespace: false,
             }),
@@ -115,7 +115,7 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::Operator(Operator {
-                symbol: String::from("+="),
+                symbol: "+=".into(),
                 has_leading_whitespace: true,
                 has_trailing_whitespace: false,
             }),
@@ -136,7 +136,7 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::Operator(Operator {
-                symbol: String::from("+="),
+                symbol: "+=".into(),
                 has_leading_whitespace: false,
                 has_trailing_whitespace: true,
             }),
@@ -157,7 +157,7 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::Operator(Operator {
-                symbol: String::from("+="),
+                symbol: "+=".into(),
                 has_leading_whitespace: true,
                 has_trailing_whitespace: true,
             }),
@@ -178,7 +178,7 @@ mod tests {
 
         let expected = Ok(Spanned {
             content: Token::Operator(Operator {
-                symbol: String::from("-"),
+                symbol: "-".into(),
                 has_leading_whitespace: false,
                 has_trailing_whitespace: false,
             }),

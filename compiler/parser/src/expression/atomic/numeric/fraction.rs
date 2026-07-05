@@ -18,7 +18,7 @@ pub(super) fn parse_fraction_literal(
         return Err(NumericLiteralError::MissingFractionalPart);
     };
 
-    let fractional_part = fractional_part.unwrap_or_else(|| String::from("0"));
+    let fractional_part = fractional_part.unwrap_or_else(|| "0".into());
 
     let value = match kind {
         FractionLiteralKind::Fraction32 => parse_fraction(base, integral_part, fractional_part)?,
