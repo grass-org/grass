@@ -52,11 +52,7 @@ where
     fn parse_folding(&mut self, min_binding_power: u32) -> Result {
         let mut expression = self.parse_left()?;
 
-        loop {
-            let Ok(right) = self.parse_right(min_binding_power) else {
-                break;
-            };
-
+        while let Ok(right) = self.parse_right(min_binding_power) {
             let (operator, operand) = right;
             let operands = [expression, operand];
             let binary_expression = BinaryExpression::new(operator, operands);

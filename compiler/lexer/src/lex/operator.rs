@@ -37,11 +37,7 @@ fn lex_operator(cursor: &mut Cursor, has_leading_whitespace: bool) -> Spanned<To
 fn lex_symbol(cursor: &mut Cursor) -> String {
     let mut symbol = String::new();
 
-    loop {
-        let Some(character) = cursor.peek() else {
-            break;
-        };
-
+    while let Some(character) = cursor.peek() {
         if !is_operator_character(character) {
             break;
         }

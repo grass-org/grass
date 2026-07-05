@@ -32,11 +32,7 @@ fn lex_numeric_literal(cursor: &mut Cursor) -> Spanned<Token> {
 fn lex_literal(cursor: &mut Cursor) -> NumericLiteral {
     let mut builder = NumericLiteralBuilder::new();
 
-    loop {
-        let Some(character) = cursor.peek() else {
-            break;
-        };
-
+    while let Some(character) = cursor.peek() {
         let Ok(()) = builder.push(character) else {
             break;
         };
