@@ -3,11 +3,7 @@ use crate::Cursor;
 pub(super) fn skip_whitespaces(cursor: &mut Cursor) -> SkipWhitespaceResult {
     let mut result = SkipWhitespaceResult::NoneFound;
 
-    loop {
-        let Some(character) = cursor.peek() else {
-            break;
-        };
-
+    while let Some(character) = cursor.peek() {
         if !is_horizontal_whitespace(character) {
             break;
         }

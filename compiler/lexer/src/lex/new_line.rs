@@ -23,11 +23,7 @@ fn lex_new_line(cursor: &mut Cursor) -> Spanned<Token> {
     cursor.advance();
 
     // We also compound all whitespaces to an already started newline token
-    loop {
-        let Some(character) = cursor.peek() else {
-            break;
-        };
-
+    while let Some(character) = cursor.peek() {
         if !is_whitespace(character) {
             break;
         }

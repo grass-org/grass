@@ -267,6 +267,7 @@ mod tests {
                 length: 4,
             },
         });
+
         assert_eq!(expected, try_lex_character_literal(&mut cursor));
     }
 }
