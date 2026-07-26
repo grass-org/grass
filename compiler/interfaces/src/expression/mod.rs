@@ -5,7 +5,6 @@ mod fraction;
 mod integer;
 mod magnitude;
 mod numeric;
-mod operator;
 mod unary;
 
 use std::fmt::Display;
@@ -19,7 +18,6 @@ pub use fraction::*;
 pub use integer::*;
 pub use magnitude::*;
 pub use numeric::*;
-pub use operator::*;
 pub use unary::*;
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]

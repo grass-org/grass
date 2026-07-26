@@ -1,5 +1,5 @@
+use interfaces::BinaryOperator;
 use interfaces::Expression;
-use interfaces::Operator;
 use interfaces::Spanned;
 use lexer::Token;
 
@@ -16,7 +16,7 @@ where
     pub(super) fn parse_right(
         &mut self,
         min_binding_power: u32,
-    ) -> Result<(Spanned<Operator>, Spanned<Expression>)> {
+    ) -> Result<(Spanned<BinaryOperator>, Spanned<Expression>)> {
         let OperatorToken { symbol, .. } =
             peek_operator_token(&mut self.tokens).ok_or(Error::NoMoreTokens)?;
 
@@ -35,16 +35,13 @@ where
 
 fn next_infix_operator(
     mut tokens: impl Iterator<Item = Spanned<Token>>,
-) -> Option<Spanned<Operator>> {
+) -> Option<Spanned<BinaryOperator>> {
     let Spanned { content, span } = tokens.next()?;
 
     let Token::Operator(OperatorToken { symbol, .. }) = content else {
         return None;
     };
 
-    let operator = Operator { symbol };
-    Some(Spanned {
-        content: operator,
-        span,
-    })
+    let operator = BinaryOperator { symbol };
+    Some(Spanned::new(operator, span))
 }

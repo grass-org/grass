@@ -3,25 +3,24 @@ use std::fmt::Formatter;
 use std::fmt::{self};
 
 use crate::Expression;
-use crate::Operator;
 use crate::Span;
 use crate::Spanned;
 
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 pub struct BinaryExpression {
-    operator: Spanned<Operator>,
+    operator: Spanned<BinaryOperator>,
     operands: Box<[Spanned<Expression>; 2]>,
 }
 
 impl BinaryExpression {
-    pub fn new(operator: Spanned<Operator>, operands: [Spanned<Expression>; 2]) -> Self {
+    pub fn new(operator: Spanned<BinaryOperator>, operands: [Spanned<Expression>; 2]) -> Self {
         Self {
             operator,
             operands: Box::new(operands),
         }
     }
 
-    pub const fn operator(&self) -> &Spanned<Operator> {
+    pub const fn operator(&self) -> &Spanned<BinaryOperator> {
         &self.operator
     }
 
@@ -42,7 +41,13 @@ impl BinaryExpression {
         Span { start, length }
     }
 
-    pub fn into_values(self) -> (Spanned<Operator>, Spanned<Expression>, Spanned<Expression>) {
+    pub fn into_values(
+        self,
+    ) -> (
+        Spanned<BinaryOperator>,
+        Spanned<Expression>,
+        Spanned<Expression>,
+    ) {
         let BinaryExpression { operator, operands } = self;
         let [operand0, operand1] = *operands;
         (operator, operand0, operand1)
@@ -72,5 +77,17 @@ impl Display for BinaryExpression {
         let [operand0, operand1] = &**operands;
 
         write!(f, "{operator}({operand0}, {operand1})")
+    }
+}
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Debug)]
+pub struct BinaryOperator {
+    pub symbol: String,
+}
+
+impl Display for BinaryOperator {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let symbol = &self.symbol;
+        write!(f, "{symbol}")
     }
 }

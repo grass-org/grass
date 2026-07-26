@@ -1,7 +1,7 @@
-use interfaces::Operator;
 use interfaces::Span;
 use interfaces::Spanned;
 use interfaces::UnaryExpression;
+use interfaces::UnaryOperator;
 use lexer::Token;
 
 use super::ExpressionParser;
@@ -14,11 +14,9 @@ where
     pub(super) fn parse_prefix_expression(&mut self, symbol: String, span: Span) -> Result {
         let binding_power = self.binding_powers.prefix_binding_power(&symbol)?;
 
-        let operator = Operator { symbol };
-        let operator = Spanned {
-            content: operator,
-            span,
-        };
+        let operator = UnaryOperator::prefix(symbol);
+        let operator = Spanned::new(operator, span);
+
         let operand = self.parse_folding(binding_power)?;
 
         Ok(UnaryExpression::new(operator, operand).into())
