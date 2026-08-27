@@ -1,0 +1,65 @@
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::{self};
+
+use crate::FractionLiteralKind;
+use crate::IntegerLiteralKind;
+use crate::MagnitudeLiteralKind;
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
+pub enum NumericLiteralArchetype {
+    Integer,
+    Magnitude,
+    Fraction,
+}
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash, Debug)]
+pub enum NumericLiteralKind {
+    Integer(IntegerLiteralKind),
+    Magnitude(MagnitudeLiteralKind),
+    Fraction(FractionLiteralKind),
+}
+
+impl NumericLiteralKind {
+    pub fn all() -> impl Iterator<Item = Self> {
+        Self::integer()
+            .chain(Self::magnitude())
+            .chain(Self::fraction())
+    }
+
+    pub fn of_archetype(
+        archetype: NumericLiteralArchetype,
+    ) -> Box<dyn Iterator<Item = NumericLiteralKind>> {
+        match archetype {
+            NumericLiteralArchetype::Integer => Box::new(Self::integer()),
+            NumericLiteralArchetype::Magnitude => Box::new(Self::magnitude()),
+            NumericLiteralArchetype::Fraction => Box::new(Self::fraction()),
+        }
+    }
+
+    pub const fn archetype(&self) -> NumericLiteralArchetype {
+        match self {
+            NumericLiteralKind::Integer(_) => NumericLiteralArchetype::Integer,
+            NumericLiteralKind::Magnitude(_) => NumericLiteralArchetype::Magnitude,
+            NumericLiteralKind::Fraction(_) => NumericLiteralArchetype::Fraction,
+        }
+    }
+
+    pub fn integer() -> impl Iterator<Item = NumericLiteralKind> {
+        IntegerLiteralKind::all().map(|kind| kind.into())
+    }
+
+    pub fn magnitude() -> impl Iterator<Item = NumericLiteralKind> {
+        MagnitudeLiteralKind::all().map(|kind| kind.into())
+    }
+
+    pub fn fraction() -> impl Iterator<Item = NumericLiteralKind> {
+        FractionLiteralKind::all().map(|kind| kind.into())
+    }
+}
+
+impl Display for NumericLiteralKind {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{self:?}")
+    }
+}
